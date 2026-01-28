@@ -10,6 +10,8 @@ import torch.nn as nn
 from typing import Dict, List, Any
 from app.database.models import get_user_events
 from app.features.feature_engineering import compute_features
+from app.models.model_manager import model_manager
+from app.models.feedback_loop import adaptive_thresholds
 
 MODEL_DIR = "app/models"
 EVALUATION_DIR = "app/evaluation"
@@ -64,6 +66,9 @@ class ModelEvaluator:
         # Save evaluation results
         self.save_evaluation(metrics, predictions)
 
+        # Update adaptive thresholds based on performance
+        adaptive_thresholds.adjust_thresholds(metrics)
+
         return metrics
 
     def save_evaluation(self, metrics: Dict[str, Any], predictions: Dict[str, Any]):
@@ -105,17 +110,36 @@ class ModelTrainer:
         """Retrain all models with new data"""
         print("Retraining anomaly detection model...")
         from app.models.anomaly_detector import train_default_models
-        train_default_models()
+        anomaly_model = train_default_models()
 
         print("Retraining sequence model...")
         from app.models.sequence_model import train_default_sequence_model
-        train_default_sequence_model()
+        sequence_model = train_default_sequence_model()
 
         print("Retraining graph model...")
         from app.models.graph_model import train_default_graph_model
-        train_default_graph_model()
+        graph_model = train_default_graph_model()
 
-        print("Model retraining completed")
+        # Save models with versioning
+        if anomaly_model:
+            model_manager.save_model('autoencoder', anomaly_model, {
+                'training_date': datetime.now(),
+                'dataset_size': training_data.get('size', 'unknown') if training_data else 'unknown'
+            })
+
+        if sequence_model:
+            model_manager.save_model('lstm', sequence_model, {
+                'training_date': datetime.now(),
+                'dataset_size': training_data.get('size', 'unknown') if training_data else 'unknown'
+            })
+
+        if graph_model:
+            model_manager.save_model('graph', graph_model, {
+                'training_date': datetime.now(),
+                'dataset_size': training_data.get('size', 'unknown') if training_data else 'unknown'
+            })
+
+        print("Model retraining and versioning completed")
 
     def validate_models(self) -> Dict[str, Any]:
         """Validate models on synthetic test data"""
@@ -132,18 +156,18 @@ class ModelTrainer:
 
         return self.evaluator.evaluate_models(test_users, true_labels)
 
-def detect_model_drift(self, current_metrics: Dict[str, Any], threshold: float = 0.1) -> bool:
-    """Detect if model performance has drifted"""
-    if len(self.metrics_history) < 2:
-        return False
+    def detect_model_drift(self, current_metrics: Dict[str, Any], threshold: float = 0.1) -> bool:
+        """Detect if model performance has drifted"""
+        if len(self.evaluator.metrics_history) < 2:
+            return False
 
-    previous_metrics = self.metrics_history[-2]
-    current_f1 = current_metrics.get('f1_score', 0)
-    previous_f1 = previous_metrics.get('f1_score', 0)
+        previous_metrics = self.evaluator.metrics_history[-2]
+        current_f1 = current_metrics.get('f1_score', 0)
+        previous_f1 = previous_metrics.get('f1_score', 0)
 
-    drift = abs(current_f1 - previous_f1) / previous_f1 if previous_f1 > 0 else 0
+        drift = abs(current_f1 - previous_f1) / previous_f1 if previous_f1 > 0 else 0
 
-    return drift > threshold
+        return drift > threshold
 
 # Global instances
 evaluator = ModelEvaluator()
