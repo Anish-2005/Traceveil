@@ -1,29 +1,231 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
 import numpy as np
+import joblib
+import os
+from typing import List, Dict, Any
 from app.database.models import get_user_events
 
+MODEL_DIR = "app/models"
+SEQUENCE_MODEL_PATH = os.path.join(MODEL_DIR, "sequence_model.pth")
+SEQUENCE_SCALER_PATH = os.path.join(MODEL_DIR, "sequence_scaler.pkl")
+
+os.makedirs(MODEL_DIR, exist_ok=True)
+
+class EventDataset(Dataset):
+    def __init__(self, sequences, labels):
+        self.sequences = sequences
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.sequences)
+
+    def __getitem__(self, idx):
+        return self.sequences[idx], self.labels[idx]
+
+class LSTMSequenceModel(nn.Module):
+    def __init__(self, input_size: int, hidden_size: int = 64, num_layers: int = 2):
+        super(LSTMSequenceModel, self).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
+        self.fc = nn.Sequential(
+            nn.Linear(hidden_size, 32),
+            nn.ReLU(),
+            nn.Linear(32, 1),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+
+        out, _ = self.lstm(x, (h0, c0))
+        out = self.fc(out[:, -1, :])  # Take last time step
+        return out
+
+def extract_sequence_features(events: List) -> np.ndarray:
+    """Extract features from a sequence of events"""
+    if not events:
+        return np.zeros(11)  # Same as feature vector size
+
+    features = []
+
+    # Time-based features
+    timestamps = [e.timestamp for e in events]
+    if len(timestamps) > 1:
+        time_diffs = np.diff([t.timestamp() for t in timestamps])
+        features.extend([
+            np.mean(time_diffs),  # avg time between events
+            np.std(time_diffs),   # std of time between events
+            np.min(time_diffs),   # min time between events
+            np.max(time_diffs),   # max time between events
+        ])
+    else:
+        features.extend([0, 0, 0, 0])
+
+    # Event type diversity
+    event_types = [e.event_type for e in events]
+    unique_types = len(set(event_types))
+    type_entropy = -sum((np.array(list(np.unique(event_types, return_counts=True)[1])) / len(event_types)) *
+                        np.log(np.array(list(np.unique(event_types, return_counts=True)[1])) / len(event_types)))
+    features.extend([unique_types / len(event_types), type_entropy])
+
+    # Metadata features
+    mouse_speeds = [e.event_metadata.get('mouse_speed', 0) for e in events if e.event_metadata.get('mouse_speed')]
+    reaction_times = [e.event_metadata.get('reaction_time', 0) for e in events if e.event_metadata.get('reaction_time')]
+
+    features.extend([
+        np.mean(mouse_speeds) if mouse_speeds else 0,
+        np.std(mouse_speeds) if mouse_speeds else 0,
+        np.mean(reaction_times) if reaction_times else 0,
+        np.std(reaction_times) if reaction_times else 0,
+    ])
+
+    # Pad or truncate to fixed size
+    while len(features) < 11:
+        features.append(0)
+
+    return np.array(features[:11])
+
+def create_sequences(user_events: List, sequence_length: int = 10) -> List[np.ndarray]:
+    """Create sequences from user events"""
+    sequences = []
+    for i in range(len(user_events) - sequence_length + 1):
+        sequence_events = user_events[i:i + sequence_length]
+        sequence_features = [extract_sequence_features([e]) for e in sequence_events]
+        sequences.append(np.array(sequence_features))
+
+    return sequences if sequences else [np.zeros((sequence_length, 11))]
+
+def load_sequence_model():
+    """Load trained sequence model or create default"""
+    if os.path.exists(SEQUENCE_MODEL_PATH):
+        try:
+            checkpoint = torch.load(SEQUENCE_MODEL_PATH)
+            model = LSTMSequenceModel(checkpoint['input_size'], checkpoint['hidden_size'], checkpoint['num_layers'])
+            model.load_state_dict(checkpoint['model_state_dict'])
+            model.eval()
+            return model
+        except Exception as e:
+            print(f"Error loading sequence model: {e}")
+
+    # Create and train default model
+    print("Training default sequence model...")
+    model = train_default_sequence_model()
+    return model
+
+def train_default_sequence_model():
+    """Train a basic sequence model on synthetic data"""
+    # Generate synthetic sequences
+    np.random.seed(42)
+    n_sequences = 500
+    sequence_length = 10
+    input_size = 11
+
+    # Normal sequences
+    normal_sequences = []
+    for _ in range(n_sequences // 2):
+        seq = np.random.normal(0, 0.5, (sequence_length, input_size))
+        # Add some patterns
+        seq[:, 0] = np.random.uniform(1, 10, sequence_length)  # action frequency
+        seq[:, 4] = np.random.uniform(400, 1200, sequence_length)  # mouse speed
+        normal_sequences.append(seq)
+
+    # Suspicious sequences
+    suspicious_sequences = []
+    for _ in range(n_sequences // 2):
+        seq = np.random.normal(0, 1.0, (sequence_length, input_size))
+        # Add suspicious patterns
+        seq[:, 0] = np.random.uniform(20, 100, sequence_length)  # high action frequency
+        seq[:, 1] = np.random.uniform(2, 5, sequence_length)     # high burstiness
+        seq[:, 4] = np.random.uniform(1500, 2500, sequence_length)  # very fast mouse
+        suspicious_sequences.append(seq)
+
+    # Labels: 0 = normal, 1 = suspicious
+    X = np.array(normal_sequences + suspicious_sequences)
+    y = np.array([0] * len(normal_sequences) + [1] * len(suspicious_sequences))
+
+    # Train model
+    model = LSTMSequenceModel(input_size)
+    criterion = nn.BCELoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    dataset = EventDataset(X, y)
+    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    for epoch in range(50):
+        model.train()
+        epoch_loss = 0
+        for sequences, labels in dataloader:
+            optimizer.zero_grad()
+            outputs = model(sequences.float())
+            loss = criterion(outputs.squeeze(), labels.float())
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item()
+
+        if (epoch + 1) % 10 == 0:
+            print(f"Sequence Model Epoch {epoch+1}/50, Loss: {epoch_loss/len(dataloader):.4f}")
+
+    # Save model
+    torch.save({
+        'input_size': input_size,
+        'hidden_size': 64,
+        'num_layers': 2,
+        'model_state_dict': model.state_dict()
+    }, SEQUENCE_MODEL_PATH)
+
+    return model
+
 def predict_sequence_risk(user_id: str) -> float:
-    # Get recent events for sequence
+    """Predict risk from user's event sequence"""
     events = get_user_events(user_id, limit=50)
 
     if len(events) < 5:
-        return 0.0  # Not enough data
+        return 0.0  # Not enough data for sequence analysis
 
-    # Simple sequence analysis: check for suspicious patterns
-    event_types = [e.event_type for e in events]  # Already in descending order
+    # Create sequences
+    sequences = create_sequences(events)
 
-    # Example: rapid tab switching might indicate cheating
-    tab_switches = sum(1 for et in event_types if et == 'tab_switch')
-    rapid_switches = tab_switches / len(event_types)
+    if not sequences:
+        return 0.0
 
-    # IP changes
+    # Load model and predict
+    model = load_sequence_model()
+
+    with torch.no_grad():
+        # Take the most recent sequence
+        sequence = torch.FloatTensor(sequences[-1]).unsqueeze(0)  # Add batch dimension
+        output = model(sequence)
+        risk_score = output.item()
+
+    # Rule-based fallback for suspicious patterns
+    rule_based_score = 0.0
+
+    # Check for rapid tab switching
+    tab_switches = sum(1 for e in events if e.event_type == 'tab_switch')
+    if tab_switches / len(events) > 0.3:
+        rule_based_score += 0.4
+
+    # Check for IP changes
     ips = [e.event_metadata.get('ip', '') for e in events]
     unique_ips = len(set(ips))
-    ip_change_rate = unique_ips / len(events)
+    if unique_ips / len(events) > 0.5:
+        rule_based_score += 0.3
 
-    # Combine into risk score
-    risk_score = min(1.0, (rapid_switches * 0.6) + (ip_change_rate * 0.4))
+    # Check for abnormal mouse speeds
+    mouse_speeds = [e.event_metadata.get('mouse_speed', 0) for e in events if 'mouse_speed' in e.event_metadata]
+    if mouse_speeds and np.mean(mouse_speeds) > 1800:
+        rule_based_score += 0.3
 
-    return risk_score
+    # Combine ML and rule-based scores
+    final_score = 0.7 * risk_score + 0.3 * rule_based_score
+
+    return min(1.0, max(0.0, final_score))
 
     return risk_score
 

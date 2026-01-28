@@ -36,13 +36,21 @@ Raw Events → Feature Intelligence → Multiple ML Models → Risk Engine → E
 
 1. **Create a Firebase project**:
    - Go to [Firebase Console](https://console.firebase.google.com/)
-   - Create a new project
-   - Enable Firestore Database
+   - Create a new project or use existing "traceveil-core"
 
-2. **Generate service account key**:
+2. **Enable Firestore**:
+   - In your Firebase project, go to Firestore Database
+   - Create a Firestore database in production mode
+
+3. **Generate service account key**:
    - Go to Project Settings > Service Accounts
-   - Generate a new private key
-   - Download the JSON file as `firebase-credentials.json`
+   - Click "Generate new private key"
+   - Download the JSON file
+   - Rename it to `firebase-credentials.json` and place in project root
+
+4. **Update credentials** (if using the provided keys):
+   - The project is already configured for "traceveil-core"
+   - Replace the placeholder values in `firebase-credentials.json` with your actual service account credentials
 
 3. **Place credentials**:
    ```bash
