@@ -57,22 +57,34 @@ class UserProfile:
 # Firestore operations
 def save_event(event):
     db = get_firestore_client()
+    if db is None:
+        print("Mock: Event saved (not really)")
+        return
     doc_ref = db.collection('events').document(event.id)
     doc_ref.set(event.to_dict())
 
 def get_user_events(user_id, limit=1000):
     db = get_firestore_client()
+    if db is None:
+        print("Mock: Returning empty events list")
+        return []
     events_ref = db.collection('events').where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit)
     docs = events_ref.stream()
     return [Event.from_dict(doc.to_dict()) for doc in docs]
 
 def save_user_profile(profile):
     db = get_firestore_client()
+    if db is None:
+        print("Mock: Profile saved (not really)")
+        return
     doc_ref = db.collection('user_profiles').document(profile.user_id)
     doc_ref.set(profile.to_dict())
 
 def get_user_profile(user_id):
     db = get_firestore_client()
+    if db is None:
+        print("Mock: Returning None profile")
+        return None
     doc = db.collection('user_profiles').document(user_id).get()
     if doc.exists:
         return UserProfile.from_dict(doc.to_dict())

@@ -69,12 +69,13 @@ def send_event(event):
             data = response.json()
             print(f"Event sent for {event['user_id']}: Risk Score = {data['risk_score']:.3f}")
         else:
-            print(f"Failed to send event: {response.status_code}")
+            print(f"Failed to send event: {response.status_code} - {response.text}")
     except Exception as e:
         print(f"Error sending event: {e}")
 
 def main():
     print("Starting sample data generation...")
+    print("Make sure Firebase is set up and the API is running!")
     print("Press Ctrl+C to stop")
 
     try:

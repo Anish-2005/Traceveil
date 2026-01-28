@@ -28,35 +28,37 @@ Raw Events → Feature Intelligence → Multiple ML Models → Risk Engine → E
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
 - Python 3.11+
+- Firebase project with Firestore enabled
+- Firebase service account key
+
+### Firebase Setup
+
+1. **Create a Firebase project**:
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Create a new project
+   - Enable Firestore Database
+
+2. **Generate service account key**:
+   - Go to Project Settings > Service Accounts
+   - Generate a new private key
+   - Download the JSON file as `firebase-credentials.json`
+
+3. **Place credentials**:
+   ```bash
+   cp /path/to/downloaded-key.json firebase-credentials.json
+   ```
 
 ### Setup
-
-1. **Clone and navigate**:
-   ```bash
-   cd traceveil
-   ```
-
-2. **Start services**:
-   ```bash
-   docker-compose up --build
-   ```
-
-3. **Access the dashboard**:
-   - API: http://localhost:8000
-   - Dashboard: http://localhost:8501
-
-### Manual Setup
 
 1. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Set environment variables**:
+2. **Set environment variables** (optional):
    ```bash
-   export DATABASE_URL="postgresql://user:password@localhost/traceveil"
+   export FIREBASE_CREDENTIALS_PATH="firebase-credentials.json"
    ```
 
 3. **Run the API**:
@@ -68,6 +70,10 @@ Raw Events → Feature Intelligence → Multiple ML Models → Risk Engine → E
    ```bash
    streamlit run dashboard/app.py
    ```
+
+### Access
+- API: http://localhost:8000
+- Dashboard: http://localhost:8501
 
 ## 📊 API Usage
 
@@ -106,11 +112,11 @@ curl "http://localhost:8000/user/user123/risk"
 
 ## 🛠️ Tech Stack
 
-- **Backend**: FastAPI, SQLAlchemy, PostgreSQL
-- **ML**: Scikit-learn, TensorFlow, PyTorch, NetworkX
-- **Real-time**: Redis, Kafka
+- **Backend**: FastAPI, Firebase/Firestore
+- **ML**: Scikit-learn, PyTorch, NetworkX
+- **Real-time**: Redis
 - **Dashboard**: Streamlit, Plotly
-- **Deployment**: Docker, Docker Compose
+- **Deployment**: Docker
 
 ## 📚 Project Structure
 
@@ -118,7 +124,7 @@ curl "http://localhost:8000/user/user123/risk"
 traceveil/
 ├── app/
 │   ├── api/           # FastAPI routes
-│   ├── database/      # DB models and connection
+│   ├── database/      # Firebase/Firestore configuration and models
 │   ├── features/      # Feature engineering
 │   ├── models/        # ML model implementations
 │   ├── risk_engine/   # Risk scoring logic
@@ -126,9 +132,9 @@ traceveil/
 ├── dashboard/         # Streamlit dashboard
 ├── data/             # Data ingestion scripts
 ├── tests/            # Unit and integration tests
+├── firebase-credentials.json  # Firebase service account key
 ├── requirements.txt
-├── Dockerfile
-└── docker-compose.yml
+└── README.md
 ```
 
 ## 🤝 Contributing

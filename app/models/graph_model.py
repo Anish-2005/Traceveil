@@ -1,13 +1,16 @@
 import networkx as nx
-from sqlalchemy.orm import Session
-from app.database.models import Event
+from app.database.models import get_user_events
 
-def compute_graph_risk(user_id: str, db: Session) -> float:
+def compute_graph_risk(user_id: str) -> float:
+    # Get all events for graph analysis (limit for performance)
+    # In a real implementation, you'd get events from all users, but for demo we'll use user's events
+    events = get_user_events(user_id, limit=100)
+
+    if len(events) < 3:
+        return 0.0
+
     # Build user-device-IP graph
     G = nx.Graph()
-
-    # Get all events for graph analysis
-    events = db.query(Event).limit(1000).all()  # Limit for performance
 
     for event in events:
         user = event.user_id
