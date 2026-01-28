@@ -14,10 +14,13 @@ from datetime import datetime
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data.download_datasets import DatasetDownloader
+# Import core modules
 from data.train_industry_datasets import train_on_industry_datasets
 from app.models.model_training import trainer
 from app.models.model_manager import model_manager
+
+# Import dataset downloader only when needed
+DatasetDownloader = None
 
 def setup_environment():
     """Ensure all required directories exist"""
@@ -39,6 +42,7 @@ def download_datasets(auto_download=True):
     print("\n📥 PHASE 1: Dataset Acquisition")
     print("=" * 50)
 
+    from data.download_datasets import DatasetDownloader
     downloader = DatasetDownloader()
 
     if auto_download:
@@ -172,7 +176,7 @@ making it production-ready for real-world deployment.
 
 def main():
     parser = argparse.ArgumentParser(description="Complete Traceveil Training Pipeline")
-    parser.add_argument("--auto-download", action="store_true", default=True,
+    parser.add_argument("--auto-download", choices=['true', 'false'], default='true',
                        help="Automatically download datasets (requires Kaggle API)")
     parser.add_argument("--skip-validation", action="store_true",
                        help="Skip model validation step")
@@ -192,7 +196,8 @@ def main():
 
     # Download datasets
     if not args.synthetic_only:
-        datasets_info = download_datasets(args.auto_download)
+        auto_download = args.auto_download == 'true'
+        datasets_info = download_datasets(auto_download)
     else:
         print("🔧 Using synthetic datasets only")
         datasets_info = ['synthetic_exam', 'synthetic_network']

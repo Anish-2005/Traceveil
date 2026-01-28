@@ -4,9 +4,9 @@ import pickle
 from datetime import datetime
 from typing import Dict, Any, List
 import torch
-from app.models.anomaly_detector import AutoencoderDetector
+from app.models.anomaly_detector import Autoencoder
 from app.models.sequence_model import LSTMSequenceModel
-from app.models.graph_model import GraphFraudDetector
+# from app.models.graph_model import GraphFraudDetector  # Not implemented yet
 
 MODEL_DIR = "app/models/saved_models"
 os.makedirs(MODEL_DIR, exist_ok=True)

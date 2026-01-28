@@ -11,7 +11,7 @@ from typing import Dict, List, Any
 from app.database.models import get_user_events
 from app.features.feature_engineering import compute_features
 from app.models.model_manager import model_manager
-from app.models.feedback_loop import adaptive_thresholds
+# from app.models.feedback_loop import adaptive_thresholds  # Import inside function to avoid circular import
 
 MODEL_DIR = "app/models"
 EVALUATION_DIR = "app/evaluation"
@@ -67,6 +67,7 @@ class ModelEvaluator:
         self.save_evaluation(metrics, predictions)
 
         # Update adaptive thresholds based on performance
+        from app.models.feedback_loop import adaptive_thresholds
         adaptive_thresholds.adjust_thresholds(metrics)
 
         return metrics

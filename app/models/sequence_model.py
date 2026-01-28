@@ -234,3 +234,31 @@ def predict_sequence_risk(user_id: str) -> float:
 def train_sequence_model():
     # TODO: Implement LSTM training
     pass
+
+def train_lstm_model(X_train, X_test, y_train, y_test, epochs=50, batch_size=32):
+    """Train LSTM model for sequence anomaly detection"""
+    input_dim = X_train.shape[1]
+    model = LSTMSequenceModel(input_dim)
+    
+    # Convert to tensors
+    X_train_tensor = torch.FloatTensor(X_train)
+    y_train_tensor = torch.FloatTensor(y_train)
+    X_test_tensor = torch.FloatTensor(X_test)
+    y_test_tensor = torch.FloatTensor(y_test)
+    
+    criterion = nn.BCEWithLogitsLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    
+    # Training loop
+    for epoch in range(epochs):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(X_train_tensor)
+        loss = criterion(outputs.squeeze(), y_train_tensor)
+        loss.backward()
+        optimizer.step()
+        
+        if (epoch + 1) % 10 == 0:
+            print(f"Epoch {epoch+1}/{epochs}, Loss: {loss.item():.4f}")
+    
+    return model

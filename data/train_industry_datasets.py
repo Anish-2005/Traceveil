@@ -20,9 +20,9 @@ warnings.filterwarnings('ignore')
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.dataset_loader import dataset_loader
-from app.models.anomaly_detector import AutoencoderDetector, train_autoencoder
+from app.models.anomaly_detector import Autoencoder, train_autoencoder
 from app.models.sequence_model import LSTMSequenceModel, train_lstm_model
-from app.models.graph_model import GraphFraudDetector, train_graph_model
+from app.models.graph_model import train_graph_model
 from app.models.model_training import trainer
 from app.features.feature_engineering import compute_features
 
