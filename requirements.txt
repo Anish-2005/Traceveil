@@ -12,5 +12,15 @@ shap
 streamlit
 plotly
 networkx
+node2vec
 joblib
 pytest
+kaggle
+imbalanced-learn
+xgboost
+lightgbm
+catboost
+seaborn
+matplotlib
+tqdm
+requests
