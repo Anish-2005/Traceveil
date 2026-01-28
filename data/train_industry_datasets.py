@@ -31,7 +31,7 @@ def prepare_ieee_cis_data(df: pd.DataFrame) -> tuple:
     print(f"Preparing IEEE-CIS data: {len(df)} transactions")
 
     # Handle categorical columns explicitly
-    categorical_cols = ['ProductCD', 'card4', 'card6', 'P_emaildomain', 'R_emaildomain', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9']
+    categorical_cols = ['ProductCD', 'card4', 'card6', 'P_emaildomain', 'R_emaildomain', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'DeviceType', 'DeviceInfo']
     for col in categorical_cols:
         if col in df.columns:
             df[col] = df[col].astype(str).fillna('unknown')
@@ -138,15 +138,20 @@ def prepare_fraud_network_data(df: pd.DataFrame) -> tuple:
     node_features = df[['amount', 'timestamp', 'ip_encoded', 'device_encoded']].values.astype(np.float32)
     labels = df['is_fraud'].values.astype(np.int64)
 
-    # Create adjacency matrix (simplified - connect transactions with same IP/device)
+    # Create adjacency matrix (optimized - connect transactions with same IP/device)
     n_nodes = len(df)
     adjacency = np.zeros((n_nodes, n_nodes))
 
-    # Connect transactions with same IP
-    for i in range(n_nodes):
-        for j in range(i+1, n_nodes):
-            if df.iloc[i]['ip_encoded'] == df.iloc[j]['ip_encoded']:
-                adjacency[i,j] = adjacency[j,i] = 1
+    # Connect transactions with same IP (more efficient)
+    ip_groups = df.groupby('ip_encoded').groups
+    for ip_indices in ip_groups.values():
+        indices_list = list(ip_indices)
+        for i in range(len(indices_list)):
+            for j in range(i+1, len(indices_list)):
+                idx_i, idx_j = indices_list[i], indices_list[j]
+                adjacency[idx_i, idx_j] = adjacency[idx_j, idx_i] = 1
+
+    print(f"Created adjacency matrix with {np.sum(adjacency)//2} connections")
 
     # Split into train/test
     X_train, X_test, y_train, y_test = train_test_split(
