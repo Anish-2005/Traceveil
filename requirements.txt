@@ -1,8 +1,8 @@
 fastapi
 uvicorn
 pydantic
-sqlalchemy
-psycopg2-binary
+firebase-admin
+google-cloud-firestore
 redis
 scikit-learn
 pandas
