@@ -17,7 +17,7 @@ def predict_sequence_risk(user_id: str, db: Session) -> float:
     rapid_switches = tab_switches / len(event_types)
 
     # IP changes
-    ips = [e.metadata.get('ip', '') for e in events]
+    ips = [e.event_metadata.get('ip', '') for e in events]
     unique_ips = len(set(ips))
     ip_change_rate = unique_ips / len(events)
 

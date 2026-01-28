@@ -26,7 +26,7 @@ async def ingest_event(event: EventData, db: Session = Depends(get_db)):
     db_event = Event(
         user_id=event.user_id,
         event_type=event.event_type,
-        metadata=event.metadata,
+        event_metadata=event.metadata,
         timestamp=event.timestamp
     )
     db.add(db_event)

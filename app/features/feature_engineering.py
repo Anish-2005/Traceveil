@@ -31,7 +31,7 @@ def compute_features(user_id: str, db: Session):
     df = pd.DataFrame([{
         'timestamp': e.timestamp,
         'event_type': e.event_type,
-        'metadata': e.metadata
+        'metadata': e.event_metadata
     } for e in events])
 
     # Temporal Features

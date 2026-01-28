@@ -7,7 +7,7 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, index=True)
     event_type = Column(String, index=True)
-    metadata = Column(JSON)
+    event_metadata = Column(JSON)
     timestamp = Column(DateTime)
     risk_score = Column(Float, nullable=True)
 

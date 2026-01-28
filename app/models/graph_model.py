@@ -11,8 +11,8 @@ def compute_graph_risk(user_id: str, db: Session) -> float:
 
     for event in events:
         user = event.user_id
-        device = event.metadata.get('device_id', 'unknown')
-        ip = event.metadata.get('ip', 'unknown')
+        device = event.event_metadata.get('device_id', 'unknown')
+        ip = event.event_metadata.get('ip', 'unknown')
 
         # Add nodes
         G.add_node(f"user_{user}", type='user')
