@@ -237,8 +237,22 @@ def train_sequence_model():
 
 def train_lstm_model(X_train, X_test, y_train, y_test, epochs=50, batch_size=32):
     """Train LSTM model for sequence anomaly detection"""
-    input_dim = X_train.shape[1]
-    model = LSTMSequenceModel(input_dim)
+    # Determine input dimensions based on data shape
+    if X_train.ndim == 3:
+        # Sequence data: (batch_size, seq_len, n_features)
+        input_size = X_train.shape[2]
+        seq_len = X_train.shape[1]
+        print(f"Training LSTM on sequence data: {X_train.shape[0]} sequences, length {seq_len}, {input_size} features")
+    elif X_train.ndim == 2:
+        # Tabular data: treat as single time step
+        input_size = X_train.shape[1]
+        X_train = X_train.unsqueeze(1)  # Add sequence dimension: (batch_size, 1, n_features)
+        X_test = X_test.unsqueeze(1)
+        print(f"Training LSTM on tabular data: {X_train.shape[0]} samples, {input_size} features")
+    else:
+        raise ValueError(f"Unsupported data dimensionality: {X_train.ndim}D")
+    
+    model = LSTMSequenceModel(input_size)
     
     # Convert to tensors
     X_train_tensor = torch.FloatTensor(X_train)

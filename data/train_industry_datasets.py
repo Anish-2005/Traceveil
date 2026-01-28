@@ -30,14 +30,35 @@ def prepare_ieee_cis_data(df: pd.DataFrame) -> tuple:
     """Prepare IEEE-CIS data for training"""
     print(f"Preparing IEEE-CIS data: {len(df)} transactions")
 
-    # Select relevant features
-    feature_cols = [col for col in df.columns if col not in ['isFraud', 'TransactionID', 'TransactionDT']]
+    # Handle categorical columns explicitly
+    categorical_cols = ['ProductCD', 'card4', 'card6', 'P_emaildomain', 'R_emaildomain', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9']
+    for col in categorical_cols:
+        if col in df.columns:
+            df[col] = df[col].astype(str).fillna('unknown')
+            from sklearn.preprocessing import LabelEncoder
+            le = LabelEncoder()
+            df[col] = le.fit_transform(df[col])
+
+    # Select relevant features (exclude IDs and target)
+    exclude_cols = ['isFraud', 'TransactionID', 'TransactionDT', 'TransactionAmt']
+    feature_cols = [col for col in df.columns if col not in exclude_cols]
 
     # Handle missing values
-    df = df.fillna(0)
+    df[feature_cols] = df[feature_cols].fillna(-999)
 
-    # Split features and target
-    X = df[feature_cols].values.astype(np.float32)
+    # Convert to numeric (should all be numeric now)
+    try:
+        X = df[feature_cols].values.astype(np.float32)
+    except ValueError as e:
+        print(f"Error converting to float: {e}")
+        # Debug: find problematic columns
+        for col in feature_cols:
+            try:
+                df[col].astype(np.float32)
+            except:
+                print(f"Problematic column: {col}, dtype: {df[col].dtype}, sample values: {df[col].head(3).values}")
+        raise
+
     y = df['isFraud'].values.astype(np.int64)
 
     # Split into train/test
@@ -45,6 +66,7 @@ def prepare_ieee_cis_data(df: pd.DataFrame) -> tuple:
 
     print(f"Training set: {len(X_train)} samples ({np.sum(y_train)} fraud)")
     print(f"Test set: {len(X_test)} samples ({np.sum(y_test)} fraud)")
+    print(f"Feature dimensions: {X.shape[1]}")
 
     return X_train, X_test, y_train, y_test
 
@@ -189,7 +211,7 @@ def train_on_industry_datasets():
 
             # Train Autoencoder for anomaly detection
             print("Training Autoencoder...")
-            autoencoder = train_autoencoder(X_train, X_test, y_train, y_test)
+            autoencoder = train_autoencoder(X_train)
 
             # Evaluate
             autoencoder.eval()
@@ -214,7 +236,7 @@ def train_on_industry_datasets():
 
             # Train Autoencoder
             print("Training Autoencoder...")
-            autoencoder = train_autoencoder(X_train, X_test, y_train, y_test)
+            autoencoder = train_autoencoder(X_train)
 
             # Evaluate
             autoencoder.eval()
