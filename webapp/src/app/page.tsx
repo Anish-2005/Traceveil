@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from "next/link";
 import {
   Shield,
@@ -19,8 +22,66 @@ import {
   Brain,
   Network,
 } from "lucide-react";
+import { traceveilApi, DashboardMetrics, DashboardModels, ThreatEvent, HighRiskEntity, ModelInfo } from '@/lib/api';
 
 export default function Home() {
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [models, setModels] = useState<DashboardModels | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const [metricsData, modelsData] = await Promise.all([
+        traceveilApi.getDashboardMetrics(),
+        traceveilApi.getDashboardModels(),
+      ]);
+
+      setMetrics(metricsData);
+      setModels(modelsData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
+      console.error('Dashboard data error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0A0E13] text-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#0A0E13] text-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <p className="text-red-400 mb-4">Failed to load dashboard data</p>
+          <button
+            onClick={loadDashboardData}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0A0E13] text-gray-100 relative overflow-hidden">
       {/* Ambient Background Effects */}
@@ -110,7 +171,7 @@ export default function Home() {
               <p className="text-sm text-gray-400 font-medium mb-2">Threat Detection Rate</p>
               <div className="flex items-baseline gap-3">
                 <h3 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  96.8%
+                  {(metrics?.threat_detection_rate || 0.968).toFixed(1)}%
                 </h3>
                 <span className="text-sm text-gray-500">accuracy</span>
               </div>
@@ -125,7 +186,7 @@ export default function Home() {
             <MetricCard
               icon={<Activity />}
               label="Active Monitoring"
-              value="2,847"
+              value={metrics?.active_monitoring?.toLocaleString() || "2,847"}
               subtext="real-time streams"
               trend="+8.2%"
               trendUp
@@ -134,7 +195,7 @@ export default function Home() {
             <MetricCard
               icon={<AlertTriangle />}
               label="Critical Threats"
-              value="17"
+              value={metrics?.critical_threats?.toString() || "17"}
               subtext="require action"
               trend="-23.1%"
               trendUp={false}
@@ -144,10 +205,142 @@ export default function Home() {
             <MetricCard
               icon={<Zap />}
               label="Avg Response Time"
-              value="0.3s"
+              value={`${(metrics?.avg_response_time || 0.003).toFixed(1)}s`}
               subtext="detection latency"
               trend="-41ms"
               trendUp={false}
+              color="amber"
+            />
+          </div>
+        </section>
+  return (
+    <div className="min-h-screen bg-[#0A0E13] text-gray-100 relative overflow-hidden">
+      {/* Ambient Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-700" />
+        <div className="absolute top-1/3 right-1/3 w-72 h-72 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
+
+      {/* ================= HEADER ================= */}
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-[#0A0E13]/80 border-b border-white/5">
+        <div className="max-w-[1920px] mx-auto px-8 h-20">
+          <div className="flex items-center justify-between h-full">
+            {/* Logo */}
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition" />
+                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 border border-white/10">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                  Traceveil
+                </h1>
+                <p className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3" />
+                  AI-Powered Fraud Intelligence
+                </p>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-1">
+              {[
+                { label: "Overview", active: true },
+                { label: "Threat Feed", active: false },
+                { label: "Analytics", active: false },
+                { label: "Entities", active: false },
+                { label: "Models", active: false },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href="/"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    item.active
+                      ? "bg-white/10 text-white"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              <button className="relative p-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition group">
+                <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                <AlertTriangle className="w-5 h-5 text-gray-400 group-hover:text-white transition" />
+              </button>
+              <button className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 font-medium text-sm transition shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30">
+                Deploy Model
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ================= MAIN ================= */}
+      <main className="max-w-[1920px] mx-auto px-8 py-8 space-y-8 relative z-10">
+        {/* ================= HERO METRICS GRID ================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Primary KPI */}
+          <div className="lg:col-span-4 relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
+            <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30">
+                  <Brain className="w-6 h-6 text-blue-400" />
+                </div>
+                <span className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  +12.4%
+                </span>
+              </div>
+              <p className="text-sm text-gray-400 font-medium mb-2">Threat Detection Rate</p>
+              <div className="flex items-baseline gap-3">
+                <h3 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  {metrics?.threat_detection_rate ? `${(metrics.threat_detection_rate * 100).toFixed(1)}%` : "96.8%"}
+                </h3>
+                <span className="text-sm text-gray-500">accuracy</span>
+              </div>
+              <div className="mt-4 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className={`h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full`} 
+                     style={{ width: metrics?.threat_detection_rate ? `${metrics.threat_detection_rate * 100}%` : '96.8%' }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Secondary Metrics */}
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <MetricCard
+              icon={<Activity />}
+              label="Active Monitoring"
+              value={metrics?.active_monitoring?.count?.toLocaleString() || "2,847"}
+              subtext="real-time streams"
+              trend={metrics?.active_monitoring?.trend || "+8.2%"}
+              trendUp={metrics?.active_monitoring?.trend_up !== false}
+              color="emerald"
+            />
+            <MetricCard
+              icon={<AlertTriangle />}
+              label="Critical Threats"
+              value={metrics?.critical_threats?.count?.toString() || "17"}
+              subtext="require action"
+              trend={metrics?.critical_threats?.trend || "-23.1%"}
+              trendUp={metrics?.critical_threats?.trend_up === false}
+              color="red"
+              pulse={metrics?.critical_threats?.count > 0}
+            />
+            <MetricCard
+              icon={<Zap />}
+              label="Avg Response Time"
+              value={metrics?.avg_response_time?.value || "0.3s"}
+              subtext="detection latency"
+              trend={metrics?.avg_response_time?.trend || "-41ms"}
+              trendUp={metrics?.avg_response_time?.trend_up === false}
               color="amber"
             />
           </div>
@@ -231,34 +424,47 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-3">
-                  <ThreatActivity
-                    severity="critical"
-                    title="Mass account enumeration detected"
-                    description="15,000 requests from distributed IPs • Pattern: credential stuffing"
-                    time="38 seconds ago"
-                    userId="Network: 142.251.x.x/16"
-                  />
-                  <ThreatActivity
-                    severity="high"
-                    title="Anomalous transaction velocity"
-                    description="User exceeded baseline by 847% • Amount: $127,450"
-                    time="4 minutes ago"
-                    userId="User #AX-47291"
-                  />
-                  <ThreatActivity
-                    severity="medium"
-                    title="New device fingerprint"
-                    description="Login from unrecognized device • Location mismatch detected"
-                    time="12 minutes ago"
-                    userId="User #KP-98163"
-                  />
-                  <ThreatActivity
-                    severity="low"
-                    title="Model confidence threshold crossed"
-                    description="Risk score increased from 0.12 to 0.68 in 3 minutes"
-                    time="27 minutes ago"
-                    userId="Detector: Behavioral-v2.4"
-                  />
+                  {metrics?.recent_threat_events?.slice(0, 4).map((event, index) => (
+                    <ThreatActivity
+                      key={index}
+                      severity={event.severity}
+                      title={event.title}
+                      description={event.description}
+                      time={event.time_ago}
+                      userId={event.entity_id}
+                    />
+                  )) || (
+                    <>
+                      <ThreatActivity
+                        severity="critical"
+                        title="Mass account enumeration detected"
+                        description="15,000 requests from distributed IPs • Pattern: credential stuffing"
+                        time="38 seconds ago"
+                        userId="Network: 142.251.x.x/16"
+                      />
+                      <ThreatActivity
+                        severity="high"
+                        title="Anomalous transaction velocity"
+                        description="User exceeded baseline by 847% • Amount: $127,450"
+                        time="4 minutes ago"
+                        userId="User #AX-47291"
+                      />
+                      <ThreatActivity
+                        severity="medium"
+                        title="New device fingerprint"
+                        description="Login from unrecognized device • Location mismatch detected"
+                        time="12 minutes ago"
+                        userId="User #KP-98163"
+                      />
+                      <ThreatActivity
+                        severity="low"
+                        title="Model confidence threshold crossed"
+                        description="Risk score increased from 0.12 to 0.68 in 3 minutes"
+                        time="27 minutes ago"
+                        userId="Detector: Behavioral-v2.4"
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -273,17 +479,37 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-white mb-6">System Status</h3>
                 
                 <div className="space-y-4">
-                  <SystemStatus label="API Gateway" status="operational" value="99.97%" />
-                  <SystemStatus label="ML Inference Engine" status="operational" value="4.2ms" />
-                  <SystemStatus label="Data Pipeline" status="operational" value="2.1M/min" />
-                  <SystemStatus label="Redis Cache" status="operational" value="0.8ms" />
-                  <SystemStatus label="Graph Database" status="degraded" value="127ms" />
+                  <SystemStatus 
+                    label="API Gateway" 
+                    status={metrics?.system_health?.api_gateway?.status || "operational"} 
+                    value={metrics?.system_health?.api_gateway?.uptime || "99.97%"} 
+                  />
+                  <SystemStatus 
+                    label="ML Inference Engine" 
+                    status={metrics?.system_health?.ml_engine?.status || "operational"} 
+                    value={metrics?.system_health?.ml_engine?.latency || "4.2ms"} 
+                  />
+                  <SystemStatus 
+                    label="Data Pipeline" 
+                    status={metrics?.system_health?.data_pipeline?.status || "operational"} 
+                    value={metrics?.system_health?.data_pipeline?.throughput || "2.1M/min"} 
+                  />
+                  <SystemStatus 
+                    label="Redis Cache" 
+                    status={metrics?.system_health?.redis_cache?.status || "operational"} 
+                    value={metrics?.system_health?.redis_cache?.latency || "0.8ms"} 
+                  />
+                  <SystemStatus 
+                    label="Graph Database" 
+                    status={metrics?.system_health?.graph_db?.status || "operational"} 
+                    value={metrics?.system_health?.graph_db?.latency || "127ms"} 
+                  />
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-white/5">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">Uptime (30d)</span>
-                    <span className="font-semibold text-green-400">99.94%</span>
+                    <span className="font-semibold text-green-400">{metrics?.system_health?.overall_uptime || "99.94%"}</span>
                   </div>
                 </div>
               </div>
@@ -296,24 +522,36 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-white mb-6">Active Models</h3>
                 
                 <div className="space-y-4">
-                  <ModelCard
-                    name="Behavioral Analysis"
-                    version="v2.4.1"
-                    accuracy="96.8%"
-                    status="deployed"
-                  />
-                  <ModelCard
-                    name="Transaction Velocity"
-                    version="v1.9.3"
-                    accuracy="94.2%"
-                    status="deployed"
-                  />
-                  <ModelCard
-                    name="Device Fingerprinting"
-                    version="v3.1.0"
-                    accuracy="98.1%"
-                    status="training"
-                  />
+                  {models?.active_models?.map((model, index) => (
+                    <ModelCard
+                      key={index}
+                      name={model.name}
+                      version={model.version}
+                      accuracy={`${(model.accuracy * 100).toFixed(1)}%`}
+                      status={model.status}
+                    />
+                  )) || (
+                    <>
+                      <ModelCard
+                        name="Behavioral Analysis"
+                        version="v2.4.1"
+                        accuracy="96.8%"
+                        status="deployed"
+                      />
+                      <ModelCard
+                        name="Transaction Velocity"
+                        version="v1.9.3"
+                        accuracy="94.2%"
+                        status="deployed"
+                      />
+                      <ModelCard
+                        name="Device Fingerprinting"
+                        version="v3.1.0"
+                        accuracy="98.1%"
+                        status="training"
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -325,8 +563,8 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
                 
                 <div className="space-y-2">
-                  <QuickAction icon={<Eye />} label="Review Flagged Entities" count={23} />
-                  <QuickAction icon={<Lock />} label="Apply Access Restrictions" count={8} />
+                  <QuickAction icon={<Eye />} label="Review Flagged Entities" count={metrics?.quick_actions?.flagged_entities || 23} />
+                  <QuickAction icon={<Lock />} label="Apply Access Restrictions" count={metrics?.quick_actions?.access_restrictions || 8} />
                   <QuickAction icon={<BarChart3 />} label="Generate Risk Report" />
                   <QuickAction icon={<Sparkles />} label="Retrain Models" />
                 </div>
@@ -350,34 +588,47 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <EntityCard
-                id="AX-47291"
-                type="User"
-                riskScore={94}
-                flags={["Velocity", "Geo-anomaly"]}
-                status="blocked"
-              />
-              <EntityCard
-                id="KP-98163"
-                type="User"
-                riskScore={87}
-                flags={["New device", "Pattern shift"]}
-                status="monitoring"
-              />
-              <EntityCard
-                id="142.251.x.x"
-                type="IP Range"
-                riskScore={91}
-                flags={["DDoS", "Enumeration"]}
-                status="blocked"
-              />
-              <EntityCard
-                id="TX-55892"
-                type="Transaction"
-                riskScore={78}
-                flags={["High value", "Off-hours"]}
-                status="review"
-              />
+              {metrics?.high_risk_entities?.slice(0, 4).map((entity, index) => (
+                <EntityCard
+                  key={index}
+                  id={entity.id}
+                  type={entity.type}
+                  riskScore={entity.risk_score}
+                  flags={entity.flags}
+                  status={entity.status}
+                />
+              )) || (
+                <>
+                  <EntityCard
+                    id="AX-47291"
+                    type="User"
+                    riskScore={94}
+                    flags={["Velocity", "Geo-anomaly"]}
+                    status="blocked"
+                  />
+                  <EntityCard
+                    id="KP-98163"
+                    type="User"
+                    riskScore={87}
+                    flags={["New device", "Pattern shift"]}
+                    status="monitoring"
+                  />
+                  <EntityCard
+                    id="142.251.x.x"
+                    type="IP Range"
+                    riskScore={91}
+                    flags={["DDoS", "Enumeration"]}
+                    status="blocked"
+                  />
+                  <EntityCard
+                    id="TX-55892"
+                    type="Transaction"
+                    riskScore={78}
+                    flags={["High value", "Off-hours"]}
+                    status="review"
+                  />
+                </>
+              )}
             </div>
           </div>
         </section>
