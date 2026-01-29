@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Traceveil Web Application
 
-## Getting Started
+A modern Next.js web interface for the Traceveil fraud detection system.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Event Ingestion**: Submit new events for real-time fraud analysis
+- **User Risk Assessment**: Check individual user risk profiles
+- **Analytics Dashboard**: View system performance and statistics
+- **Model Monitoring**: Track model versions and status
+- **Feedback System**: Submit feedback to improve model accuracy
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- Running Traceveil FastAPI backend (default: http://localhost:8000)
+
+## Setup
+
+1. **Install dependencies:**
+   ```bash
+   cd webapp
+   npm install
+   ```
+
+2. **Configure API endpoint:**
+   Create a `.env.local` file in the webapp directory:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Usage
+
+### Dashboard
+- Overview of system status and key metrics
+- Quick access to main features
+- Recent activity feed
+
+### Event Ingestion
+- Submit new events with user ID, event type, and metadata
+- Real-time risk assessment with detailed explanations
+- JSON metadata support for flexible event data
+
+### User Risk Assessment
+- Search for users by ID
+- View comprehensive risk profiles
+- Access risk explanations and recommendations
+
+### Analytics
+- System performance metrics
+- Risk distribution charts
+- Model accuracy tracking
+- Feedback statistics
+
+## API Integration
+
+The webapp communicates with the Traceveil FastAPI backend through the following endpoints:
+
+- `POST /ingest` - Ingest new events
+- `GET /user/{user_id}/risk` - Get user risk assessment
+- `POST /feedback` - Submit feedback
+- `GET /feedback/stats` - Get feedback statistics
+- `GET /models/status` - Get model status
+
+## Development
+
+### Project Structure
+```
+webapp/
+├── src/
+│   ├── app/                 # Next.js app router pages
+│   │   ├── analytics/       # Analytics dashboard
+│   │   ├── events/          # Event management
+│   │   ├── users/           # User risk assessment
+│   │   └── layout.tsx       # Root layout
+│   ├── lib/
+│   │   └── api.ts           # API client and types
+│   └── components/          # Reusable components
+├── public/                  # Static assets
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Adding New Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Create new pages in `src/app/`
+2. Add API functions to `src/lib/api.ts`
+3. Update navigation in the layout
+4. Use Tailwind CSS for styling
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment
 
-## Learn More
+### Build for Production
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Environment Variables
+- `NEXT_PUBLIC_API_URL`: URL of the Traceveil API backend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technologies Used
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 14**: React framework with app router
+- **TypeScript**: Type-safe JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **Axios**: HTTP client for API calls
+- **Lucide React**: Icon library
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Follow the existing code style
+2. Add TypeScript types for new API responses
+3. Test API integration thoroughly
+4. Update this README for new features
