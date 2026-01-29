@@ -187,7 +187,7 @@ logs/
 app/logs/
 app/feedback/
 app/evaluation/
-app/models/saved_models/
+# app/models/saved_models/  # Commented out to allow model storage
 
 # IDEs
 # VS Code
@@ -281,7 +281,7 @@ keys/
 .env.production
 
 # Application specific
-app/models/saved_models/
+# app/models/saved_models/  # Commented out to allow model storage
 app/feedback/
 app/evaluation/
 dashboard/__pycache__/

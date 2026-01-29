@@ -1,0 +1,13 @@
+{
+  "current_models": {
+    "autoencoder": "app/models/saved_models\\autoencoder_v2_20260130_014502",
+    "lstm": "app/models/saved_models\\lstm_v2_20260130_014523",
+    "graph": "app/models/saved_models\\graph_v2_20260130_014532"
+  },
+  "model_versions": {
+    "autoencoder": "2",
+    "lstm": "2",
+    "graph": "2"
+  },
+  "last_updated": "2026-01-30T01:45:32.855440"
+}
