@@ -68,6 +68,14 @@ python train_traceveil.py --auto-download
 
 ### Firebase Setup
 
+**Option 1: Development Mode (Recommended for getting started)**
+```bash
+# The app runs in mock Firebase mode by default
+# No Firebase setup required for development/testing
+python -c "from app.main import app; print('✅ App ready in mock mode')"
+```
+
+**Option 2: Production Firebase Setup**
 1. **Create a Firebase project**:
    - Go to [Firebase Console](https://console.firebase.google.com/)
    - Create a new project or use existing "traceveil-core"
@@ -80,7 +88,19 @@ python train_traceveil.py --auto-download
    - Go to Project Settings > Service Accounts
    - Click "Generate new private key"
    - Download the JSON file
-   - Rename it to `firebase-credentials.json` and place in project root
+   - Run the setup script: `python setup_firebase.py`
+
+4. **Enable Firebase**:
+   ```bash
+   # Set environment variable to enable real Firebase
+   set USE_MOCK_FIREBASE=false
+   ```
+
+**Option 3: Automated Setup**
+```bash
+# Run the interactive setup script
+python setup_firebase.py
+```
 
 ### Industry-Standard Training Setup
 
