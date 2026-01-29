@@ -62,14 +62,14 @@ def prepare_ieee_cis_data(df: pd.DataFrame) -> tuple:
     y = df['isFraud'].values.astype(np.int64)
 
     # For development, use a smaller sample to speed up training
-    if len(df) > 50000:
-        print(f"Using subset of {50000} samples for faster training")
+    if len(df) > 10000:
+        print(f"Using subset of {10000} samples for faster training")
         # Sample maintaining fraud ratio
         fraud_df = df[df['isFraud'] == 1]
         normal_df = df[df['isFraud'] == 0]
         
-        n_fraud = min(len(fraud_df), 5000)
-        n_normal = 45000
+        n_fraud = min(len(fraud_df), 1000)
+        n_normal = 9000
         
         fraud_sample = fraud_df.sample(n=n_fraud, random_state=42)
         normal_sample = normal_df.sample(n=min(n_normal, len(normal_df)), random_state=42)
@@ -233,7 +233,7 @@ def train_on_industry_datasets():
 
             # Train Autoencoder for anomaly detection
             print("Training Autoencoder...")
-            autoencoder = train_autoencoder(X_train, epochs=50)  # Reduced epochs for faster training
+            autoencoder = train_autoencoder(X_train, epochs=10)  # Reduced epochs for faster training
 
             # Evaluate
             autoencoder.eval()
