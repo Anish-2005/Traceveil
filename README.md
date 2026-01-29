@@ -133,15 +133,37 @@ python train_traceveil.py --synthetic-only
    uvicorn app.main:app --reload
    ```
 
-2. **Run the dashboard** (in another terminal):
+2. **Run the modern webapp** (in another terminal):
+   ```bash
+   cd webapp
+   npm install
+   npm run dev
+   ```
+
+3. **Alternative: Run the legacy dashboard** (in another terminal):
    ```bash
    streamlit run dashboard/app.py
    ```
 
-3. **Generate realistic test data**:
+4. **Generate realistic test data**:
    ```bash
    python data/generate_sample_data.py
    ```
+
+### Quick Start Scripts
+
+**Windows (start.bat)**:
+```cmd
+# Start both API and webapp automatically
+start.bat
+```
+
+**Linux/Mac (start.sh)**:
+```bash
+# Start both API and webapp automatically
+chmod +x start.sh
+./start.sh
+```
 
 ### Training Scripts
 
@@ -170,9 +192,11 @@ python train_traceveil.py --synthetic-only
 ```
 
 ### Access
-- API: http://localhost:8000
-- Dashboard: http://localhost:8501
-- Training Report: `TRAINING_REPORT.md`
+- **Modern Web App**: http://localhost:3000 (Next.js)
+- **API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Legacy Dashboard**: http://localhost:8501 (Streamlit)
+- **Training Report**: `TRAINING_REPORT.md`
 
 ## 📊 API Usage
 
@@ -212,9 +236,10 @@ curl "http://localhost:8000/user/user123/risk"
 ## 🛠️ Tech Stack
 
 - **Backend**: FastAPI, Firebase/Firestore
+- **Frontend**: Next.js, TypeScript, Tailwind CSS
 - **ML**: Scikit-learn, PyTorch, NetworkX
 - **Real-time**: Redis
-- **Dashboard**: Streamlit, Plotly
+- **Legacy Dashboard**: Streamlit, Plotly
 - **Deployment**: Docker
 
 ## 📚 Project Structure
@@ -228,16 +253,23 @@ traceveil/
 │   ├── models/        # ML model implementations
 │   ├── risk_engine/   # Risk scoring logic
 │   └── explainability/ # SHAP and explanations
+├── webapp/            # Next.js modern web application
+│   ├── src/
+│   │   ├── app/       # Next.js app router pages
+│   │   └── lib/       # API client and utilities
+│   └── package.json
 ├── data/
 │   ├── dataset_loader.py      # Industry dataset loading & preprocessing
 │   ├── train_industry_datasets.py  # Model training on real datasets
 │   ├── download_datasets.py   # Automated Kaggle dataset downloads
 │   └── generate_sample_data.py # Realistic synthetic data generation
-├── dashboard/         # Streamlit dashboard
+├── dashboard/         # Legacy Streamlit dashboard
 ├── models/            # Trained model artifacts
 ├── tests/            # Unit and integration tests
 ├── train_traceveil.py # Complete training pipeline orchestrator
 ├── firebase-credentials.json  # Firebase service account key
+├── start.bat          # Windows startup script
+├── start.sh           # Linux/Mac startup script
 ├── requirements.txt
 └── README.md
 ```

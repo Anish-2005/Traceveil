@@ -1,156 +1,600 @@
 import Link from "next/link";
-import { Shield, Activity, Users, BarChart3, Settings, AlertTriangle } from "lucide-react";
+import {
+  Shield,
+  Activity,
+  AlertTriangle,
+  Users,
+  BarChart3,
+  Radar,
+  TrendingUp,
+  Zap,
+  Lock,
+  Eye,
+  ArrowUpRight,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  MinusCircle,
+  Sparkles,
+  Brain,
+  Network,
+} from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Shield className="h-8 w-8 text-blue-600" />
-              <h1 className="ml-2 text-xl font-bold text-gray-900">Traceveil</h1>
-              <span className="ml-2 text-sm text-gray-500">Fraud Detection System</span>
+    <div className="min-h-screen bg-[#0A0E13] text-gray-100 relative overflow-hidden">
+      {/* Ambient Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-700" />
+        <div className="absolute top-1/3 right-1/3 w-72 h-72 bg-cyan-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
+
+      {/* ================= HEADER ================= */}
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-[#0A0E13]/80 border-b border-white/5">
+        <div className="max-w-[1920px] mx-auto px-8 h-20">
+          <div className="flex items-center justify-between h-full">
+            {/* Logo */}
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition" />
+                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 border border-white/10">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                  Traceveil
+                </h1>
+                <p className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3" />
+                  AI-Powered Fraud Intelligence
+                </p>
+              </div>
             </div>
-            <nav className="flex space-x-8">
-              <Link href="/" className="text-blue-600 border-b-2 border-blue-600 pb-2">Dashboard</Link>
-              <Link href="/events" className="text-gray-500 hover:text-gray-700">Events</Link>
-              <Link href="/users" className="text-gray-500 hover:text-gray-700">Users</Link>
-              <Link href="/analytics" className="text-gray-500 hover:text-gray-700">Analytics</Link>
-              <Link href="/settings" className="text-gray-500 hover:text-gray-700">Settings</Link>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-1">
+              {[
+                { label: "Overview", active: true },
+                { label: "Threat Feed", active: false },
+                { label: "Analytics", active: false },
+                { label: "Entities", active: false },
+                { label: "Models", active: false },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href="/"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    item.active
+                      ? "bg-white/10 text-white"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
             </nav>
+
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+              <button className="relative p-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition group">
+                <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                <AlertTriangle className="w-5 h-5 text-gray-400 group-hover:text-white transition" />
+              </button>
+              <button className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 font-medium text-sm transition shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30">
+                Deploy Model
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Traceveil</h2>
-          <p className="text-lg text-gray-600">Real-time fraud and cheating detection powered by advanced AI</p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <Activity className="h-8 w-8 text-green-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Monitoring</p>
-                <p className="text-2xl font-bold text-gray-900">1,247</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <AlertTriangle className="h-8 w-8 text-red-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Risk Alerts</p>
-                <p className="text-2xl font-bold text-gray-900">23</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-blue-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
-                <p className="text-2xl font-bold text-gray-900">15,892</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <BarChart3 className="h-8 w-8 text-purple-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Accuracy</p>
-                <p className="text-2xl font-bold text-gray-900">96.4%</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <Link href="/events/new" className="block w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                Ingest New Event
-              </Link>
-              <Link href="/users/search" className="block w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors">
-                Check User Risk
-              </Link>
-              <Link href="/analytics" className="block w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors">
-                View Analytics
-              </Link>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">API Status</span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Online
+      {/* ================= MAIN ================= */}
+      <main className="max-w-[1920px] mx-auto px-8 py-8 space-y-8 relative z-10">
+        {/* ================= HERO METRICS GRID ================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Primary KPI */}
+          <div className="lg:col-span-4 relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
+            <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30">
+                  <Brain className="w-6 h-6 text-blue-400" />
+                </div>
+                <span className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  +12.4%
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Model Status</span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Active
-                </span>
+              <p className="text-sm text-gray-400 font-medium mb-2">Threat Detection Rate</p>
+              <div className="flex items-baseline gap-3">
+                <h3 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  96.8%
+                </h3>
+                <span className="text-sm text-gray-500">accuracy</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Database</span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Connected
-                </span>
+              <div className="mt-4 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full w-[96.8%] bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full" />
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-2 border-b border-gray-100">
-              <div>
-                <p className="text-sm font-medium text-gray-900">High-risk event detected</p>
-                <p className="text-xs text-gray-500">User ID: 12345 • 2 minutes ago</p>
+          {/* Secondary Metrics */}
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <MetricCard
+              icon={<Activity />}
+              label="Active Monitoring"
+              value="2,847"
+              subtext="real-time streams"
+              trend="+8.2%"
+              trendUp
+              color="emerald"
+            />
+            <MetricCard
+              icon={<AlertTriangle />}
+              label="Critical Threats"
+              value="17"
+              subtext="require action"
+              trend="-23.1%"
+              trendUp={false}
+              color="red"
+              pulse
+            />
+            <MetricCard
+              icon={<Zap />}
+              label="Avg Response Time"
+              value="0.3s"
+              subtext="detection latency"
+              trend="-41ms"
+              trendUp={false}
+              color="amber"
+            />
+          </div>
+        </section>
+
+        {/* ================= COMMAND CENTER ================= */}
+        <section className="grid lg:grid-cols-12 gap-6">
+          {/* Live Threat Intelligence */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* Threat Map Visualization */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+              <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">Threat Intelligence Map</h3>
+                    <p className="text-sm text-gray-400">Real-time anomaly detection & classification</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      <span className="text-xs font-semibold text-green-400">LIVE</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Radar Visualization */}
+                <div className="relative h-80 rounded-xl bg-gradient-to-br from-blue-950/30 to-purple-950/30 border border-white/5 overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Network className="w-32 h-32 text-blue-500/20" />
+                  </div>
+                  
+                  {/* Animated Radar Rings */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute w-48 h-48 rounded-full border border-blue-500/20 animate-ping" style={{ animationDuration: '3s' }} />
+                    <div className="absolute w-64 h-64 rounded-full border border-purple-500/20 animate-ping" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
+                    <div className="absolute w-80 h-80 rounded-full border border-cyan-500/20 animate-ping" style={{ animationDuration: '5s', animationDelay: '1s' }} />
+                  </div>
+
+                  {/* Threat Indicators */}
+                  <ThreatIndicator position="top-12 left-20" severity="high" label="SQL Injection" />
+                  <ThreatIndicator position="top-32 right-16" severity="medium" label="Rate Limit" />
+                  <ThreatIndicator position="bottom-24 left-32" severity="critical" label="Account Takeover" />
+                  <ThreatIndicator position="bottom-16 right-24" severity="low" label="Suspicious Login" />
+                  
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 bg-red-500 rounded-full" />
+                        <span className="text-gray-400">Critical</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                        <span className="text-gray-400">High</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                        <span className="text-gray-400">Medium</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                        <span className="text-gray-400">Low</span>
+                      </div>
+                    </div>
+                    <span className="text-gray-500">Last updated: 2s ago</span>
+                  </div>
+                </div>
               </div>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                Critical
-              </span>
             </div>
-            <div className="flex items-center justify-between py-2 border-b border-gray-100">
-              <div>
-                <p className="text-sm font-medium text-gray-900">Model retrained successfully</p>
-                <p className="text-xs text-gray-500">Anomaly detector v2.1 • 15 minutes ago</p>
+
+            {/* Activity Timeline */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+              <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-white">Recent Threat Activity</h3>
+                  <button className="text-xs font-medium text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                    View All
+                    <ArrowUpRight className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <ThreatActivity
+                    severity="critical"
+                    title="Mass account enumeration detected"
+                    description="15,000 requests from distributed IPs • Pattern: credential stuffing"
+                    time="38 seconds ago"
+                    userId="Network: 142.251.x.x/16"
+                  />
+                  <ThreatActivity
+                    severity="high"
+                    title="Anomalous transaction velocity"
+                    description="User exceeded baseline by 847% • Amount: $127,450"
+                    time="4 minutes ago"
+                    userId="User #AX-47291"
+                  />
+                  <ThreatActivity
+                    severity="medium"
+                    title="New device fingerprint"
+                    description="Login from unrecognized device • Location mismatch detected"
+                    time="12 minutes ago"
+                    userId="User #KP-98163"
+                  />
+                  <ThreatActivity
+                    severity="low"
+                    title="Model confidence threshold crossed"
+                    description="Risk score increased from 0.12 to 0.68 in 3 minutes"
+                    time="27 minutes ago"
+                    userId="Detector: Behavioral-v2.4"
+                  />
+                </div>
               </div>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Success
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="text-sm font-medium text-gray-900">New user registered</p>
-                <p className="text-xs text-gray-500">User ID: 67890 • 1 hour ago</p>
-              </div>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                Info
-              </span>
             </div>
           </div>
-        </div>
+
+          {/* Right Sidebar */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* System Health */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+              <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+                <h3 className="text-lg font-bold text-white mb-6">System Status</h3>
+                
+                <div className="space-y-4">
+                  <SystemStatus label="API Gateway" status="operational" value="99.97%" />
+                  <SystemStatus label="ML Inference Engine" status="operational" value="4.2ms" />
+                  <SystemStatus label="Data Pipeline" status="operational" value="2.1M/min" />
+                  <SystemStatus label="Redis Cache" status="operational" value="0.8ms" />
+                  <SystemStatus label="Graph Database" status="degraded" value="127ms" />
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-white/5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Uptime (30d)</span>
+                    <span className="font-semibold text-green-400">99.94%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Model Performance */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+              <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+                <h3 className="text-lg font-bold text-white mb-6">Active Models</h3>
+                
+                <div className="space-y-4">
+                  <ModelCard
+                    name="Behavioral Analysis"
+                    version="v2.4.1"
+                    accuracy="96.8%"
+                    status="deployed"
+                  />
+                  <ModelCard
+                    name="Transaction Velocity"
+                    version="v1.9.3"
+                    accuracy="94.2%"
+                    status="deployed"
+                  />
+                  <ModelCard
+                    name="Device Fingerprinting"
+                    version="v3.1.0"
+                    accuracy="98.1%"
+                    status="training"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+              <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+                <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
+                
+                <div className="space-y-2">
+                  <QuickAction icon={<Eye />} label="Review Flagged Entities" count={23} />
+                  <QuickAction icon={<Lock />} label="Apply Access Restrictions" count={8} />
+                  <QuickAction icon={<BarChart3 />} label="Generate Risk Report" />
+                  <QuickAction icon={<Sparkles />} label="Retrain Models" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ================= ENTITY MONITORING ================= */}
+        <section className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+          <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-1">High-Risk Entities</h3>
+                <p className="text-sm text-gray-400">Entities requiring immediate attention</p>
+              </div>
+              <button className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium transition">
+                View All Entities
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <EntityCard
+                id="AX-47291"
+                type="User"
+                riskScore={94}
+                flags={["Velocity", "Geo-anomaly"]}
+                status="blocked"
+              />
+              <EntityCard
+                id="KP-98163"
+                type="User"
+                riskScore={87}
+                flags={["New device", "Pattern shift"]}
+                status="monitoring"
+              />
+              <EntityCard
+                id="142.251.x.x"
+                type="IP Range"
+                riskScore={91}
+                flags={["DDoS", "Enumeration"]}
+                status="blocked"
+              />
+              <EntityCard
+                id="TX-55892"
+                type="Transaction"
+                riskScore={78}
+                flags={["High value", "Off-hours"]}
+                status="review"
+              />
+            </div>
+          </div>
+        </section>
       </main>
+    </div>
+  );
+}
+
+/* ================= ADVANCED COMPONENTS ================= */
+
+function MetricCard({ icon, label, value, subtext, trend, trendUp, color, pulse }: any) {
+  const colorMap: any = {
+    emerald: {
+      bg: "from-emerald-500/20 to-green-500/20",
+      border: "border-emerald-500/30",
+      text: "text-emerald-400",
+    },
+    red: {
+      bg: "from-red-500/20 to-rose-500/20",
+      border: "border-red-500/30",
+      text: "text-red-400",
+    },
+    amber: {
+      bg: "from-amber-500/20 to-yellow-500/20",
+      border: "border-amber-500/30",
+      text: "text-amber-400",
+    },
+  };
+
+  return (
+    <div className="relative group">
+      <div className={`absolute inset-0 bg-gradient-to-br ${colorMap[color].bg} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500`} />
+      <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-5 hover:border-white/20 transition-all">
+        <div className="flex items-start justify-between mb-3">
+          <div className={`p-2.5 rounded-lg bg-gradient-to-br ${colorMap[color].bg} border ${colorMap[color].border}`}>
+            <div className={colorMap[color].text}>{icon}</div>
+          </div>
+          {pulse && <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
+        </div>
+        <p className="text-xs text-gray-400 font-medium mb-1">{label}</p>
+        <h4 className="text-2xl font-bold text-white mb-1">{value}</h4>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-gray-500">{subtext}</p>
+          <span className={`text-xs font-semibold ${trendUp ? 'text-green-400' : 'text-red-400'}`}>
+            {trend}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ThreatIndicator({ position, severity, label }: any) {
+  const severityColors: any = {
+    critical: "bg-red-500 border-red-400 shadow-red-500/50",
+    high: "bg-amber-500 border-amber-400 shadow-amber-500/50",
+    medium: "bg-yellow-500 border-yellow-400 shadow-yellow-500/50",
+    low: "bg-blue-500 border-blue-400 shadow-blue-500/50",
+  };
+
+  return (
+    <div className={`absolute ${position} group/indicator cursor-pointer`}>
+      <div className={`w-3 h-3 ${severityColors[severity]} border rounded-full animate-pulse shadow-lg`} />
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-black/90 backdrop-blur-sm border border-white/10 rounded text-xs whitespace-nowrap opacity-0 group-hover/indicator:opacity-100 transition pointer-events-none">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function ThreatActivity({ severity, title, description, time, userId }: any) {
+  const severityConfig: any = {
+    critical: { color: "red", icon: <XCircle className="w-4 h-4" /> },
+    high: { color: "amber", icon: <AlertTriangle className="w-4 h-4" /> },
+    medium: { color: "yellow", icon: <MinusCircle className="w-4 h-4" /> },
+    low: { color: "blue", icon: <Activity className="w-4 h-4" /> },
+  };
+
+  const config = severityConfig[severity];
+
+  return (
+    <div className="group/activity p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 transition-all cursor-pointer">
+      <div className="flex items-start gap-4">
+        <div className={`p-2 rounded-lg bg-${config.color}-500/10 border border-${config.color}-500/20 text-${config.color}-400`}>
+          {config.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <h4 className="font-semibold text-white text-sm group-hover/activity:text-blue-400 transition">{title}</h4>
+            <span className="text-xs text-gray-500 whitespace-nowrap">{time}</span>
+          </div>
+          <p className="text-xs text-gray-400 mb-2">{description}</p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500">{userId}</span>
+            <button className="text-xs text-blue-400 hover:text-blue-300 font-medium opacity-0 group-hover/activity:opacity-100 transition">
+              Investigate →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SystemStatus({ label, status, value }: any) {
+  const statusConfig: any = {
+    operational: { color: "green", text: "Operational" },
+    degraded: { color: "amber", text: "Degraded" },
+    offline: { color: "red", text: "Offline" },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className="flex items-center justify-between py-3 border-b border-white/5 last:border-none group/status">
+      <div className="flex items-center gap-3">
+        <div className={`w-2 h-2 bg-${config.color}-500 rounded-full ${status === 'operational' ? 'animate-pulse' : ''}`} />
+        <span className="text-sm text-gray-300">{label}</span>
+      </div>
+      <div className="text-right">
+        <div className="text-xs text-gray-400">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function ModelCard({ name, version, accuracy, status }: any) {
+  const statusConfig: any = {
+    deployed: { color: "green", text: "Deployed", icon: <CheckCircle2 className="w-3 h-3" /> },
+    training: { color: "blue", text: "Training", icon: <Activity className="w-3 h-3" /> },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className="p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 transition-all cursor-pointer group/model">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h4 className="font-semibold text-white text-sm mb-0.5">{name}</h4>
+          <p className="text-xs text-gray-500">{version}</p>
+        </div>
+        <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-${config.color}-500/10 border border-${config.color}-500/20 text-${config.color}-400`}>
+          {config.icon}
+          <span className="text-xs font-medium">{config.text}</span>
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-gray-400">Accuracy</span>
+        <span className="text-sm font-bold text-white">{accuracy}</span>
+      </div>
+    </div>
+  );
+}
+
+function QuickAction({ icon, label, count }: any) {
+  return (
+    <button className="w-full p-3 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 hover:border-white/10 transition-all group/action text-left">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="text-gray-400 group-hover/action:text-blue-400 transition">
+            {icon}
+          </div>
+          <span className="text-sm text-gray-300 group-hover/action:text-white transition">{label}</span>
+        </div>
+        {count && (
+          <span className="px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold">
+            {count}
+          </span>
+        )}
+      </div>
+    </button>
+  );
+}
+
+function EntityCard({ id, type, riskScore, flags, status }: any) {
+  const statusConfig: any = {
+    blocked: { color: "red", text: "Blocked" },
+    monitoring: { color: "amber", text: "Monitoring" },
+    review: { color: "blue", text: "Review" },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className="p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] border border-white/5 hover:border-white/10 transition-all cursor-pointer group/entity">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <p className="text-xs text-gray-500 mb-0.5">{type}</p>
+          <h4 className="font-semibold text-white text-sm">{id}</h4>
+        </div>
+        <div className={`px-2 py-0.5 rounded-full bg-${config.color}-500/10 border border-${config.color}-500/20 text-${config.color}-400 text-xs font-medium`}>
+          {config.text}
+        </div>
+      </div>
+      
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-xs text-gray-400">Risk Score</span>
+          <span className={`text-sm font-bold ${riskScore >= 90 ? 'text-red-400' : riskScore >= 75 ? 'text-amber-400' : 'text-yellow-400'}`}>
+            {riskScore}
+          </span>
+        </div>
+        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+          <div 
+            className={`h-full rounded-full ${riskScore >= 90 ? 'bg-red-500' : riskScore >= 75 ? 'bg-amber-500' : 'bg-yellow-500'}`}
+            style={{ width: `${riskScore}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5">
+        {flags.map((flag: string) => (
+          <span key={flag} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs text-gray-400">
+            {flag}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
