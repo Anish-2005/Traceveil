@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Traceveil - Real-Time Fraud Detection",
   description: "Advanced AI-powered fraud and cheating detection system",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

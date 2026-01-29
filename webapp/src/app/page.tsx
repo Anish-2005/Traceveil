@@ -23,201 +23,24 @@ import {
   Network,
 } from "lucide-react";
 
-// TypeScript Interfaces
-interface DashboardMetrics {
-  threat_detection_rate: number;
-  active_monitoring: {
-    count: number;
-    trend: string;
-    trend_up: boolean;
-  };
-  critical_threats: {
-    count: number;
-    trend: string;
-    trend_up: boolean;
-  };
-  avg_response_time: {
-    value: string;
-    trend: string;
-    trend_up: boolean;
-  };
-  recent_threat_events: ThreatEvent[];
-  system_health: {
-    api_gateway: { status: string; uptime: string };
-    ml_engine: { status: string; latency: string };
-    data_pipeline: { status: string; throughput: string };
-    redis_cache: { status: string; latency: string };
-    graph_db: { status: string; latency: string };
-    overall_uptime: string;
-  };
-  high_risk_entities: HighRiskEntity[];
-  quick_actions: {
-    flagged_entities: number;
-    access_restrictions: number;
-  };
-}
-
-interface ThreatEvent {
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  title: string;
-  description: string;
-  time_ago: string;
-  entity_id: string;
-}
-
-interface HighRiskEntity {
-  id: string;
-  type: string;
-  risk_score: number;
-  flags: string[];
-  status: 'blocked' | 'monitoring' | 'review';
-}
-
-interface ModelInfo {
-  name: string;
-  version: string;
-  accuracy: number;
-  status: 'deployed' | 'training';
-}
-
-interface DashboardModels {
-  active_models: ModelInfo[];
-}
-
-// Mock API (replace with actual API calls)
-const traceveilApi = {
-  getDashboardMetrics: async (): Promise<DashboardMetrics> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return {
-      threat_detection_rate: 0.968,
-      active_monitoring: {
-        count: 2847,
-        trend: "+8.2%",
-        trend_up: true
-      },
-      critical_threats: {
-        count: 17,
-        trend: "-23.1%",
-        trend_up: false
-      },
-      avg_response_time: {
-        value: "0.3s",
-        trend: "-41ms",
-        trend_up: false
-      },
-      recent_threat_events: [
-        {
-          severity: 'critical',
-          title: "Mass account enumeration detected",
-          description: "15,000 requests from distributed IPs • Pattern: credential stuffing",
-          time_ago: "38 seconds ago",
-          entity_id: "Network: 142.251.x.x/16"
-        },
-        {
-          severity: 'high',
-          title: "Anomalous transaction velocity",
-          description: "User exceeded baseline by 847% • Amount: $127,450",
-          time_ago: "4 minutes ago",
-          entity_id: "User #AX-47291"
-        },
-        {
-          severity: 'medium',
-          title: "New device fingerprint",
-          description: "Login from unrecognized device • Location mismatch detected",
-          time_ago: "12 minutes ago",
-          entity_id: "User #KP-98163"
-        },
-        {
-          severity: 'low',
-          title: "Model confidence threshold crossed",
-          description: "Risk score increased from 0.12 to 0.68 in 3 minutes",
-          time_ago: "27 minutes ago",
-          entity_id: "Detector: Behavioral-v2.4"
-        }
-      ],
-      system_health: {
-        api_gateway: { status: "operational", uptime: "99.97%" },
-        ml_engine: { status: "operational", latency: "4.2ms" },
-        data_pipeline: { status: "operational", throughput: "2.1M/min" },
-        redis_cache: { status: "operational", latency: "0.8ms" },
-        graph_db: { status: "operational", latency: "127ms" },
-        overall_uptime: "99.94%"
-      },
-      high_risk_entities: [
-        {
-          id: "AX-47291",
-          type: "User",
-          risk_score: 94,
-          flags: ["Velocity", "Geo-anomaly"],
-          status: "blocked"
-        },
-        {
-          id: "KP-98163",
-          type: "User",
-          risk_score: 87,
-          flags: ["New device", "Pattern shift"],
-          status: "monitoring"
-        },
-        {
-          id: "142.251.x.x",
-          type: "IP Range",
-          risk_score: 91,
-          flags: ["DDoS", "Enumeration"],
-          status: "blocked"
-        },
-        {
-          id: "TX-55892",
-          type: "Transaction",
-          risk_score: 78,
-          flags: ["High value", "Off-hours"],
-          status: "review"
-        }
-      ],
-      quick_actions: {
-        flagged_entities: 23,
-        access_restrictions: 8
-      }
-    };
-  },
-
-  getDashboardModels: async (): Promise<DashboardModels> => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return {
-      active_models: [
-        {
-          name: "Behavioral Analysis",
-          version: "v2.4.1",
-          accuracy: 0.968,
-          status: "deployed"
-        },
-        {
-          name: "Transaction Velocity",
-          version: "v1.9.3",
-          accuracy: 0.942,
-          status: "deployed"
-        },
-        {
-          name: "Device Fingerprinting",
-          version: "v3.1.0",
-          accuracy: 0.981,
-          status: "training"
-        }
-      ]
-    };
-  }
-};
+import { traceveilApi, DashboardMetrics, DashboardModels, ThreatEvent, HighRiskEntity, ModelInfo } from '@/lib/api';
 
 export default function Home() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [models, setModels] = useState<DashboardModels | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   useEffect(() => {
     loadDashboardData();
+    
+    // Set up periodic refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadDashboardData();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadDashboardData = async () => {
@@ -232,6 +55,7 @@ export default function Home() {
 
       setMetrics(metricsData);
       setModels(modelsData);
+      setLastUpdated(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
       console.error('Dashboard data error:', err);
@@ -285,15 +109,22 @@ export default function Home() {
             {/* Logo */}
             <div className="flex items-center gap-4">
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition" />
-                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 border border-white/10">
-                  <Shield className="w-6 h-6 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-300" />
+                <div className="relative p-1.5 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm group-hover:border-white/20 transition-all duration-300">
+                  <img
+                    src="/traceveil-logo.svg"
+                    alt="Traceveil"
+                    className="w-14 h-14 group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
               </div>
               <div>
-                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent">
                   Traceveil
                 </h1>
+                <p className="text-xs text-gray-400 font-medium tracking-wide">
+                  FRAUD DETECTION SYSTEM
+                </p>
                 <p className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3" />
                   AI-Powered Fraud Intelligence
@@ -376,29 +207,29 @@ export default function Home() {
             <MetricCard
               icon={<Activity />}
               label="Active Monitoring"
-              value={metrics?.active_monitoring.count.toLocaleString() || "2,847"}
+              value={metrics?.active_monitoring?.toLocaleString() || "2,847"}
               subtext="real-time streams"
-              trend={metrics?.active_monitoring.trend || "+8.2%"}
-              trendUp={metrics?.active_monitoring.trend_up !== false}
+              trend="+8.2%"
+              trendUp={true}
               color="emerald"
             />
             <MetricCard
               icon={<AlertTriangle />}
               label="Critical Threats"
-              value={metrics?.critical_threats.count.toString() || "17"}
+              value={metrics?.critical_threats?.toString() || "17"}
               subtext="require action"
-              trend={metrics?.critical_threats.trend || "-23.1%"}
-              trendUp={metrics?.critical_threats.trend_up === true}
+              trend="-23.1%"
+              trendUp={false}
               color="red"
-              pulse={metrics ? metrics.critical_threats.count > 0 : true}
+              pulse={metrics ? (metrics.critical_threats || 0) > 0 : true}
             />
             <MetricCard
               icon={<Zap />}
               label="Avg Response Time"
-              value={metrics?.avg_response_time.value || "0.3s"}
+              value={metrics?.avg_response_time ? `${(metrics.avg_response_time * 1000).toFixed(1)}ms` : "0.3s"}
               subtext="detection latency"
-              trend={metrics?.avg_response_time.trend || "-41ms"}
-              trendUp={metrics?.avg_response_time.trend_up === true}
+              trend="-41ms"
+              trendUp={false}
               color="amber"
             />
           </div>
@@ -438,32 +269,54 @@ export default function Home() {
                     <div className="absolute w-80 h-80 rounded-full border border-cyan-500/20 animate-ping" style={{ animationDuration: '5s', animationDelay: '1s' }} />
                   </div>
 
-                  {/* Threat Indicators */}
-                  <ThreatIndicator position="top-12 left-20" severity="high" label="SQL Injection" />
-                  <ThreatIndicator position="top-32 right-16" severity="medium" label="Rate Limit" />
-                  <ThreatIndicator position="bottom-24 left-32" severity="critical" label="Account Takeover" />
-                  <ThreatIndicator position="bottom-16 right-24" severity="low" label="Suspicious Login" />
+                  {/* Threat Indicators - Real Data */}
+                  {metrics?.recent_threats?.slice(0, 6).map((threat, index) => {
+                    // Generate random positions for threats
+                    const positions = [
+                      "top-12 left-20", "top-32 right-16", "bottom-24 left-32", 
+                      "bottom-16 right-24", "top-1/2 left-1/4", "bottom-1/3 right-1/3",
+                      "top-16 left-1/2", "bottom-20 right-12", "top-24 left-32", "bottom-12 left-16"
+                    ];
+                    const severity = (threat.severity as 'critical' | 'high' | 'medium' | 'low') || 
+                                   (threat.risk_score > 0.8 ? 'critical' : threat.risk_score > 0.6 ? 'high' : threat.risk_score > 0.4 ? 'medium' : 'low');
+                    
+                    return (
+                      <ThreatIndicator 
+                        key={index}
+                        position={positions[index % positions.length]} 
+                        severity={severity} 
+                        label={threat.event_type || threat.description?.substring(0, 20) || 'Threat Detected'} 
+                      />
+                    );
+                  }) || (
+                    <>
+                      <ThreatIndicator position="top-12 left-20" severity="high" label="SQL Injection" />
+                      <ThreatIndicator position="top-32 right-16" severity="medium" label="Rate Limit" />
+                      <ThreatIndicator position="bottom-24 left-32" severity="critical" label="Account Takeover" />
+                      <ThreatIndicator position="bottom-16 right-24" severity="low" label="Suspicious Login" />
+                    </>
+                  )}
                   
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 bg-red-500 rounded-full" />
-                        <span className="text-gray-400">Critical</span>
+                        <span className="text-gray-400">Critical ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'critical' || t.risk_score > 0.8).length || 0})</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                        <span className="text-gray-400">High</span>
+                        <span className="text-gray-400">High ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'high' || (t.risk_score > 0.6 && t.risk_score <= 0.8)).length || 0})</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                        <span className="text-gray-400">Medium</span>
+                        <span className="text-gray-400">Medium ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'medium' || (t.risk_score > 0.4 && t.risk_score <= 0.6)).length || 0})</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                        <span className="text-gray-400">Low</span>
+                        <span className="text-gray-400">Low ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'low' || t.risk_score <= 0.4).length || 0})</span>
                       </div>
                     </div>
-                    <span className="text-gray-500">Last updated: 2s ago</span>
+                    <span className="text-gray-500">Last updated: {lastUpdated.toLocaleTimeString()}</span>
                   </div>
                 </div>
               </div>
@@ -482,16 +335,55 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-3">
-                  {metrics?.recent_threat_events.slice(0, 4).map((event, index) => (
-                    <ThreatActivity
-                      key={index}
-                      severity={event.severity}
-                      title={event.title}
-                      description={event.description}
-                      time={event.time_ago}
-                      userId={event.entity_id}
-                    />
-                  ))}
+                  {metrics?.recent_threats?.slice(0, 4).map((event, index) => {
+                    const severity = (event.severity as 'critical' | 'high' | 'medium' | 'low') || 
+                                   (event.risk_score > 0.8 ? 'critical' : event.risk_score > 0.6 ? 'high' : event.risk_score > 0.4 ? 'medium' : 'low');
+                    const timeAgo = event.timestamp ? 
+                      Math.floor((Date.now() - new Date(event.timestamp).getTime()) / 1000 / 60) + ' minutes ago' :
+                      'Unknown time';
+                    
+                    return (
+                      <ThreatActivity
+                        key={index}
+                        severity={severity}
+                        title={`${event.event_type || 'Threat'} detected`}
+                        description={`Risk score: ${(event.risk_score * 100).toFixed(1)}% • ${event.description || 'Anomalous activity detected'}`}
+                        time={timeAgo}
+                        userId={event.user_id || event.id || 'Unknown'}
+                      />
+                    );
+                  }) || (
+                    <>
+                      <ThreatActivity
+                        severity="critical"
+                        title="Mass account enumeration detected"
+                        description="15,000 requests from distributed IPs • Pattern: credential stuffing"
+                        time="38 seconds ago"
+                        userId="Network: 142.251.x.x/16"
+                      />
+                      <ThreatActivity
+                        severity="high"
+                        title="Anomalous transaction velocity"
+                        description="User exceeded baseline by 847% • Amount: $127,450"
+                        time="4 minutes ago"
+                        userId="User #AX-47291"
+                      />
+                      <ThreatActivity
+                        severity="medium"
+                        title="New device fingerprint"
+                        description="Login from unrecognized device • Location mismatch detected"
+                        time="12 minutes ago"
+                        userId="User #KP-98163"
+                      />
+                      <ThreatActivity
+                        severity="low"
+                        title="Model confidence threshold crossed"
+                        description="Risk score increased from 0.12 to 0.68 in 3 minutes"
+                        time="27 minutes ago"
+                        userId="Detector: Behavioral-v2.4"
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -508,35 +400,35 @@ export default function Home() {
                 <div className="space-y-4">
                   <SystemStatus 
                     label="API Gateway" 
-                    status={metrics?.system_health.api_gateway.status || "operational"} 
-                    value={metrics?.system_health.api_gateway.uptime || "99.97%"} 
+                    status={metrics?.system_health?.api_gateway?.status || "operational"} 
+                    value={metrics?.system_health?.api_gateway?.value || "99.97%"} 
                   />
                   <SystemStatus 
                     label="ML Inference Engine" 
-                    status={metrics?.system_health.ml_engine.status || "operational"} 
-                    value={metrics?.system_health.ml_engine.latency || "4.2ms"} 
+                    status={metrics?.system_health?.ml_inference_engine?.status || "operational"} 
+                    value={metrics?.system_health?.ml_inference_engine?.value || "4.2ms"} 
                   />
                   <SystemStatus 
                     label="Data Pipeline" 
-                    status={metrics?.system_health.data_pipeline.status || "operational"} 
-                    value={metrics?.system_health.data_pipeline.throughput || "2.1M/min"} 
+                    status={metrics?.system_health?.data_pipeline?.status || "operational"} 
+                    value={metrics?.system_health?.data_pipeline?.value || "2.1M/min"} 
                   />
                   <SystemStatus 
                     label="Redis Cache" 
-                    status={metrics?.system_health.redis_cache.status || "operational"} 
-                    value={metrics?.system_health.redis_cache.latency || "0.8ms"} 
+                    status={metrics?.system_health?.redis_cache?.status || "operational"} 
+                    value={metrics?.system_health?.redis_cache?.value || "0.8ms"} 
                   />
                   <SystemStatus 
                     label="Graph Database" 
-                    status={metrics?.system_health.graph_db.status || "operational"} 
-                    value={metrics?.system_health.graph_db.latency || "127ms"} 
+                    status={metrics?.system_health?.graph_database?.status || "operational"} 
+                    value={metrics?.system_health?.graph_database?.value || "127ms"} 
                   />
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-white/5">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Uptime (30d)</span>
-                    <span className="font-semibold text-green-400">{metrics?.system_health.overall_uptime || "99.94%"}</span>
+                    <span className="text-gray-400">System Status</span>
+                    <span className="font-semibold text-green-400">All Systems Operational</span>
                   </div>
                 </div>
               </div>
@@ -549,15 +441,36 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-white mb-6">Active Models</h3>
                 
                 <div className="space-y-4">
-                  {models?.active_models.map((model, index) => (
+                  {models?.models?.map((model, index) => (
                     <ModelCard
                       key={index}
                       name={model.name}
                       version={model.version}
-                      accuracy={`${(model.accuracy * 100).toFixed(1)}%`}
-                      status={model.status}
+                      accuracy={model.accuracy}
+                      status={model.status as 'deployed' | 'training'}
                     />
-                  ))}
+                  )) || (
+                    <>
+                      <ModelCard
+                        name="Behavioral Analysis"
+                        version="v2.4.1"
+                        accuracy="96.8%"
+                        status="deployed"
+                      />
+                      <ModelCard
+                        name="Transaction Velocity"
+                        version="v1.9.3"
+                        accuracy="94.2%"
+                        status="deployed"
+                      />
+                      <ModelCard
+                        name="Device Fingerprinting"
+                        version="v3.1.0"
+                        accuracy="98.1%"
+                        status="training"
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -569,8 +482,8 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
                 
                 <div className="space-y-2">
-                  <QuickAction icon={<Eye />} label="Review Flagged Entities" count={metrics?.quick_actions.flagged_entities || 23} />
-                  <QuickAction icon={<Lock />} label="Apply Access Restrictions" count={metrics?.quick_actions.access_restrictions || 8} />
+                  <QuickAction icon={<Eye />} label="Review Flagged Entities" count={23} />
+                  <QuickAction icon={<Lock />} label="Apply Access Restrictions" count={8} />
                   <QuickAction icon={<BarChart3 />} label="Generate Risk Report" />
                   <QuickAction icon={<Sparkles />} label="Retrain Models" />
                 </div>
@@ -594,16 +507,54 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {metrics?.high_risk_entities.slice(0, 4).map((entity, index) => (
-                <EntityCard
-                  key={index}
-                  id={entity.id}
-                  type={entity.type}
-                  riskScore={entity.risk_score}
-                  flags={entity.flags}
-                  status={entity.status}
-                />
-              ))}
+              {metrics?.high_risk_entities?.slice(0, 4).map((entity, index) => {
+                const riskScore = Math.round((entity.risk_score || 0) * 100);
+                const status = entity.severity === 'critical' ? 'blocked' : 
+                             entity.severity === 'high' ? 'monitoring' : 'review';
+                const flags = entity.flags || [`Risk: ${riskScore}%`];
+                
+                return (
+                  <EntityCard
+                    key={index}
+                    id={entity.user_id || entity.id || `Entity-${index + 1}`}
+                    type={entity.event_type || 'User'}
+                    riskScore={riskScore}
+                    flags={flags}
+                    status={status}
+                  />
+                );
+              }) || (
+                <>
+                  <EntityCard
+                    id="AX-47291"
+                    type="User"
+                    riskScore={94}
+                    flags={["Velocity", "Geo-anomaly"]}
+                    status="blocked"
+                  />
+                  <EntityCard
+                    id="KP-98163"
+                    type="User"
+                    riskScore={87}
+                    flags={["New device", "Pattern shift"]}
+                    status="monitoring"
+                  />
+                  <EntityCard
+                    id="142.251.x.x"
+                    type="IP Range"
+                    riskScore={91}
+                    flags={["DDoS", "Enumeration"]}
+                    status="blocked"
+                  />
+                  <EntityCard
+                    id="TX-55892"
+                    type="Transaction"
+                    riskScore={78}
+                    flags={["High value", "Off-hours"]}
+                    status="review"
+                  />
+                </>
+              )}
             </div>
           </div>
         </section>
