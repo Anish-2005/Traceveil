@@ -281,19 +281,19 @@ export default function AnalyticsPage() {
               <div className="grid grid-cols-3 gap-4">
                 <StatBox
                   label="Total Feedback"
-                  value={feedbackStats.total_feedback.toString()}
+                  value={(feedbackStats.total_feedback ?? 0).toString()}
                   icon={<Activity className="w-4 h-4" />}
                   color="blue"
                 />
                 <StatBox
                   label="Accuracy Gain"
-                  value={`+${feedbackStats.accuracy_improvements}%`}
+                  value={`+${feedbackStats.accuracy_improvements ?? 0}%`}
                   icon={<TrendingUp className="w-4 h-4" />}
                   color="emerald"
                 />
                 <StatBox
                   label="Model Updates"
-                  value={feedbackStats.model_updates.toString()}
+                  value={(feedbackStats.model_updates ?? 0).toString()}
                   icon={<RefreshCw className="w-4 h-4" />}
                   color="purple"
                 />

@@ -1,9 +1,46 @@
 'use client';
 
+/**
+ * Events Page - Event Ingestion & Risk Assessment
+ * 
+ * Production-grade interface for ingesting events and
+ * receiving real-time AI-powered risk assessments.
+ */
+
 import { useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft, Send, AlertCircle, CheckCircle } from 'lucide-react';
+import {
+  Send,
+  AlertCircle,
+  CheckCircle,
+  Zap,
+  Code,
+  Clock,
+  User,
+  Activity,
+  Shield,
+  TrendingUp,
+  AlertTriangle,
+  FileJson,
+  Sparkles
+} from 'lucide-react';
+import { PageLayout, PageHeader } from '@/components/shared';
 import { traceveilApi, EventData, RiskAssessment } from '@/lib/api';
+
+const eventTypes = [
+  { value: 'login', label: 'Login', icon: <User className="w-4 h-4" />, color: 'blue' },
+  { value: 'transaction', label: 'Transaction', icon: <Activity className="w-4 h-4" />, color: 'emerald' },
+  { value: 'page_view', label: 'Page View', icon: <Zap className="w-4 h-4" />, color: 'purple' },
+  { value: 'api_call', label: 'API Call', icon: <Code className="w-4 h-4" />, color: 'amber' },
+  { value: 'file_upload', label: 'File Upload', icon: <FileJson className="w-4 h-4" />, color: 'cyan' },
+] as const;
+
+const sampleMetadata = {
+  login: '{\n  "ip_address": "192.168.1.1",\n  "device": "Chrome/Windows",\n  "location": "New York, US"\n}',
+  transaction: '{\n  "amount": 250.00,\n  "currency": "USD",\n  "merchant": "Amazon",\n  "card_last4": "4242"\n}',
+  page_view: '{\n  "page": "/dashboard",\n  "referrer": "google.com",\n  "duration_ms": 3500\n}',
+  api_call: '{\n  "endpoint": "/api/data",\n  "method": "POST",\n  "response_time_ms": 145\n}',
+  file_upload: '{\n  "filename": "report.pdf",\n  "size_bytes": 1048576,\n  "mime_type": "application/pdf"\n}',
+};
 
 export default function NewEventPage() {
   const [formData, setFormData] = useState<EventData>({
@@ -17,15 +54,27 @@ export default function NewEventPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<RiskAssessment | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [jsonError, setJsonError] = useState<string | null>(null);
+
+  const handleEventTypeChange = (type: string) => {
+    setFormData(prev => ({ ...prev, event_type: type }));
+    // Auto-populate sample metadata
+    const sample = sampleMetadata[type as keyof typeof sampleMetadata];
+    if (sample && !metadataInput) {
+      setMetadataInput(sample);
+    }
+  };
 
   const handleMetadataChange = (value: string) => {
     setMetadataInput(value);
+    setJsonError(null);
     try {
-      const parsed = JSON.parse(value);
-      setFormData(prev => ({ ...prev, metadata: parsed }));
-      setError(null);
+      if (value.trim()) {
+        const parsed = JSON.parse(value);
+        setFormData(prev => ({ ...prev, metadata: parsed }));
+      }
     } catch (e) {
-      // Invalid JSON, but we'll allow it for now
+      setJsonError('Invalid JSON format');
     }
   };
 
@@ -48,6 +97,7 @@ export default function NewEventPage() {
       const eventData: EventData = {
         ...formData,
         metadata: metadataInput.trim() ? JSON.parse(metadataInput) : {},
+        timestamp: new Date().toISOString(),
       };
 
       const response = await traceveilApi.ingestEvent(eventData);
@@ -61,195 +111,308 @@ export default function NewEventPage() {
 
   const getRiskColor = (level: string) => {
     switch (level.toLowerCase()) {
-      case 'low': return 'text-green-600 bg-green-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'critical': return 'text-red-800 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'low': return { bg: 'bg-emerald-500/15', border: 'border-emerald-500/25', text: 'text-emerald-400', bar: 'from-emerald-500 to-emerald-400' };
+      case 'medium': return { bg: 'bg-amber-500/15', border: 'border-amber-500/25', text: 'text-amber-400', bar: 'from-amber-500 to-amber-400' };
+      case 'high': return { bg: 'bg-orange-500/15', border: 'border-orange-500/25', text: 'text-orange-400', bar: 'from-orange-500 to-orange-400' };
+      case 'critical': return { bg: 'bg-red-500/15', border: 'border-red-500/25', text: 'text-red-400', bar: 'from-red-500 to-red-400' };
+      default: return { bg: 'bg-slate-500/15', border: 'border-slate-500/25', text: 'text-slate-400', bar: 'from-slate-500 to-slate-400' };
+    }
+  };
+
+  const getRiskIcon = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'low': return <Shield className="w-6 h-6 text-emerald-400" />;
+      case 'medium': return <TrendingUp className="w-6 h-6 text-amber-400" />;
+      case 'high':
+      case 'critical': return <AlertTriangle className="w-6 h-6 text-red-400" />;
+      default: return <Activity className="w-6 h-6 text-slate-400" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-gray-400 hover:text-gray-600">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-              <h1 className="ml-4 text-xl font-semibold text-gray-900">Ingest New Event</h1>
+    <PageLayout>
+      <PageHeader
+        title="Ingest Event"
+        subtitle="Real-time Risk Assessment"
+      />
+
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
+          {/* Form Column */}
+          <div className="lg:col-span-6">
+            <div className="glass-card-elevated p-6 lg:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/25">
+                  <Zap className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white">Event Details</h2>
+                  <p className="text-xs text-slate-400">Submit event for AI analysis</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* User ID */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    User ID <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      required
+                      value={formData.user_id}
+                      onChange={(e) => setFormData(prev => ({ ...prev, user_id: e.target.value }))}
+                      className="w-full px-4 py-3 pl-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                      placeholder="e.g., user_12345"
+                    />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  </div>
+                </div>
+
+                {/* Event Type */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Event Type <span className="text-red-400">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {eventTypes.map((type) => (
+                      <button
+                        key={type.value}
+                        type="button"
+                        onClick={() => handleEventTypeChange(type.value)}
+                        className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all ${formData.event_type === type.value
+                            ? 'bg-blue-500/15 border-blue-500/40 text-white'
+                            : 'bg-white/[0.02] border-white/[0.06] text-slate-400 hover:bg-white/[0.04] hover:border-white/[0.1]'
+                          }`}
+                      >
+                        {type.icon}
+                        <span className="text-sm font-medium">{type.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Metadata JSON */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-slate-300">
+                      Metadata (JSON)
+                    </label>
+                    {jsonError && (
+                      <span className="text-xs text-red-400 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {jsonError}
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <textarea
+                      rows={8}
+                      value={metadataInput}
+                      onChange={(e) => handleMetadataChange(e.target.value)}
+                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border text-white placeholder-slate-500 font-mono text-sm focus:outline-none focus:ring-2 transition-all resize-none ${jsonError
+                          ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
+                          : 'border-white/[0.08] focus:border-blue-500/50 focus:ring-blue-500/20'
+                        }`}
+                      placeholder='{"key": "value"}'
+                    />
+                    <div className="absolute top-3 right-3">
+                      <Code className="w-4 h-4 text-slate-600" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Enter valid JSON object with event-specific data
+                  </p>
+                </div>
+
+                {/* Timestamp */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Timestamp
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      value={formData.timestamp.slice(0, 16)}
+                      onChange={(e) => setFormData(prev => ({ ...prev, timestamp: new Date(e.target.value).toISOString() }))}
+                      className="w-full px-4 py-3 pl-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                    />
+                    <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  </div>
+                </div>
+
+                {/* Error */}
+                {error && (
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                    <p className="text-sm text-red-400">{error}</p>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !formData.user_id || !formData.event_type}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Processing Event...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      Ingest & Analyze
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
           </div>
-        </div>
-      </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Form */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">Event Details</h2>
+          {/* Results Column */}
+          <div className="lg:col-span-6 space-y-6">
+            {result ? (
+              <>
+                {/* Success Banner */}
+                <div className="glass-card p-4 border-l-4 border-emerald-500">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-400" />
+                    <div>
+                      <p className="text-sm font-medium text-white">Event Processed Successfully</p>
+                      <p className="text-xs text-slate-400">Event ID: {result.event_id}</p>
+                    </div>
+                  </div>
+                </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="user_id" className="block text-sm font-medium text-gray-700">
-                  User ID *
-                </label>
-                <input
-                  type="text"
-                  id="user_id"
-                  required
-                  value={formData.user_id}
-                  onChange={(e) => setFormData(prev => ({ ...prev, user_id: e.target.value }))}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., user123"
-                />
-              </div>
+                {/* Risk Assessment Card */}
+                <div className="glass-card-elevated p-6 lg:p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className={`p-3 rounded-xl ${getRiskColor(result.risk_assessment.risk_level).bg} ${getRiskColor(result.risk_assessment.risk_level).border} border`}>
+                      {getRiskIcon(result.risk_assessment.risk_level)}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">Risk Assessment</h3>
+                      <span className={`text-sm ${getRiskColor(result.risk_assessment.risk_level).text}`}>
+                        {result.risk_assessment.risk_level.toUpperCase()} RISK
+                      </span>
+                    </div>
+                  </div>
 
-              <div>
-                <label htmlFor="event_type" className="block text-sm font-medium text-gray-700">
-                  Event Type *
-                </label>
-                <select
-                  id="event_type"
-                  required
-                  value={formData.event_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, event_type: e.target.value }))}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select event type</option>
-                  <option value="login">Login</option>
-                  <option value="transaction">Transaction</option>
-                  <option value="page_view">Page View</option>
-                  <option value="api_call">API Call</option>
-                  <option value="file_upload">File Upload</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
+                  {/* Metrics */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                      <p className="text-xs text-slate-400 mb-1">Risk Score</p>
+                      <p className="text-3xl font-black text-white">
+                        {(result.risk_assessment.risk_score * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                      <p className="text-xs text-slate-400 mb-1">Confidence</p>
+                      <p className="text-3xl font-black text-white">
+                        {(result.risk_assessment.confidence * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
 
-              <div>
-                <label htmlFor="metadata" className="block text-sm font-medium text-gray-700">
-                  Metadata (JSON)
-                </label>
-                <textarea
-                  id="metadata"
-                  rows={6}
-                  value={metadataInput}
-                  onChange={(e) => handleMetadataChange(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
-                  placeholder='{"key": "value", "amount": 100}'
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Enter valid JSON object with event metadata
+                  {/* Risk Bar */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="text-slate-400">Threat Level</span>
+                      <span className={`font-medium ${getRiskColor(result.risk_assessment.risk_level).text}`}>
+                        {result.risk_assessment.category}
+                      </span>
+                    </div>
+                    <div className="h-3 bg-white/[0.06] rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r ${getRiskColor(result.risk_assessment.risk_level).bar} transition-all duration-1000`}
+                        style={{ width: `${result.risk_assessment.risk_score * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Category */}
+                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                    <p className="text-xs text-slate-400 mb-1">Category</p>
+                    <p className="text-sm font-medium text-white">{result.risk_assessment.category}</p>
+                  </div>
+                </div>
+
+                {/* Explanation Card */}
+                <div className="glass-card p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25">
+                      <Sparkles className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">AI Explanation</h3>
+                      <p className="text-xs text-slate-400">Model reasoning</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Summary */}
+                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        {result.explanation.summary}
+                      </p>
+                    </div>
+
+                    {/* Factors */}
+                    <div>
+                      <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Key Factors</p>
+                      <ul className="space-y-2">
+                        {result.explanation.factors.map((factor, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm text-slate-300">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0" />
+                            {factor}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Recommendations */}
+                    <div>
+                      <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Recommendations</p>
+                      <ul className="space-y-2">
+                        {result.explanation.recommendations.map((rec, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm text-slate-300">
+                            <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                            {rec}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* Empty State */
+              <div className="glass-card-elevated p-12 text-center h-full flex flex-col items-center justify-center min-h-[400px]">
+                <div className="relative inline-block mb-6">
+                  <div className="absolute inset-0 bg-purple-500/20 rounded-3xl blur-2xl" />
+                  <div className="relative p-6 rounded-3xl bg-white/[0.04] border border-white/[0.06]">
+                    <Sparkles className="w-12 h-12 text-purple-400" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">AI Risk Analysis</h3>
+                <p className="text-slate-400 max-w-sm mx-auto">
+                  Submit an event to receive real-time risk assessment powered by our ML models.
                 </p>
-              </div>
-
-              <div>
-                <label htmlFor="timestamp" className="block text-sm font-medium text-gray-700">
-                  Timestamp
-                </label>
-                <input
-                  type="datetime-local"
-                  id="timestamp"
-                  value={formData.timestamp.slice(0, 16)}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timestamp: new Date(e.target.value).toISOString() }))}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {error && (
-                <div className="flex items-center p-4 bg-red-50 border border-red-200 rounded-md">
-                  <AlertCircle className="h-5 w-5 text-red-400 mr-2" />
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Ingest Event
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
-
-          {/* Results */}
-          <div className="space-y-6">
-            {result && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center mb-4">
-                  <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-900">Risk Assessment</h3>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Risk Level</p>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRiskColor(result.risk_assessment.risk_level)}`}>
-                      {result.risk_assessment.risk_level.toUpperCase()}
-                    </span>
+                <div className="flex items-center gap-4 mt-6 text-xs text-slate-500">
+                  <div className="flex items-center gap-1">
+                    <Activity className="w-3 h-3" />
+                    Anomaly Detection
                   </div>
-
-                  <div>
-                    <p className="text-sm text-gray-600">Risk Score</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {(result.risk_assessment.risk_score * 100).toFixed(1)}%
-                    </p>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    Sequence Analysis
                   </div>
-
-                  <div>
-                    <p className="text-sm text-gray-600">Confidence</p>
-                    <p className="text-lg text-gray-900">
-                      {(result.risk_assessment.confidence * 100).toFixed(1)}%
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-gray-600">Category</p>
-                    <p className="text-sm text-gray-900">{result.risk_assessment.category}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {result && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Explanation</h3>
-
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Summary</p>
-                    <p className="text-sm text-gray-600 mt-1">{result.explanation.summary}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Key Factors</p>
-                    <ul className="text-sm text-gray-600 mt-1 list-disc list-inside">
-                      {result.explanation.factors.map((factor, index) => (
-                        <li key={index}>{factor}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Recommendations</p>
-                    <ul className="text-sm text-gray-600 mt-1 list-disc list-inside">
-                      {result.explanation.recommendations.map((rec, index) => (
-                        <li key={index}>{rec}</li>
-                      ))}
-                    </ul>
+                  <div className="flex items-center gap-1">
+                    <Shield className="w-3 h-3" />
+                    Graph Analysis
                   </div>
                 </div>
               </div>
@@ -257,6 +420,6 @@ export default function NewEventPage() {
           </div>
         </div>
       </main>
-    </div>
+    </PageLayout>
   );
 }
