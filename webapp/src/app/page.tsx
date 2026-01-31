@@ -145,78 +145,57 @@ interface DashboardHeaderProps {}
 
 function DashboardHeader({}: DashboardHeaderProps) {
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-slate-900/80 border-b border-white/10 shadow-lg shadow-black/20">
-      <div className="max-w-[1920px] mx-auto px-8 h-20">
-        <div className="flex items-center justify-between h-full">
-          {/* Logo */}
-          <div className="flex items-center gap-6">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
-              <div className="relative p-2 rounded-2xl bg-gradient-to-br from-white/15 to-white/5 border border-white/20 backdrop-blur-xl shadow-xl group-hover:border-white/30 transition-all duration-300 group-hover:scale-105">
-                <img
-                  src="/traceveil-logo.svg"
-                  alt="Traceveil"
-                  className="w-16 h-16 group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
-                />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-200 bg-clip-text text-transparent drop-shadow-sm">
-                Traceveil
-              </h1>
-              <p className="text-sm text-slate-400 font-medium tracking-wider">
-                AI-POWERED FRAUD DETECTION
-              </p>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                <p className="text-xs text-slate-500 font-medium tracking-wide">
-                  REAL-TIME INTELLIGENCE SYSTEM
-                </p>
-              </div>
-            </div>
-          </div>
+    <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur border-b border-slate-200/10 dark:border-white/10 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Logo and Brand */}
+        <div className="flex items-center gap-4">
+          <img
+            src="/traceveil-logo.svg"
+            alt="Traceveil"
+            className="w-10 h-10 transition-transform duration-200 hover:scale-105 focus:scale-105 outline-none"
+            tabIndex={0}
+          />
+          <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 via-cyan-400 to-slate-200 bg-clip-text text-transparent select-none">
+            Traceveil
+          </span>
+        </div>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-2">
-            {[
-              { label: "Overview", active: true },
-              { label: "Threat Feed", active: false },
-              { label: "Analytics", active: false },
-              { label: "Entities", active: false },
-              { label: "Models", active: false },
-            ].map((item) => (
-              <button
-                key={item.label}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
-                  item.active
-                    ? 'bg-blue-500/20 border border-blue-400/40 text-blue-300 shadow-lg shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
+        {/* Navigation */}
+        <nav className="hidden md:flex items-center gap-1">
+          {["Overview", "Threat Feed", "Analytics", "Entities", "Models"].map((label, i) => (
+            <button
+              key={label}
+              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white/80 dark:focus-visible:ring-offset-slate-950/80 ${
+                i === 0
+                  ? 'bg-blue-500/10 text-blue-700 dark:text-blue-300 font-semibold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-500/5 dark:hover:bg-blue-500/10'
+              }`}
+              aria-current={i === 0 ? 'page' : undefined}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
 
-          {/* Actions */}
-          <div className="flex items-center gap-4">
-            <button
-              className="relative p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 group shadow-lg hover:shadow-xl hover:shadow-black/20"
-              aria-label="View alerts"
-            >
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-pulse shadow-lg shadow-red-500/50" />
-              <AlertTriangle className="w-5 h-5 text-slate-400 group-hover:text-red-400 transition-colors duration-200" />
-            </button>
-            <button
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-500 hover:via-blue-400 hover:to-cyan-400 font-semibold text-sm transition-all duration-200 shadow-xl shadow-blue-500/30 hover:shadow-blue-400/40 hover:shadow-2xl hover:scale-105 active:scale-95"
-              aria-label="Deploy model"
-            >
-              <span className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Deploy Model
-              </span>
-            </button>
-          </div>
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <button
+            className="relative p-2 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-slate-200/30 dark:border-white/10 hover:bg-red-50 dark:hover:bg-red-900/20 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/70"
+            aria-label="View alerts"
+          >
+            <span className="sr-only">View alerts</span>
+            <AlertTriangle className="w-5 h-5 text-red-400" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse border-2 border-white dark:border-slate-950" />
+          </button>
+          <button
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold text-sm shadow-md hover:from-blue-500 hover:to-cyan-400 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70"
+            aria-label="Deploy model"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              Deploy Model
+            </span>
+          </button>
         </div>
       </div>
     </header>
@@ -231,44 +210,39 @@ interface DashboardMainProps {
 
 function DashboardMain({ metrics, models, lastUpdated }: DashboardMainProps) {
   return (
-    <main className="max-w-[1920px] mx-auto px-8 py-12 space-y-12 relative z-10">
-      {/* ================= HERO METRICS GRID ================= */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-14 relative z-10">
+      {/* HERO METRICS GRID */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Primary KPI */}
-        <div className="lg:col-span-4 relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 to-cyan-500/15 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-          <div className="relative bg-gradient-to-br from-white/[0.08] via-white/[0.05] to-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all duration-300 shadow-2xl shadow-black/20 hover:shadow-black/30">
-            <div className="flex items-start justify-between mb-6">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-400/40 shadow-xl">
-                <Brain className="w-8 h-8 text-blue-300 drop-shadow-sm" />
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-500/50" />
-                <span className="px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold shadow-sm">
-                  LIVE
-                </span>
+        <div className="lg:col-span-4 flex flex-col justify-between">
+          <div className="relative bg-gradient-to-br from-white/90 to-blue-50 dark:from-slate-900/80 dark:to-slate-800/80 border border-slate-200/40 dark:border-white/10 rounded-2xl p-7 shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                <Brain className="w-7 h-7 text-blue-500 dark:text-blue-300" />
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse" />
+                <span className="text-xs font-semibold text-emerald-500">LIVE</span>
               </div>
             </div>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-slate-400 font-semibold mb-2 tracking-wide">THREAT DETECTION RATE</p>
-                <div className="flex items-baseline gap-4">
-                  <h3 className="text-5xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent tracking-tight">
-                    {metrics ? `${(metrics.threat_detection_rate * 100).toFixed(1)}%` : "96.8%"}
-                  </h3>
-                  <span className="text-lg text-slate-500 font-medium">accuracy</span>
-                </div>
+            <div className="mb-4">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 tracking-wide uppercase">Threat Detection Rate</p>
+              <div className="flex items-end gap-3">
+                <span className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  {metrics ? `${(metrics.threat_detection_rate * 100).toFixed(1)}%` : "96.8%"}
+                </span>
+                <span className="text-base text-slate-400 font-medium">accuracy</span>
               </div>
-              <div className="mt-6 h-2 bg-white/10 rounded-full overflow-hidden shadow-inner">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 rounded-full transition-all duration-1000 shadow-sm"
-                  style={{ width: metrics ? `${metrics.threat_detection_rate * 100}%` : '96.8%' }}
-                />
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-300 font-semibold">+12.4% from last hour</span>
-              </div>
+            </div>
+            <div className="h-2 bg-slate-200/60 dark:bg-slate-700/40 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 rounded-full transition-all duration-1000"
+                style={{ width: metrics ? `${metrics.threat_detection_rate * 100}%` : '96.8%' }}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-xs mt-4">
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <span className="text-emerald-500 font-semibold">+12.4% from last hour</span>
             </div>
           </div>
         </div>
@@ -306,8 +280,8 @@ function DashboardMain({ metrics, models, lastUpdated }: DashboardMainProps) {
         </div>
       </section>
 
-      {/* ================= COMMAND CENTER ================= */}
-      <section className="grid lg:grid-cols-12 gap-8">
+      {/* COMMAND CENTER */}
+      <section className="grid lg:grid-cols-12 gap-10">
         {/* Live Threat Intelligence */}
         <div className="lg:col-span-8 space-y-8">
           <ThreatIntelligenceMap metrics={metrics} lastUpdated={lastUpdated} />
@@ -322,7 +296,7 @@ function DashboardMain({ metrics, models, lastUpdated }: DashboardMainProps) {
         </div>
       </section>
 
-      {/* ================= ENTITY MONITORING ================= */}
+      {/* ENTITY MONITORING */}
       <EntityMonitoringSection metrics={metrics} />
     </main>
   );
@@ -336,41 +310,44 @@ interface ThreatIntelligenceMapProps {
 function ThreatIntelligenceMap({ metrics, lastUpdated }: ThreatIntelligenceMapProps) {
   return (
     <div className="relative group">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-      <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
-        <div className="flex items-center justify-between mb-6">
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/8 to-pink-500/8 rounded-3xl blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+      <div className="relative bg-gradient-to-br from-white/[0.12] via-white/[0.08] to-white/[0.04] backdrop-blur-3xl border border-white/15 rounded-3xl p-8 hover:border-white/25 transition-all duration-500 shadow-2xl shadow-black/30 hover:shadow-black/40">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="text-lg font-bold text-white mb-1">Threat Intelligence Map</h3>
-            <p className="text-sm text-gray-400">Real-time anomaly detection & classification</p>
+            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Threat Intelligence Map</h3>
+            <p className="text-sm text-slate-400 leading-relaxed font-medium">Real-time anomaly detection & classification across global networks</p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs font-semibold text-green-400">LIVE</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-green-500/15 border border-green-400/30 shadow-xl shadow-green-500/20">
+              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-500/60" />
+              <span className="text-sm font-bold text-green-300 tracking-wide">LIVE</span>
             </div>
           </div>
         </div>
 
-        {/* Radar Visualization */}
-        <div className="relative h-80 rounded-xl bg-gradient-to-br from-blue-950/30 to-purple-950/30 border border-white/5 overflow-hidden">
+        {/* Enhanced Radar Visualization */}
+        <div className="relative h-96 rounded-2xl bg-gradient-to-br from-blue-950/40 to-purple-950/40 border border-white/10 overflow-hidden shadow-2xl shadow-black/50">
           <div className="absolute inset-0 flex items-center justify-center">
-            <Network className="w-32 h-32 text-blue-500/20" />
+            <div className="relative">
+              <Network className="w-40 h-40 text-blue-500/15 drop-shadow-2xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-2xl" />
+            </div>
           </div>
 
-          {/* Animated Radar Rings */}
+          {/* Enhanced Animated Radar Rings */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="absolute w-48 h-48 rounded-full border border-blue-500/20 animate-ping" style={{ animationDuration: '3s' }} />
-            <div className="absolute w-64 h-64 rounded-full border border-purple-500/20 animate-ping" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
-            <div className="absolute w-80 h-80 rounded-full border border-cyan-500/20 animate-ping" style={{ animationDuration: '5s', animationDelay: '1s' }} />
+            <div className="absolute w-56 h-56 rounded-full border-2 border-blue-500/30 animate-ping shadow-lg shadow-blue-500/20" style={{ animationDuration: '4s' }} />
+            <div className="absolute w-72 h-72 rounded-full border-2 border-purple-500/25 animate-ping shadow-lg shadow-purple-500/20" style={{ animationDuration: '5s', animationDelay: '0.7s' }} />
+            <div className="absolute w-88 h-88 rounded-full border-2 border-cyan-500/20 animate-ping shadow-lg shadow-cyan-500/20" style={{ animationDuration: '6s', animationDelay: '1.4s' }} />
           </div>
 
           {/* Threat Indicators - Real Data */}
           {metrics?.recent_threats?.slice(0, 6).map((threat, index) => {
             // Generate random positions for threats
             const positions = [
-              "top-12 left-20", "top-32 right-16", "bottom-24 left-32",
-              "bottom-16 right-24", "top-1/2 left-1/4", "bottom-1/3 right-1/3",
-              "top-16 left-1/2", "bottom-20 right-12", "top-24 left-32", "bottom-12 left-16"
+              "top-16 left-24", "top-36 right-20", "bottom-28 left-36",
+              "bottom-20 right-28", "top-1/2 left-1/5", "bottom-1/3 right-1/4",
+              "top-20 left-1/2", "bottom-24 right-16", "top-28 left-36", "bottom-16 left-20"
             ];
             const severity = (threat.severity as 'critical' | 'high' | 'medium' | 'low') ||
                            (threat.risk_score > 0.8 ? 'critical' : threat.risk_score > 0.6 ? 'high' : threat.risk_score > 0.4 ? 'medium' : 'low');
@@ -385,33 +362,36 @@ function ThreatIntelligenceMap({ metrics, lastUpdated }: ThreatIntelligenceMapPr
             );
           }) || (
             <>
-              <ThreatIndicator position="top-12 left-20" severity="high" label="SQL Injection" />
-              <ThreatIndicator position="top-32 right-16" severity="medium" label="Rate Limit" />
-              <ThreatIndicator position="bottom-24 left-32" severity="critical" label="Account Takeover" />
-              <ThreatIndicator position="bottom-16 right-24" severity="low" label="Suspicious Login" />
+              <ThreatIndicator position="top-16 left-24" severity="high" label="SQL Injection" />
+              <ThreatIndicator position="top-36 right-20" severity="medium" label="Rate Limit" />
+              <ThreatIndicator position="bottom-28 left-36" severity="critical" label="Account Takeover" />
+              <ThreatIndicator position="bottom-20 right-28" severity="low" label="Suspicious Login" />
             </>
           )}
 
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-red-500 rounded-full" />
-                <span className="text-gray-400">Critical ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'critical' || t.risk_score > 0.8).length || 0})</span>
+          <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-sm">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full shadow-lg shadow-red-500/50" />
+                <span className="text-slate-300 font-semibold">Critical ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'critical' || t.risk_score > 0.8).length || 0})</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                <span className="text-gray-400">High ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'high' || (t.risk_score > 0.6 && t.risk_score <= 0.8)).length || 0})</span>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50" />
+                <span className="text-slate-300 font-semibold">High ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'high' || (t.risk_score > 0.6 && t.risk_score <= 0.8)).length || 0})</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                <span className="text-gray-400">Medium ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'medium' || (t.risk_score > 0.4 && t.risk_score <= 0.6)).length || 0})</span>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-lg shadow-yellow-500/50" />
+                <span className="text-slate-300 font-semibold">Medium ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'medium' || (t.risk_score > 0.4 && t.risk_score <= 0.6)).length || 0})</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                <span className="text-gray-400">Low ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'low' || t.risk_score <= 0.4).length || 0})</span>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50" />
+                <span className="text-slate-300 font-semibold">Low ({metrics?.recent_threats?.filter(t => (t.severity as string) === 'low' || t.risk_score <= 0.4).length || 0})</span>
               </div>
             </div>
-            <span className="text-gray-500">Last updated: {lastUpdated.toLocaleTimeString()}</span>
+            <div className="flex items-center gap-2 text-slate-400 font-medium">
+              <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse" />
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -426,23 +406,25 @@ interface ThreatActivityTimelineProps {
 function ThreatActivityTimeline({ metrics }: ThreatActivityTimelineProps) {
   return (
     <div className="relative group">
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
-      <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-white">Recent Threat Activity</h3>
-          <button className="text-xs font-medium text-blue-400 hover:text-blue-300 flex items-center gap-1 transition">
-            View All
-            <ArrowUpRight className="w-3 h-3" />
-          </button>
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/8 to-blue-500/8 rounded-3xl blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+      <div className="relative bg-gradient-to-br from-white/[0.12] via-white/[0.08] to-white/[0.04] backdrop-blur-3xl border border-white/15 rounded-3xl p-8 hover:border-white/25 transition-all duration-500 shadow-2xl shadow-black/30 hover:shadow-black/40">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Recent Threat Activity</h3>
+            <p className="text-sm text-slate-400 leading-relaxed font-medium">Latest security events and anomaly detections</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/30 text-sm font-semibold text-slate-300 hover:text-white transition-all duration-200 shadow-lg hover:shadow-xl">
+              View All
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          {metrics?.recent_threats?.slice(0, 4).map((event, index) => {
+        <div className="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+          {metrics?.recent_threats?.slice(0, 8).map((event, index) => {
             const severity = (event.severity as 'critical' | 'high' | 'medium' | 'low') ||
                            (event.risk_score > 0.8 ? 'critical' : event.risk_score > 0.6 ? 'high' : event.risk_score > 0.4 ? 'medium' : 'low');
-            const timeAgo = event.timestamp ?
-              Math.floor((Date.now() - new Date(event.timestamp).getTime()) / 1000 / 60) + ' minutes ago' :
-              'Unknown time';
+            const timeAgo = new Date(event.timestamp).toLocaleTimeString();
 
             return (
               <ThreatActivity
@@ -490,6 +472,10 @@ function ThreatActivityTimeline({ metrics }: ThreatActivityTimelineProps) {
       </div>
     </div>
   );
+}
+
+interface SystemHealthPanelProps {
+  metrics: DashboardMetrics | null;
 }
 
 interface SystemHealthPanelProps {

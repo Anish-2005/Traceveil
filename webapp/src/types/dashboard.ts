@@ -173,6 +173,8 @@ export const CARD_STYLES = {
   innerGlow: 'absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent rounded-2xl',
   header: 'flex items-center justify-between mb-6 pb-4 border-b border-white/5',
   content: 'space-y-4',
+  professional: 'relative bg-gradient-to-br from-white/[0.12] via-white/[0.08] to-white/[0.04] backdrop-blur-3xl border border-white/15 rounded-3xl hover:border-white/25 transition-all duration-500 shadow-2xl shadow-black/30 hover:shadow-black/40',
+  enterprise: 'relative bg-gradient-to-br from-white/[0.15] via-white/[0.10] to-white/[0.06] backdrop-blur-3xl border border-white/20 rounded-3xl hover:border-white/30 transition-all duration-500 shadow-2xl shadow-black/40 hover:shadow-black/50',
 } as const;
 
 export const TYPOGRAPHY = {
@@ -181,11 +183,24 @@ export const TYPOGRAPHY = {
     h2: 'text-2xl font-bold tracking-tight text-white',
     h3: 'text-xl font-semibold text-white',
     h4: 'text-lg font-semibold text-white',
+    h5: 'text-base font-semibold text-white',
+    h6: 'text-sm font-semibold text-white uppercase tracking-wider',
   },
   body: {
     large: 'text-base text-slate-200 leading-relaxed',
     base: 'text-sm text-slate-300 leading-relaxed',
     small: 'text-xs text-slate-400 leading-normal',
+    micro: 'text-xs text-slate-500 leading-tight',
   },
   label: 'text-xs font-medium text-slate-400 uppercase tracking-wider',
+  display: {
+    large: 'text-6xl font-black tracking-tighter bg-gradient-to-r from-white via-slate-100 to-slate-200 bg-clip-text text-transparent',
+    medium: 'text-5xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-200 bg-clip-text text-transparent',
+    small: 'text-4xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-200 bg-clip-text text-transparent',
+  },
+  metric: {
+    value: 'text-3xl font-black tracking-tight text-white',
+    label: 'text-sm font-semibold text-slate-400 uppercase tracking-widest',
+    subtext: 'text-xs text-slate-500 font-medium',
+  },
 } as const;
