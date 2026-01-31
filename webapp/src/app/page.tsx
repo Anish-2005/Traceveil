@@ -82,16 +82,32 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0A0E13] text-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <p className="text-red-400 mb-4">Failed to load dashboard data</p>
-          <p className="text-sm text-gray-500 mb-6">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex items-center justify-center relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-500/5 rounded-full blur-3xl animate-pulse" />
+        </div>
+
+        <div className="relative z-10 text-center max-w-md mx-auto p-8">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-red-500/20 rounded-3xl blur-2xl opacity-50" />
+            <div className="relative p-6 rounded-3xl bg-white/[0.08] backdrop-blur-2xl border border-red-400/20 shadow-2xl">
+              <AlertTriangle className="h-16 w-16 text-red-300 mx-auto drop-shadow-lg" />
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-bold text-white mb-4">Connection Error</h2>
+          <p className="text-red-300 mb-6 leading-relaxed">Unable to load dashboard data from the server.</p>
+          <p className="text-sm text-slate-400 mb-8 leading-relaxed">{error}</p>
+
           <button
             onClick={loadDashboardData}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            className="px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 font-semibold text-white transition-all duration-200 shadow-xl shadow-red-500/30 hover:shadow-red-400/40 hover:shadow-2xl hover:scale-105 active:scale-95"
           >
-            Retry
+            <span className="flex items-center gap-3">
+              <Activity className="w-5 h-5" />
+              Retry Connection
+            </span>
           </button>
         </div>
       </div>
@@ -100,12 +116,18 @@ export default function Home() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-[#0A0E13] text-gray-100 relative overflow-hidden">
-        {/* Ambient Background Effects */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 relative overflow-hidden">
+        {/* Enhanced Ambient Background Effects */}
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '700ms' }} />
-          <div className="absolute top-1/3 right-1/3 w-72 h-72 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1000ms' }} />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-500/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s', animationDuration: '10s' }} />
+          <div className="absolute top-1/3 right-1/3 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s', animationDuration: '12s' }} />
+          <div className="absolute top-2/3 left-1/2 w-64 h-64 bg-emerald-500/4 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '6s', animationDuration: '9s' }} />
+        </div>
+
+        {/* Subtle Grid Pattern */}
+        <div className="fixed inset-0 opacity-[0.02] pointer-events-none">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
         </div>
 
         <DashboardHeader />
@@ -123,37 +145,39 @@ interface DashboardHeaderProps {}
 
 function DashboardHeader({}: DashboardHeaderProps) {
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-[#0A0E13]/80 border-b border-white/5">
+    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-slate-900/80 border-b border-white/10 shadow-lg shadow-black/20">
       <div className="max-w-[1920px] mx-auto px-8 h-20">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur-lg opacity-30 group-hover:opacity-50 transition-all duration-300" />
-              <div className="relative p-1.5 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm group-hover:border-white/20 transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
+              <div className="relative p-2 rounded-2xl bg-gradient-to-br from-white/15 to-white/5 border border-white/20 backdrop-blur-xl shadow-xl group-hover:border-white/30 transition-all duration-300 group-hover:scale-105">
                 <img
                   src="/traceveil-logo.svg"
                   alt="Traceveil"
-                  className="w-14 h-14 group-hover:scale-105 transition-transform duration-300"
+                  className="w-16 h-16 group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                 />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-200 bg-clip-text text-transparent drop-shadow-sm">
                 Traceveil
               </h1>
-              <p className="text-xs text-gray-400 font-medium tracking-wide">
-                FRAUD DETECTION SYSTEM
+              <p className="text-sm text-slate-400 font-medium tracking-wider">
+                AI-POWERED FRAUD DETECTION
               </p>
-              <p className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3" />
-                AI-Powered Fraud Intelligence
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <p className="text-xs text-slate-500 font-medium tracking-wide">
+                  REAL-TIME INTELLIGENCE SYSTEM
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-2">
             {[
               { label: "Overview", active: true },
               { label: "Threat Feed", active: false },
@@ -161,41 +185,43 @@ function DashboardHeader({}: DashboardHeaderProps) {
               { label: "Entities", active: false },
               { label: "Models", active: false },
             ].map((item) => (
-              <Link
+              <button
                 key={item.label}
-                href="/"
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
                   item.active
-                    ? "bg-white/10 text-white"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                    ? 'bg-blue-500/20 border border-blue-400/40 text-blue-300 shadow-lg shadow-blue-500/20'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
                 }`}
               >
                 {item.label}
-              </Link>
+              </button>
             ))}
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
-              className="relative p-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition group"
+              className="relative p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 group shadow-lg hover:shadow-xl hover:shadow-black/20"
               aria-label="View alerts"
             >
-              <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              <AlertTriangle className="w-5 h-5 text-gray-400 group-hover:text-white transition" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-pulse shadow-lg shadow-red-500/50" />
+              <AlertTriangle className="w-5 h-5 text-slate-400 group-hover:text-red-400 transition-colors duration-200" />
             </button>
             <button
-              className="px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 font-medium text-sm transition shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-500 hover:via-blue-400 hover:to-cyan-400 font-semibold text-sm transition-all duration-200 shadow-xl shadow-blue-500/30 hover:shadow-blue-400/40 hover:shadow-2xl hover:scale-105 active:scale-95"
               aria-label="Deploy model"
             >
-              Deploy Model
+              <span className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Deploy Model
+              </span>
             </button>
           </div>
         </div>
       </div>
     </header>
   );
-}
+};
 
 interface DashboardMainProps {
   metrics: DashboardMetrics | null;
@@ -205,34 +231,44 @@ interface DashboardMainProps {
 
 function DashboardMain({ metrics, models, lastUpdated }: DashboardMainProps) {
   return (
-    <main className="max-w-[1920px] mx-auto px-8 py-8 space-y-8 relative z-10">
+    <main className="max-w-[1920px] mx-auto px-8 py-12 space-y-12 relative z-10">
       {/* ================= HERO METRICS GRID ================= */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Primary KPI */}
         <div className="lg:col-span-4 relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
-          <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30">
-                <Brain className="w-6 h-6 text-blue-400" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 to-cyan-500/15 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700" />
+          <div className="relative bg-gradient-to-br from-white/[0.08] via-white/[0.05] to-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all duration-300 shadow-2xl shadow-black/20 hover:shadow-black/30">
+            <div className="flex items-start justify-between mb-6">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-400/40 shadow-xl">
+                <Brain className="w-8 h-8 text-blue-300 drop-shadow-sm" />
               </div>
-              <span className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" />
-                +12.4%
-              </span>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-500/50" />
+                <span className="px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold shadow-sm">
+                  LIVE
+                </span>
+              </div>
             </div>
-            <p className="text-sm text-gray-400 font-medium mb-2">Threat Detection Rate</p>
-            <div className="flex items-baseline gap-3">
-              <h3 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                {metrics ? `${(metrics.threat_detection_rate * 100).toFixed(1)}%` : "96.8%"}
-              </h3>
-              <span className="text-sm text-gray-500">accuracy</span>
-            </div>
-            <div className="mt-4 h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-1000"
-                style={{ width: metrics ? `${metrics.threat_detection_rate * 100}%` : '96.8%' }}
-              />
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-slate-400 font-semibold mb-2 tracking-wide">THREAT DETECTION RATE</p>
+                <div className="flex items-baseline gap-4">
+                  <h3 className="text-5xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent tracking-tight">
+                    {metrics ? `${(metrics.threat_detection_rate * 100).toFixed(1)}%` : "96.8%"}
+                  </h3>
+                  <span className="text-lg text-slate-500 font-medium">accuracy</span>
+                </div>
+              </div>
+              <div className="mt-6 h-2 bg-white/10 rounded-full overflow-hidden shadow-inner">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 rounded-full transition-all duration-1000 shadow-sm"
+                  style={{ width: metrics ? `${metrics.threat_detection_rate * 100}%` : '96.8%' }}
+                />
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <span className="text-emerald-300 font-semibold">+12.4% from last hour</span>
+              </div>
             </div>
           </div>
         </div>
@@ -271,15 +307,15 @@ function DashboardMain({ metrics, models, lastUpdated }: DashboardMainProps) {
       </section>
 
       {/* ================= COMMAND CENTER ================= */}
-      <section className="grid lg:grid-cols-12 gap-6">
+      <section className="grid lg:grid-cols-12 gap-8">
         {/* Live Threat Intelligence */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-8">
           <ThreatIntelligenceMap metrics={metrics} lastUpdated={lastUpdated} />
           <ThreatActivityTimeline metrics={metrics} />
         </div>
 
         {/* Right Sidebar */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-8">
           <SystemHealthPanel metrics={metrics} />
           <ActiveModelsPanel models={models} />
           <QuickActionsPanel />
