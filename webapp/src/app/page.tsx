@@ -167,9 +167,6 @@ interface HeroSectionProps {
 }
 
 function HeroSection({ metrics, models }: HeroSectionProps) {
-  const detectionRate = metrics?.threat_detection_rate ?? 0.968;
-  const formattedRate = `${(detectionRate * 100).toFixed(1)}%`;
-
   return (
     <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
       {/* Welcome Card */}

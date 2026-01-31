@@ -1,69 +1,145 @@
 'use client';
 
 import { memo } from 'react';
+import { Brain, Sparkles, Zap, CheckCircle2 } from 'lucide-react';
 import { DashboardModels } from '@/lib/api';
-import { ModelCard } from './ModelCard';
-import { DEFAULT_MODELS } from '@/lib/constants';
 
 /**
  * Props for the ActiveModelsPanel component
  */
 export interface ActiveModelsPanelProps {
-    /** Dashboard models data */
     models: DashboardModels | null;
-    /** Optional custom class names */
     className?: string;
 }
 
 /**
- * Panel displaying active ML models and their status
- * 
- * Features:
- * - Model cards with version and accuracy
- * - Deployed vs training status indicators
- * - Automatic fallback to default demo models
- * - Smooth hover animations
+ * Premium active models panel with enhanced visualizations
  */
 export const ActiveModelsPanel = memo(function ActiveModelsPanel({
     models,
     className = '',
 }: ActiveModelsPanelProps) {
-    const modelList = models?.models ?? DEFAULT_MODELS;
+    const modelsList = models?.models ?? [
+        { name: 'Anomaly Detector v3', status: 'deployed', accuracy: 96.8 },
+        { name: 'Behavior Profiler', status: 'deployed', accuracy: 94.2 },
+        { name: 'Risk Scorer v2', status: 'training', accuracy: 91.5 },
+    ];
+
+    const deployedCount = modelsList.filter(m => m.status === 'deployed').length;
 
     return (
-        <div className={`relative group ${className}`}>
-            {/* Glow effect */}
-            <div
-                className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"
-                aria-hidden="true"
-            />
-
-            <div className="relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300">
-                <h3 className="text-lg font-bold text-white mb-6">
-                    Active Models
-                </h3>
-
-                {/* Models List */}
-                <div
-                    className="space-y-4"
-                    role="list"
-                    aria-label="Active machine learning models"
-                >
-                    {modelList.map((model, index) => (
-                        <ModelCard
-                            key={`model-${model.name}-${index}`}
-                            name={model.name}
-                            version={model.version}
-                            accuracy={model.accuracy}
-                            status={model.status as 'deployed' | 'training'}
-                        />
-                    ))}
+        <div className={`glass-card p-5 lg:p-6 ${className}`}>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-violet-500/15 border border-violet-500/25">
+                        <Brain className="w-4 h-4 text-violet-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-base font-bold text-white">ML Models</h3>
+                        <p className="text-xs text-slate-400">
+                            {deployedCount} deployed, {modelsList.length - deployedCount} training
+                        </p>
+                    </div>
                 </div>
+                <button
+                    type="button"
+                    className="p-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/10 transition-all duration-200 group"
+                    aria-label="Deploy new model"
+                >
+                    <Sparkles className="w-4 h-4 text-slate-400 group-hover:text-violet-400 transition-colors" />
+                </button>
+            </div>
+
+            {/* Models list */}
+            <div className="space-y-3" role="list" aria-label="Active ML models">
+                {modelsList.map((model, index) => (
+                    <ModelCard
+                        key={model.name}
+                        name={model.name}
+                        status={model.status}
+                        accuracy={typeof model.accuracy === 'string' ? parseFloat(model.accuracy) : model.accuracy}
+                        index={index}
+                    />
+                ))}
+            </div>
+
+            {/* View all link */}
+            <button
+                type="button"
+                className="w-full mt-4 py-3 text-sm font-semibold text-slate-400 hover:text-white bg-white/[0.02] hover:bg-white/[0.04] rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200"
+            >
+                Manage Models
+            </button>
+        </div>
+    );
+});
+
+/**
+ * Model card component
+ */
+interface ModelCardProps {
+    name: string;
+    status: string;
+    accuracy: number;
+    index: number;
+}
+
+const ModelCard = memo(function ModelCard({ name, status, accuracy, index }: ModelCardProps) {
+    const isDeployed = status === 'deployed';
+
+    return (
+        <div
+            className="p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200 group"
+            role="listitem"
+            style={{ animationDelay: `${index * 50}ms` }}
+        >
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-white group-hover:text-blue-200 transition-colors truncate">
+                    {name}
+                </span>
+                <span className={`
+          flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+          ${isDeployed
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
+                        : 'bg-violet-500/15 text-violet-400 border border-violet-500/25'
+                    }
+        `}>
+                    {isDeployed ? (
+                        <>
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>Live</span>
+                        </>
+                    ) : (
+                        <>
+                            <Zap className="w-3 h-3" />
+                            <span>Training</span>
+                        </>
+                    )}
+                </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+                <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-1000 ${accuracy >= 95
+                            ? 'bg-gradient-to-r from-emerald-500 to-green-400'
+                            : accuracy >= 90
+                                ? 'bg-gradient-to-r from-blue-500 to-cyan-400'
+                                : 'bg-gradient-to-r from-amber-500 to-yellow-400'
+                            }`}
+                        style={{ width: `${accuracy}%` }}
+                    />
+                </div>
+                <span className="text-xs font-semibold text-slate-300 tabular-nums w-12 text-right">
+                    {accuracy.toFixed(1)}%
+                </span>
             </div>
         </div>
     );
 });
 
 ActiveModelsPanel.displayName = 'ActiveModelsPanel';
+ModelCard.displayName = 'ModelCard';
 
 export default ActiveModelsPanel;
