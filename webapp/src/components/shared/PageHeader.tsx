@@ -33,7 +33,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { href: '/', label: 'Dashboard', icon: <Home className="w-4 h-4" /> },
+    { href: '/dashboard', label: 'Dashboard', icon: <Home className="w-4 h-4" /> },
     { href: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" /> },
     { href: '/models', label: 'Models', icon: <Brain className="w-4 h-4" /> },
     { href: '/users', label: 'Users', icon: <Users className="w-4 h-4" /> },

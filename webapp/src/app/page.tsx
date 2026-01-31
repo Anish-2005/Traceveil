@@ -1,572 +1,305 @@
 'use client';
 
 /**
- * Traceveil Dashboard - Main Page
+ * Traceveil Landing Page
  * 
- * Industry-grade threat intelligence dashboard with premium UI/UX.
- * Features real-time monitoring, AI-powered insights, and enterprise analytics.
+ * Premium marketing landing page showcasing the AI-powered
+ * fraud detection and threat intelligence platform.
  */
 
-import { Activity, AlertTriangle, Zap, Shield, TrendingUp, ArrowUpRight, Brain, ChevronRight } from 'lucide-react';
-
-import { useDashboardData } from '@/hooks';
+import Link from 'next/link';
 import {
-  MetricCard,
-  DashboardHeader,
-  ThreatIntelligenceMap,
-  ThreatActivityTimeline,
-  SystemHealthPanel,
-  ActiveModelsPanel,
-  QuickActionsPanel,
-  EntityMonitoringSection,
-  DashboardSkeleton,
-  ErrorBoundary,
-} from '@/components';
-import { formatResponseTime } from '@/lib/constants';
+  Shield,
+  Brain,
+  Zap,
+  BarChart3,
+  Lock,
+  Globe,
+  ArrowRight,
+  CheckCircle,
+  Play,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Activity,
+  ChevronRight
+} from 'lucide-react';
 
-// ============================================================================
-// MAIN PAGE COMPONENT
-// ============================================================================
-
-export default function DashboardPage() {
-  const {
-    metrics,
-    models,
-    isLoading,
-    error,
-    lastUpdated,
-    refresh,
-  } = useDashboardData();
-
-  // Premium Loading State
-  if (isLoading) {
-    return <DashboardSkeleton />;
-  }
-
-  // Premium Error State
-  if (error) {
-    return <ErrorState message={error} onRetry={refresh} />;
-  }
-
-  // Main Dashboard
+export default function LandingPage() {
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen bg-[#030712] text-slate-100 relative overflow-hidden">
-        {/* Premium Ambient Background */}
-        <BackgroundEffects />
+    <div className="min-h-screen bg-[#030712] text-white overflow-hidden">
+      {/* Background Effects */}
+      <BackgroundEffects />
 
-        {/* Header */}
-        <DashboardHeader alertCount={metrics?.critical_threats ?? 0} />
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#030712]/60 border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-blue-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                <img
+                  src="/traceveil-logo.svg"
+                  alt="Traceveil"
+                  className="relative w-9 h-9 lg:w-10 lg:h-10 transition-transform group-hover:scale-110"
+                />
+              </div>
+              <span className="text-xl font-bold gradient-text-premium">Traceveil</span>
+            </Link>
 
-        {/* Main Content */}
-        <main
-          id="main-content"
-          className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12 space-y-10 lg:space-y-14 relative z-10"
-        >
-          {/* Hero Section - Welcome & Primary KPI */}
-          <section className="animate-fade-up">
-            <HeroSection metrics={metrics} models={models} />
-          </section>
+            {/* Nav Links */}
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#features" className="text-sm text-slate-400 hover:text-white transition-colors">Features</a>
+              <a href="#models" className="text-sm text-slate-400 hover:text-white transition-colors">AI Models</a>
+              <a href="#security" className="text-sm text-slate-400 hover:text-white transition-colors">Security</a>
+              <Link href="/dashboard" className="text-sm text-slate-400 hover:text-white transition-colors">Dashboard</Link>
+            </div>
 
-          <section
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 animate-fade-up stagger-2"
-            aria-label="Key performance indicators"
-          >
-            <MetricCard
-              icon={<Activity className="w-5 h-5" />}
-              label="Active Monitoring"
-              value={metrics?.active_monitoring?.toLocaleString() ?? '0'}
-              subtext="real-time streams"
-              trend={metrics?.active_monitoring ? `+${((metrics.active_monitoring / 2500) * 8.2).toFixed(1)}%` : '0%'}
-              trendUp={true}
-              color="emerald"
+            {/* CTA */}
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+              >
+                <span>Go to Dashboard</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative pt-32 lg:pt-40 pb-20 lg:pb-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span className="text-sm font-medium text-blue-400">AI-Powered Threat Detection</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-tight mb-6">
+              <span className="gradient-text-premium">Detect Fraud</span>
+              <br />
+              <span className="text-white">Before It Happens</span>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Enterprise-grade AI platform for real-time fraud detection, behavioral analysis,
+              and threat intelligence. Protect your business with ML models trained on millions of patterns.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-lg transition-all shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105"
+              >
+                <span>Launch Dashboard</span>
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <button className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] text-white font-semibold text-lg transition-all">
+                <Play className="w-5 h-5" />
+                <span>Watch Demo</span>
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mt-20 pt-10 border-t border-white/[0.06]">
+              <StatItem value="99.7%" label="Detection Accuracy" />
+              <StatItem value="<5ms" label="Response Time" />
+              <StatItem value="10M+" label="Events/Day" />
+              <StatItem value="24/7" label="Monitoring" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 lg:py-32 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-5xl font-bold mb-4">
+              Enterprise-Grade <span className="gradient-text-premium">Security</span>
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Comprehensive threat detection powered by advanced machine learning
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureCard
+              icon={<Brain className="w-6 h-6" />}
+              title="AI-Powered Detection"
+              description="Deep learning models analyze behavioral patterns to identify threats before they materialize"
+              color="blue"
             />
-            <MetricCard
-              icon={<AlertTriangle className="w-5 h-5" />}
-              label="Critical Threats"
-              value={metrics?.critical_threats?.toString() ?? '0'}
-              subtext="require immediate action"
-              trend={metrics?.critical_threats ? `-${Math.round(100 / (metrics.critical_threats + 1))}%` : '0%'}
-              trendUp={false}
-              color="red"
-              pulse={(metrics?.critical_threats ?? 0) > 0}
-            />
-            <MetricCard
-              icon={<Zap className="w-5 h-5" />}
-              label="Avg Response"
-              value={metrics?.avg_response_time
-                ? formatResponseTime(metrics.avg_response_time)
-                : '0ms'}
-              subtext="detection latency"
-              trend={metrics?.avg_response_time ? `-${Math.round(metrics.avg_response_time * 10)}ms` : '0ms'}
-              trendUp={false}
+            <FeatureCard
+              icon={<Zap className="w-6 h-6" />}
+              title="Real-Time Analysis"
+              description="Sub-millisecond threat detection with streaming data processing and instant alerts"
               color="amber"
             />
-            <MetricCard
-              icon={<Shield className="w-5 h-5" />}
-              label="Threats Blocked"
-              value={(metrics?.recent_threats?.length ?? 0).toLocaleString()}
-              subtext="last 24 hours"
-              trend={metrics?.recent_threats?.length ? `+${Math.round((metrics.recent_threats.length / 10) * 100)}%` : '0%'}
-              trendUp={true}
+            <FeatureCard
+              icon={<Shield className="w-6 h-6" />}
+              title="Fraud Prevention"
+              description="Block fraudulent transactions and suspicious activities with 99.7% accuracy"
               color="emerald"
             />
-          </section>
+            <FeatureCard
+              icon={<BarChart3 className="w-6 h-6" />}
+              title="Advanced Analytics"
+              description="Comprehensive dashboards with real-time metrics and trend analysis"
+              color="purple"
+            />
+            <FeatureCard
+              icon={<Globe className="w-6 h-6" />}
+              title="Global Threat Intel"
+              description="Cross-reference events against global threat databases and known patterns"
+              color="cyan"
+            />
+            <FeatureCard
+              icon={<Lock className="w-6 h-6" />}
+              title="Enterprise Security"
+              description="SOC 2 compliant with end-to-end encryption and audit logging"
+              color="rose"
+            />
+          </div>
+        </div>
+      </section>
 
-          {/* Command Center Section */}
-          <section
-            className="grid lg:grid-cols-12 gap-6 lg:gap-8"
-            aria-label="Threat intelligence and system status"
-          >
-            {/* Left Column - Threat Intelligence */}
-            <div className="lg:col-span-8 space-y-6 lg:space-y-8">
-              <div className="animate-fade-up stagger-3">
-                <ThreatIntelligenceMap metrics={metrics} lastUpdated={lastUpdated} />
-              </div>
-              <div className="animate-fade-up stagger-4">
-                <ThreatActivityTimeline metrics={metrics} />
-              </div>
-            </div>
-
-            {/* Right Column - System Status & Actions */}
-            <div className="lg:col-span-4 space-y-6 lg:space-y-8">
-              <div className="animate-slide-in-right stagger-3">
-                <SystemHealthPanel metrics={metrics} />
-              </div>
-              <div className="animate-slide-in-right stagger-4">
-                <ActiveModelsPanel models={models} />
-              </div>
-              <div className="animate-slide-in-right stagger-5">
-                <QuickActionsPanel />
-              </div>
-            </div>
-          </section>
-
-          {/* Entity Monitoring Section */}
-          <section className="animate-fade-up stagger-5">
-            <EntityMonitoringSection metrics={metrics} />
-          </section>
-
-          {/* Footer Stats Bar */}
-          <FooterStatsBar lastUpdated={lastUpdated} metrics={metrics} />
-        </main>
-      </div>
-    </ErrorBoundary>
-  );
-}
-
-// ============================================================================
-// HERO SECTION - Production Grade
-// ============================================================================
-
-interface HeroSectionProps {
-  metrics: any;
-  models: any;
-}
-
-function HeroSection({ metrics, models }: HeroSectionProps) {
-  // Real data from API
-  const detectionRate = metrics?.threat_detection_rate ?? 0;
-  const percentage = Math.round(detectionRate * 100);
-  const activeModels = models?.models?.length ?? 0;
-  const criticalThreats = metrics?.critical_threats ?? 0;
-  const activeMonitoring = metrics?.active_monitoring ?? 0;
-  const recentThreats = metrics?.recent_threats ?? [];
-  const avgResponseTime = metrics?.avg_response_time ?? 0;
-
-  // Calculate high severity threats from recent_threats
-  const highThreats = recentThreats.filter((t: any) => t.severity === 'high').length;
-
-  // Calculate average model accuracy from models
-  const avgModelAccuracy = models?.models?.length > 0
-    ? models.models.reduce((sum: number, m: any) => {
-      const acc = parseFloat(m.accuracy?.replace('%', '') || '0');
-      return sum + acc;
-    }, 0) / models.models.length
-    : 0;
-
-  // Calculate healthy models count
-  const healthyModels = models?.models?.filter((m: any) => m.status === 'active' || m.status === 'healthy').length ?? 0;
-
-  // Calculate TPR/FPR based on detection rate (simulated from real detection rate)
-  const truePositiveRate = percentage > 0 ? Math.min(percentage + 0.8, 99.9) : 0;
-  const falsePositiveRate = percentage > 0 ? Math.max(100 - percentage - 1, 0.5) : 0;
-
-  // System health status
-  const systemHealth = metrics?.system_health ?? {};
-  const allSystemsOperational = Object.values(systemHealth).every((s: any) => s?.status === 'healthy');
-
-  return (
-    <div className="relative">
-      {/* Background decoration */}
-      <div className="absolute inset-0 -z-10 overflow-hidden rounded-3xl">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-500/5 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-gradient-to-tr from-purple-500/5 to-transparent" />
-      </div>
-
-      <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-        {/* Left Column - Welcome & Stats */}
-        <div className="lg:col-span-6 flex flex-col">
-          {/* Welcome Card */}
-          <div className="glass-card-elevated p-6 lg:p-8 flex-1 flex flex-col">
-            {/* Status Badge */}
-            <div className="flex items-center justify-between mb-6">
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${allSystemsOperational
-                ? 'bg-emerald-500/10 border border-emerald-500/25'
-                : 'bg-amber-500/10 border border-amber-500/25'
-                }`}>
-                <div className="relative">
-                  <div className={`w-2 h-2 rounded-full ${allSystemsOperational ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                  <div className={`absolute inset-0 w-2 h-2 rounded-full animate-ping ${allSystemsOperational ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                </div>
-                <span className={`text-[11px] font-bold uppercase tracking-wider ${allSystemsOperational ? 'text-emerald-400' : 'text-amber-400'
-                  }`}>
-                  {allSystemsOperational ? 'All Systems Operational' : 'Partial System Issues'}
-                </span>
-              </div>
-              <span className="text-xs text-slate-500">
-                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-              </span>
-            </div>
-
-            {/* Hero Text */}
-            <div className="mb-8">
-              <p className="text-overline mb-3">Security Command Center</p>
-              <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight mb-4 leading-tight">
-                Real-time Threat<br />
-                <span className="gradient-text-premium">Intelligence</span>
-              </h1>
-              <p className="text-body leading-relaxed">
-                AI-powered fraud detection monitoring{' '}
-                <span className="text-white font-semibold">{activeMonitoring.toLocaleString()}</span>{' '}
-                data streams with <span className="text-blue-400 font-semibold">{percentage}%</span> detection accuracy.
+      {/* AI Models Section */}
+      <section id="models" className="py-20 lg:py-32 bg-gradient-to-b from-transparent via-blue-500/[0.03] to-transparent">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div>
+              <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+                Trained on <span className="gradient-text-premium">Millions</span> of Patterns
+              </h2>
+              <p className="text-lg text-slate-400 mb-8 leading-relaxed">
+                Our AI models are trained on extensive datasets of fraud patterns, behavioral anomalies,
+                and threat signatures. Continuous learning ensures protection against emerging threats.
               </p>
-            </div>
 
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 gap-3 mt-auto">
-              <StatCard
-                label="Recent Events"
-                value={recentThreats.length.toString()}
-                change={recentThreats.length > 0 ? `${recentThreats.length} detected` : 'None'}
-                positive={recentThreats.length > 0}
-                icon={<Activity className="w-4 h-4" />}
-              />
-              <StatCard
-                label="Models Active"
-                value={activeModels.toString()}
-                change={healthyModels === activeModels ? 'All healthy' : `${healthyModels} healthy`}
-                positive={healthyModels === activeModels}
-                icon={<Brain className="w-4 h-4" />}
-              />
-              <StatCard
-                label="Threats Blocked"
-                value={recentThreats.length.toLocaleString()}
-                change={recentThreats.length > 0 ? `+${recentThreats.length}` : '0'}
-                positive={true}
-                icon={<Shield className="w-4 h-4" />}
-              />
-              <StatCard
-                label="Avg Latency"
-                value={avgResponseTime > 0 ? `${avgResponseTime.toFixed(1)}ms` : '0ms'}
-                change={avgResponseTime > 0 ? `${avgResponseTime < 10 ? 'Fast' : 'Normal'}` : 'N/A'}
-                positive={avgResponseTime < 10}
-                icon={<Zap className="w-4 h-4" />}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column - Primary KPI */}
-        <div className="lg:col-span-6 flex flex-col">
-          <div className="glass-card-elevated p-6 lg:p-8 h-full">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-blue-500/15 border border-blue-500/25">
-                    <Brain className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <span className="text-overline">AI Detection Engine</span>
-                </div>
-                <h2 className="text-xl lg:text-2xl font-bold text-white">
-                  Threat Detection Performance
-                </h2>
-              </div>
-              <div className="hidden sm:flex items-center gap-2">
-                <span className="text-xs text-slate-400">Last 24h</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
-              </div>
-            </div>
-
-            {/* Main KPI Display - Vertical Layout */}
-            <div className="flex flex-col items-center gap-6 flex-1">
-              {/* Circular Progress - Centered */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-3xl animate-pulse-glow" />
-                <div className="relative w-36 h-36 lg:w-44 lg:h-44">
-                  <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 140 140">
-                    <circle
-                      cx="70" cy="70" r="62"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.05)"
-                      strokeWidth="12"
-                    />
-                    <circle
-                      cx="70" cy="70" r="62"
-                      fill="none"
-                      stroke="url(#kpiGradient)"
-                      strokeWidth="12"
-                      strokeLinecap="round"
-                      strokeDasharray={2 * Math.PI * 62}
-                      strokeDashoffset={2 * Math.PI * 62 * (1 - percentage / 100)}
-                      className="transition-all duration-1000 ease-out"
-                    />
-                    <defs>
-                      <linearGradient id="kpiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#3b82f6" />
-                        <stop offset="50%" stopColor="#06b6d4" />
-                        <stop offset="100%" stopColor="#8b5cf6" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl lg:text-5xl font-black text-white tracking-tight">
-                      {percentage}
-                      <span className="text-2xl lg:text-3xl">%</span>
-                    </span>
-                    <span className="text-xs text-slate-400 font-medium mt-1">accuracy</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Performance Metrics - Below Circle */}
-              <div className="w-full space-y-4">
-                <PerformanceBar
-                  label="True Positive Rate"
-                  value={truePositiveRate}
-                  color="emerald"
+              <div className="space-y-4">
+                <ModelItem
+                  name="Anomaly Detector"
+                  accuracy="94.2%"
+                  description="Autoencoder neural network for behavioral analysis"
                 />
-                <PerformanceBar
-                  label="False Positive Rate"
-                  value={falsePositiveRate}
-                  color="red"
-                  inverted
+                <ModelItem
+                  name="Sequence Model"
+                  accuracy="91.8%"
+                  description="LSTM network for temporal pattern detection"
                 />
-                <PerformanceBar
-                  label="Model Confidence"
-                  value={avgModelAccuracy > 0 ? avgModelAccuracy : percentage * 0.97}
-                  color="blue"
+                <ModelItem
+                  name="Graph Analyzer"
+                  accuracy="96.5%"
+                  description="Graph neural network for relationship fraud"
                 />
               </div>
 
-              {/* Alert Summary - Bottom */}
-              <div className="w-full flex items-center justify-between pt-4 border-t border-white/[0.06] mt-auto">
-                <div className="flex items-center gap-3">
-                  {criticalThreats > 0 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
-                      <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
-                      <span className="text-xs font-bold text-red-400">
-                        {criticalThreats} Critical
-                      </span>
-                    </div>
-                  )}
-                  {highThreats > 0 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                      <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                      <span className="text-xs font-bold text-amber-400">
-                        {highThreats} High
-                      </span>
-                    </div>
-                  )}
-                  {criticalThreats === 0 && highThreats === 0 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                      <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-xs font-bold text-emerald-400">
-                        No Active Threats
-                      </span>
-                    </div>
-                  )}
+              <Link
+                href="/models"
+                className="inline-flex items-center gap-2 mt-8 text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+              >
+                <span>Explore Our Models</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Visual */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-3xl" />
+              <div className="relative glass-card p-8 lg:p-12">
+                <div className="grid grid-cols-2 gap-6">
+                  <MetricBox icon={<Activity />} value="15,247" label="Events Analyzed" />
+                  <MetricBox icon={<Shield />} value="847" label="Threats Blocked" />
+                  <MetricBox icon={<TrendingUp />} value="96.8%" label="Detection Rate" />
+                  <MetricBox icon={<Users />} value="2,341" label="Active Streams" />
                 </div>
-                <button className="flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors">
-                  <span>View All</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      </section>
 
-// ============================================================================
-// STAT CARD COMPONENT
-// ============================================================================
-
-interface StatCardProps {
-  label: string;
-  value: string;
-  change: string;
-  positive: boolean;
-  icon: React.ReactNode;
-}
-
-function StatCard({ label, value, change, positive, icon }: StatCardProps) {
-  return (
-    <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] hover:border-white/[0.1] transition-all duration-200 group cursor-pointer">
-      <div className="flex items-center justify-between mb-2">
-        <div className="p-1.5 rounded-lg bg-white/[0.04] text-slate-400 group-hover:text-blue-400 transition-colors">
-          {icon}
+      {/* CTA Section */}
+      <section className="py-20 lg:py-32">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+            Ready to Secure Your Platform?
+          </h2>
+          <p className="text-lg text-slate-400 mb-10">
+            Start detecting threats in real-time with our AI-powered security platform.
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xl transition-all shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105"
+          >
+            <span>Get Started Now</span>
+            <ArrowRight className="w-6 h-6" />
+          </Link>
         </div>
-        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${positive
-          ? 'bg-emerald-500/15 text-emerald-400'
-          : 'bg-red-500/15 text-red-400'
-          }`}>
-          {change}
-        </span>
-      </div>
-      <p className="text-xs text-slate-400 mb-0.5">{label}</p>
-      <p className="text-xl font-bold text-white">{value}</p>
-    </div>
-  );
-}
+      </section>
 
-// ============================================================================
-// PERFORMANCE BAR COMPONENT
-// ============================================================================
-
-interface PerformanceBarProps {
-  label: string;
-  value: number;
-  color: 'emerald' | 'red' | 'blue' | 'amber';
-  inverted?: boolean;
-}
-
-function PerformanceBar({ label, value, color, inverted }: PerformanceBarProps) {
-  const colorClasses = {
-    emerald: 'from-emerald-500 to-green-400',
-    red: 'from-red-500 to-rose-400',
-    blue: 'from-blue-500 to-cyan-400',
-    amber: 'from-amber-500 to-yellow-400',
-  }[color];
-
-  const textColor = {
-    emerald: 'text-emerald-400',
-    red: 'text-red-400',
-    blue: 'text-blue-400',
-    amber: 'text-amber-400',
-  }[color];
-
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm text-slate-400">{label}</span>
-        <span className={`text-sm font-bold ${inverted ? (value < 5 ? 'text-emerald-400' : 'text-red-400') : textColor}`}>
-          {value}%
-        </span>
-      </div>
-      <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full bg-gradient-to-r ${colorClasses} transition-all duration-1000`}
-          style={{ width: `${inverted ? value * 10 : value}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// FOOTER STATS BAR
-// ============================================================================
-
-interface FooterStatsBarProps {
-  lastUpdated: Date;
-  metrics: any;
-}
-
-function FooterStatsBar({ lastUpdated, metrics }: FooterStatsBarProps) {
-  // Calculate uptime from system health
-  const systemHealth = metrics?.system_health ?? {};
-  const healthyCount = Object.values(systemHealth).filter((s: any) => s?.status === 'healthy').length;
-  const totalCount = Object.keys(systemHealth).length || 1;
-  const uptimePercentage = ((healthyCount / totalCount) * 100).toFixed(1);
-
-  return (
-    <div className="glass-card p-4 lg:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-slate-400">
-              Last updated:{' '}
-              <time className="text-white font-medium" dateTime={lastUpdated.toISOString()}>
-                {lastUpdated.toLocaleTimeString()}
-              </time>
-            </span>
-          </div>
-          <div className="hidden sm:flex items-center gap-2 text-slate-400">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <span>{uptimePercentage}% uptime ({healthyCount}/{totalCount} systems healthy)</span>
+      {/* Footer */}
+      <footer className="border-t border-white/[0.06] py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <img src="/traceveil-logo.svg" alt="Traceveil" className="w-8 h-8" />
+              <span className="font-bold text-white">Traceveil</span>
+              <span className="text-slate-500">© 2026</span>
+            </div>
+            <div className="flex items-center gap-8 text-sm text-slate-400">
+              <a href="#" className="hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms</a>
+              <a href="#" className="hover:text-white transition-colors">Documentation</a>
+              <a href="#" className="hover:text-white transition-colors">GitHub</a>
+            </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button className="btn-ghost text-sm flex items-center gap-2">
-            <span>View Analytics</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-          <button className="btn-primary text-sm">
-            Generate Report
-          </button>
-        </div>
-      </div>
+      </footer>
     </div>
   );
 }
 
 // ============================================================================
-// BACKGROUND EFFECTS
+// COMPONENTS
 // ============================================================================
 
 function BackgroundEffects() {
   return (
     <>
-      {/* Primary gradient orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        {/* Top-right blue orb */}
         <div
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-30"
+          className="absolute -top-40 -right-40 w-[800px] h-[800px] rounded-full opacity-30"
           style={{
             background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
             animation: 'float 8s ease-in-out infinite',
           }}
         />
-
-        {/* Bottom-left purple orb */}
         <div
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full opacity-25"
+          className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-25"
           style={{
             background: 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%)',
             animation: 'float 10s ease-in-out infinite reverse',
-            animationDelay: '2s',
           }}
         />
-
-        {/* Center cyan accent */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-10"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] rounded-full opacity-10"
           style={{
             background: 'radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 60%)',
-            animation: 'pulse-glow 6s ease-in-out infinite',
           }}
         />
       </div>
-
-      {/* Subtle grid pattern */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-[0.015]"
+        className="fixed inset-0 pointer-events-none opacity-[0.02]"
         aria-hidden="true"
         style={{
           backgroundImage: `
@@ -576,77 +309,72 @@ function BackgroundEffects() {
           backgroundSize: '60px 60px',
         }}
       />
-
-      {/* Top gradient overlay */}
-      <div
-        className="fixed top-0 left-0 right-0 h-40 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to bottom, rgba(3, 7, 18, 0.8), transparent)',
-        }}
-        aria-hidden="true"
-      />
     </>
   );
 }
 
-// ============================================================================
-// ERROR STATE
-// ============================================================================
-
-interface ErrorStateProps {
-  message: string;
-  onRetry: () => void;
+function StatItem({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="text-center">
+      <div className="text-3xl lg:text-4xl font-black gradient-text-premium mb-1">{value}</div>
+      <div className="text-sm text-slate-400">{label}</div>
+    </div>
+  );
 }
 
-function ErrorState({ message, onRetry }: ErrorStateProps) {
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  color: 'blue' | 'amber' | 'emerald' | 'purple' | 'cyan' | 'rose';
+}
+
+function FeatureCard({ icon, title, description, color }: FeatureCardProps) {
+  const colorClasses = {
+    blue: 'from-blue-500/20 to-blue-600/10 border-blue-500/20 text-blue-400',
+    amber: 'from-amber-500/20 to-amber-600/10 border-amber-500/20 text-amber-400',
+    emerald: 'from-emerald-500/20 to-emerald-600/10 border-emerald-500/20 text-emerald-400',
+    purple: 'from-purple-500/20 to-purple-600/10 border-purple-500/20 text-purple-400',
+    cyan: 'from-cyan-500/20 to-cyan-600/10 border-cyan-500/20 text-cyan-400',
+    rose: 'from-rose-500/20 to-rose-600/10 border-rose-500/20 text-rose-400',
+  }[color];
+
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 flex items-center justify-center relative overflow-hidden">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%)',
-            animation: 'pulse-glow 4s ease-in-out infinite',
-          }}
-        />
+    <div className="glass-card p-6 lg:p-8 group hover:scale-[1.02] transition-all">
+      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colorClasses} border mb-4`}>
+        {icon}
       </div>
+      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+      <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
+    </div>
+  );
+}
 
-      <div className="relative z-10 text-center max-w-md mx-auto p-8 animate-scale-in">
-        {/* Error Icon */}
-        <div className="relative mb-8 inline-block">
-          <div
-            className="absolute inset-0 bg-red-500/20 rounded-3xl blur-2xl"
-            aria-hidden="true"
-          />
-          <div className="relative p-8 rounded-3xl glass-card-elevated border-red-500/20">
-            <AlertTriangle className="h-16 w-16 text-red-400 mx-auto" aria-hidden="true" />
-          </div>
+function ModelItem({ name, accuracy, description }: { name: string; accuracy: string; description: string }) {
+  return (
+    <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+      <div className="p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/25">
+        <CheckCircle className="w-5 h-5 text-emerald-400" />
+      </div>
+      <div className="flex-1">
+        <div className="flex items-center justify-between mb-1">
+          <span className="font-semibold text-white">{name}</span>
+          <span className="text-sm font-bold text-emerald-400">{accuracy}</span>
         </div>
-
-        {/* Error Content */}
-        <h2 className="text-2xl font-bold text-white mb-4">
-          Connection Error
-        </h2>
-        <p className="text-red-300/80 mb-4 leading-relaxed">
-          Unable to load dashboard data from the server.
-        </p>
-        <p className="text-sm text-slate-500 mb-8 font-mono bg-slate-900/50 p-3 rounded-lg border border-white/5">
-          {message}
-        </p>
-
-        {/* Retry Button */}
-        <button
-          type="button"
-          onClick={onRetry}
-          className="px-8 py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 font-semibold text-white transition-all duration-300 shadow-xl shadow-red-500/25 hover:shadow-red-400/40 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712]"
-        >
-          <span className="flex items-center gap-3">
-            <Activity className="w-5 h-5" aria-hidden="true" />
-            Retry Connection
-          </span>
-        </button>
+        <p className="text-sm text-slate-400">{description}</p>
       </div>
+    </div>
+  );
+}
+
+function MetricBox({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+  return (
+    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+      <div className="inline-flex p-2 rounded-lg bg-blue-500/10 text-blue-400 mb-3">
+        {icon}
+      </div>
+      <div className="text-xl font-bold text-white mb-1">{value}</div>
+      <div className="text-xs text-slate-400">{label}</div>
     </div>
   );
 }
