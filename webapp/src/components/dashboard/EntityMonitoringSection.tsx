@@ -100,7 +100,7 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
                             id={entity.id}
                             type={entity.type}
                             riskScore={entity.riskScore}
-                            flags={entity.flags}
+                            flags={[...entity.flags]}
                             status={entity.status}
                         />
                     ))}

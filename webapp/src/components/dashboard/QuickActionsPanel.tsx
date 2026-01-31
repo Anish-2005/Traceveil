@@ -57,13 +57,13 @@ export const QuickActionsPanel = memo(function QuickActionsPanel({
                 >
                     {QUICK_ACTIONS.map((action) => {
                         const IconComponent = ICON_MAP[action.icon];
+                        const count = 'count' in action ? action.count : undefined;
                         return (
                             <QuickAction
                                 key={action.label}
                                 icon={<IconComponent className="w-4 h-4" />}
                                 label={action.label}
-                                count={action.count}
-                                onClick={() => onActionClick?.(action.label)}
+                                count={count}
                             />
                         );
                     })}
