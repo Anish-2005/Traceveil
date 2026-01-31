@@ -7,7 +7,7 @@ import { useCountUp } from '@/hooks';
 
 export function HeroSection() {
     return (
-        <section className="relative min-h-screen pt-32 lg:pt-40 pb-20 overflow-hidden">
+        <section className="relative min-h-screen pt-20 lg:pt-30 pb-20 overflow-hidden">
             {/* Animated Grid Background */}
             <div className="absolute inset-0 pointer-events-none">
                 <div

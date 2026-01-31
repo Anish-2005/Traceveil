@@ -819,6 +819,7 @@ body {
   border-radius: 1rem;
   cursor: pointer;
   overflow: hidden;
+  white-space: nowrap;
   transition: transform 0.3s cubic-bezier(0.03, 0.98, 0.52, 0.99),
     box-shadow 0.3s ease;
   box-shadow:
