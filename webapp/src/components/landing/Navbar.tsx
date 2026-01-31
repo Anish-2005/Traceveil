@@ -57,10 +57,10 @@ export function Navbar() {
                         <div className="hidden md:flex items-center gap-4">
                             <Link
                                 href="/dashboard"
-                                className="magnetic-btn gap-2 text-sm py-2.5 px-5"
+                                className="group flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
                             >
-                                <span>Launch Dashboard</span>
-                                <ArrowRight className="w-4 h-4" />
+                                <span>Get Started</span>
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                             </Link>
                         </div>
 

@@ -1,111 +1,155 @@
 import Link from 'next/link';
-import { Brain, ChevronRight, CheckCircle, Activity, Shield, TrendingUp, Users } from 'lucide-react';
+import { Brain, ChevronRight, Terminal, GitBranch, Cpu, Network } from 'lucide-react';
 
 export function AIModelsSection() {
     const models = [
-        { name: 'Anomaly Detector', accuracy: 94.2, type: 'Autoencoder Neural Network', status: 'active' },
-        { name: 'Sequence Model', accuracy: 91.8, type: 'LSTM Network', status: 'active' },
-        { name: 'Graph Analyzer', accuracy: 96.5, type: 'Graph Neural Network', status: 'active' },
+        {
+            id: 'mod_01',
+            name: 'Anomaly Detector',
+            type: 'Autoencoder NN',
+            latency: '12ms',
+            accuracy: '99.4%',
+            status: 'active'
+        },
+        {
+            id: 'mod_02',
+            name: 'Sequence Analyzer',
+            type: 'Bi-LSTM',
+            latency: '24ms',
+            accuracy: '98.8%',
+            status: 'active'
+        },
+        {
+            id: 'mod_03',
+            name: 'Graph Network',
+            type: 'GNN-v4',
+            latency: '45ms',
+            accuracy: '97.2%',
+            status: 'training'
+        },
     ];
 
     return (
-        <section id="models" className="py-24 lg:py-32 bg-gradient-to-b from-transparent via-blue-500/[0.03] to-transparent">
+        <section id="models" className="py-24 lg:py-32 bg-[#030712] relative border-t border-white/[0.05]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-                    {/* Left Column */}
-                    <div>
-                        <div className="scroll-reveal inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25 mb-6">
-                            <Brain className="w-4 h-4 text-emerald-400" />
-                            <span className="text-sm font-semibold text-emerald-400">ML-Powered</span>
+                <div className="grid lg:grid-cols-12 gap-12 items-start">
+
+                    {/* Left Column: Context */}
+                    <div className="lg:col-span-5 pt-4">
+                        <div className="inline-flex items-center gap-2 mb-8 text-blue-400 font-mono text-xs tracking-wider uppercase">
+                            <Terminal className="w-4 h-4" />
+                            <span>Neural Architecture</span>
                         </div>
 
-                        <h2 className="scroll-reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-                            Trained on <span className="gradient-text-premium">Millions</span> of Patterns
+                        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+                            Multi-layered <br />
+                            <span className="text-slate-500">intelligence engine.</span>
                         </h2>
 
-                        <p className="scroll-reveal reveal-delay-2 text-lg text-slate-400 mb-8 leading-relaxed">
-                            Our AI models are trained on extensive datasets of fraud patterns, behavioral anomalies,
-                            and threat signatures. Continuous learning ensures protection against emerging threats.
+                        <p className="text-lg text-slate-400 mb-8 leading-relaxed">
+                            Our proprietary ensemble model combines unsupervised learning for anomaly detection
+                            with deep graph networks for relationship mapping.
                         </p>
 
-                        {/* Model Cards */}
-                        <div className="space-y-4">
-                            {models.map((model, i) => (
-                                <ModelCard key={model.name} {...model} delay={i + 3} />
-                            ))}
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-start gap-3 p-4 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                                <Cpu className="w-5 h-5 text-slate-500 mt-0.5" />
+                                <div>
+                                    <div className="text-white font-medium text-sm">Parallel Processing</div>
+                                    <div className="text-slate-500 text-xs mt-1">Simultaneous execution across 4,096 CUDA cores per node.</div>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3 p-4 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+                                <GitBranch className="w-5 h-5 text-slate-500 mt-0.5" />
+                                <div>
+                                    <div className="text-white font-medium text-sm">Continuous Training</div>
+                                    <div className="text-slate-500 text-xs mt-1">Models re-weight every 6 hours based on global threat feedback.</div>
+                                </div>
+                            </div>
                         </div>
 
                         <Link
                             href="/models"
-                            className="scroll-reveal reveal-delay-6 inline-flex items-center gap-2 mt-8 text-blue-400 hover:text-blue-300 font-semibold transition-colors group"
+                            className="inline-flex items-center gap-2 mt-10 text-white hover:text-blue-400 font-medium transition-colors text-sm group"
                         >
-                            <span>Explore Our Models</span>
+                            <span>Read Technical Whitepaper</span>
                             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
 
-                    {/* Right Column - Visual */}
-                    <div className="scroll-reveal-right relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-3xl blur-3xl" />
-                        <div className="relative glass-card p-8 lg:p-12">
-                            <div className="grid grid-cols-2 gap-6">
-                                <LiveMetricBox icon={<Activity />} value="15,247" label="Events Analyzed" trend="+12%" />
-                                <LiveMetricBox icon={<Shield />} value="847" label="Threats Blocked" trend="+23%" />
-                                <LiveMetricBox icon={<TrendingUp />} value="96.8%" label="Detection Rate" trend="+0.5%" />
-                                <LiveMetricBox icon={<Users />} value="2,341" label="Active Streams" trend="+8%" />
+                    {/* Right Column: Technical Spec Table */}
+                    <div className="lg:col-span-7">
+                        <div className="rounded-2xl border border-white/[0.08] bg-[#0a0f1a] overflow-hidden">
+                            {/* Panel Header */}
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-white/[0.01]">
+                                <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
+                                    <Network className="w-4 h-4" />
+                                    <span>active_inference_nodes</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="text-xs font-medium text-emerald-500">Operational</span>
+                                </div>
+                            </div>
+
+                            {/* Table Header */}
+                            <div className="grid grid-cols-12 px-6 py-3 border-b border-white/[0.04] bg-white/[0.005] text-xs font-mono text-slate-500 uppercase tracking-wider">
+                                <div className="col-span-4">Model ID</div>
+                                <div className="col-span-3">Type</div>
+                                <div className="col-span-2 text-right">Latency</div>
+                                <div className="col-span-3 text-right">Precision</div>
+                            </div>
+
+                            {/* Rows */}
+                            <div className="divide-y divide-white/[0.04]">
+                                {models.map((model, i) => (
+                                    <div key={model.id} className="grid grid-cols-12 px-6 py-5 items-center hover:bg-white/[0.02] transition-colors group">
+                                        <div className="col-span-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`h-2 w-2 rounded-full ${model.status === 'active' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                                                <div>
+                                                    <div className="text-sm font-medium text-white font-mono group-hover:text-blue-400 transition-colors">{model.name}</div>
+                                                    <div className="text-xs text-slate-600 font-mono mt-0.5">{model.id}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-span-3">
+                                            <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/[0.05] border border-white/[0.05] text-xs text-slate-300 font-mono">
+                                                {model.type}
+                                            </span>
+                                        </div>
+                                        <div className="col-span-2 text-right">
+                                            <span className="text-xs text-slate-400 font-mono">{model.latency}</span>
+                                        </div>
+                                        <div className="col-span-3 text-right">
+                                            <span className="text-sm font-bold text-emerald-400 font-mono">{model.accuracy}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Footer / Console Log */}
+                            <div className="px-6 py-4 bg-[#05080f] border-t border-white/[0.08]">
+                                <div className="font-mono text-[10px] leading-relaxed text-slate-600 space-y-1">
+                                    <div className="flex gap-2">
+                                        <span className="text-blue-500">info</span>
+                                        <span>[10:42:01] Ensemble weights updated (v4.2.1)</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="text-blue-500">info</span>
+                                        <span>[10:42:03] Graph re-indexing complete (3.2ms)</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <span className="text-emerald-500">success</span>
+                                        <span>[10:42:05] Node synchronization verified</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
-    );
-}
-
-interface ModelCardProps {
-    name: string;
-    accuracy: number;
-    type: string;
-    status: string;
-    delay: number;
-}
-
-function ModelCard({ name, accuracy, type, delay }: ModelCardProps) {
-    return (
-        <div className={`scroll-reveal reveal-delay-${Math.min(delay, 6)} flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.1] transition-all group`}>
-            <div className="p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/25">
-                <CheckCircle className="w-5 h-5 text-emerald-400" />
-            </div>
-            <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-white group-hover:text-emerald-200 transition-colors">{name}</span>
-                    <span className="text-sm font-bold text-emerald-400">{accuracy}%</span>
-                </div>
-                <p className="text-sm text-slate-400 mb-3">{type}</p>
-                <div className="progress-glow">
-                    <div className="progress-glow-fill" style={{ width: `${accuracy}%` }} />
-                </div>
-            </div>
-        </div>
-    );
-}
-
-interface LiveMetricBoxProps {
-    icon: React.ReactNode;
-    value: string;
-    label: string;
-    trend: string;
-}
-
-function LiveMetricBox({ icon, value, label, trend }: LiveMetricBoxProps) {
-    return (
-        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center hover:bg-white/[0.04] transition-all group">
-            <div className="inline-flex p-2 rounded-lg bg-blue-500/10 text-blue-400 mb-3 icon-pulse">
-                {icon}
-            </div>
-            <div className="text-xl font-bold text-white mb-1">{value}</div>
-            <div className="text-xs text-slate-400 mb-2">{label}</div>
-            <div className="text-xs font-semibold text-emerald-400">{trend}</div>
-        </div>
     );
 }
