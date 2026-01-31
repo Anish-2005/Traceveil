@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { Brain, TrendingUp } from 'lucide-react';
+import { Brain, TrendingUp, ArrowUpRight, Zap } from 'lucide-react';
 import { DashboardMetrics } from '@/lib/api';
 import { formatRiskScore, DEFAULT_METRICS } from '@/lib/constants';
 
@@ -16,100 +16,154 @@ export interface PrimaryKPICardProps {
 }
 
 /**
- * Hero KPI card displaying the primary threat detection rate metric
+ * Premium hero KPI card with animated visualizations
  * 
  * Features:
- * - Large, prominent metric display
- * - Live indicator with pulse animation
- * - Visual progress bar
- * - Trend indicator with percentage change
- * - Graceful fallback when data is unavailable
+ * - Prominent detection rate display with gradient
+ * - Animated circular progress ring
+ * - Real-time stats with micro-animations
+ * - Premium glassmorphism styling
  */
 export const PrimaryKPICard = memo(function PrimaryKPICard({
     metrics,
     className = '',
 }: PrimaryKPICardProps) {
     const detectionRate = metrics?.threat_detection_rate ?? DEFAULT_METRICS.threatDetectionRate;
-    const formattedRate = formatRiskScore(detectionRate);
+    const percentage = Math.round(detectionRate * 100);
+    const circumference = 2 * Math.PI * 54; // radius = 54
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-        <div className={`relative group ${className}`}>
-            {/* Glow effect on hover */}
-            <div
-                className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"
-                aria-hidden="true"
-            />
-
-            <div className="relative bg-gradient-to-br from-white/90 to-blue-50 dark:from-slate-900/80 dark:to-slate-800/80 border border-slate-200/40 dark:border-white/10 rounded-2xl p-7 shadow-md hover:shadow-lg transition-all duration-300">
-                {/* Header with icon and live indicator */}
-                <div className="flex items-center justify-between mb-6">
-                    <span
-                        className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30"
+        <div className={`glass-card-elevated p-6 lg:p-8 overflow-hidden ${className}`}>
+            <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
+                {/* Circular Progress */}
+                <div className="relative flex-shrink-0 mx-auto lg:mx-0">
+                    {/* Background glow */}
+                    <div
+                        className="absolute inset-0 bg-blue-500/20 rounded-full blur-2xl animate-pulse-glow"
                         aria-hidden="true"
-                    >
-                        <Brain className="w-7 h-7 text-blue-500 dark:text-blue-300" />
-                    </span>
-
-                    <div
-                        className="flex items-center gap-2"
-                        role="status"
-                        aria-label="Live data indicator"
-                    >
-                        <span
-                            className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"
-                            aria-hidden="true"
-                        />
-                        <span className="text-xs font-semibold text-emerald-500 uppercase tracking-wide">
-                            Live
-                        </span>
-                    </div>
-                </div>
-
-                {/* Metric display */}
-                <div className="mb-4">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 tracking-wide uppercase">
-                        Threat Detection Rate
-                    </p>
-                    <div className="flex items-end gap-3">
-                        <span
-                            className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight"
-                            aria-label={`${formattedRate} accuracy`}
-                        >
-                            {formattedRate}
-                        </span>
-                        <span className="text-base text-slate-400 font-medium pb-1">
-                            accuracy
-                        </span>
-                    </div>
-                </div>
-
-                {/* Progress bar */}
-                <div
-                    className="h-2 bg-slate-200/60 dark:bg-slate-700/40 rounded-full overflow-hidden"
-                    role="progressbar"
-                    aria-valuenow={Math.round(detectionRate * 100)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label="Detection rate progress"
-                >
-                    <div
-                        className="h-full bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 rounded-full transition-all duration-1000 ease-out"
-                        style={{ width: `${detectionRate * 100}%` }}
                     />
+
+                    <div className="relative w-36 h-36 lg:w-40 lg:h-40">
+                        {/* SVG Progress Ring */}
+                        <svg
+                            className="w-full h-full -rotate-90 transform"
+                            viewBox="0 0 120 120"
+                            aria-hidden="true"
+                        >
+                            {/* Background ring */}
+                            <circle
+                                cx="60"
+                                cy="60"
+                                r="54"
+                                fill="none"
+                                stroke="rgba(255,255,255,0.06)"
+                                strokeWidth="8"
+                            />
+                            {/* Progress ring */}
+                            <circle
+                                cx="60"
+                                cy="60"
+                                r="54"
+                                fill="none"
+                                stroke="url(#progressGradient)"
+                                strokeWidth="8"
+                                strokeLinecap="round"
+                                strokeDasharray={circumference}
+                                strokeDashoffset={strokeDashoffset}
+                                className="transition-all duration-1000 ease-out"
+                            />
+                            {/* Gradient definition */}
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="#3b82f6" />
+                                    <stop offset="50%" stopColor="#06b6d4" />
+                                    <stop offset="100%" stopColor="#8b5cf6" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+
+                        {/* Center content */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-3xl lg:text-4xl font-black text-white tracking-tight">
+                                {percentage}%
+                            </span>
+                            <span className="text-xs text-slate-400 font-medium">
+                                accuracy
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Trend indicator */}
-                <div className="flex items-center gap-2 text-xs mt-4">
-                    <TrendingUp className="w-4 h-4 text-emerald-400" aria-hidden="true" />
-                    <span className="text-emerald-500 font-semibold">
-                        +12.4% from last hour
-                    </span>
+                {/* Content */}
+                <div className="flex-1 text-center lg:text-left">
+                    {/* Header */}
+                    <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
+                        <div className="p-1.5 rounded-lg bg-blue-500/15 border border-blue-500/20">
+                            <Brain className="w-4 h-4 text-blue-400" />
+                        </div>
+                        <span className="text-overline">AI Detection Engine</span>
+                    </div>
+
+                    {/* Main metric */}
+                    <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
+                        Threat Detection Rate
+                    </h2>
+                    <p className="text-body mb-6 max-w-md mx-auto lg:mx-0">
+                        Our ML models are performing above industry standards with exceptional precision in identifying malicious patterns.
+                    </p>
+
+                    {/* Stats row */}
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 lg:gap-6">
+                        <StatBadge
+                            icon={<TrendingUp className="w-3.5 h-3.5" />}
+                            label="+12.4%"
+                            subtext="vs last hour"
+                            positive
+                        />
+                        <StatBadge
+                            icon={<Zap className="w-3.5 h-3.5" />}
+                            label="4.2ms"
+                            subtext="avg latency"
+                        />
+                        <button className="flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors group">
+                            <span>View Details</span>
+                            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 });
 
+/**
+ * Stat badge component
+ */
+interface StatBadgeProps {
+    icon: React.ReactNode;
+    label: string;
+    subtext: string;
+    positive?: boolean;
+}
+
+const StatBadge = memo(function StatBadge({ icon, label, subtext, positive }: StatBadgeProps) {
+    return (
+        <div className={`
+      flex items-center gap-2 px-3 py-1.5 rounded-lg border
+      ${positive
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-white/[0.04] border-white/10 text-slate-300'
+            }
+    `}>
+            {icon}
+            <span className="text-sm font-semibold">{label}</span>
+            <span className="text-xs text-slate-500">{subtext}</span>
+        </div>
+    );
+});
+
 PrimaryKPICard.displayName = 'PrimaryKPICard';
+StatBadge.displayName = 'StatBadge';
 
 export default PrimaryKPICard;
