@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ScrollObserver } from "@/components/ui/ScrollObserver";
 import { AuthProvider } from "@/context/AuthContext";
 
 // Premium font configuration with performance optimization
-const inter = Inter({
-  variable: "--font-inter",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
   preload: true,
@@ -159,7 +159,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
         <ScrollObserver />

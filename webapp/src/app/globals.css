@@ -36,8 +36,9 @@
   --glass-shadow: rgba(0, 0, 0, 0.4);
 
   /* Typography */
-  --font-sans: 'Inter', var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-geist-mono), 'JetBrains Mono', 'Fira Code', monospace;
+  /* Typography */
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), 'Fira Code', monospace;
 
   /* Spacing */
   --header-height: 4.5rem;

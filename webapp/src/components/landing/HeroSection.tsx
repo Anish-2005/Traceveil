@@ -34,9 +34,9 @@ export function HeroSection() {
                             <ChevronRight className="w-3 h-3 text-slate-500 group-hover:text-white transition-colors" />
                         </div>
 
-                        <h1 className="scroll-reveal reveal-delay-1 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1] lg:leading-[1.05]">
+                        <h1 className="scroll-reveal reveal-delay-1 text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-white mb-8 leading-[1.1] lg:leading-[1.05]">
                             The security layer for <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 animate-gradient">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 animate-gradient pb-2">
                                 modern platforms.
                             </span>
                         </h1>
