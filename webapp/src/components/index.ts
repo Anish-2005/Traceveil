@@ -31,6 +31,10 @@ export { SystemHealthPanel, type SystemHealthPanelProps } from './dashboard/Syst
 export { ActiveModelsPanel, type ActiveModelsPanelProps } from './dashboard/ActiveModelsPanel';
 export { QuickActionsPanel, type QuickActionsPanelProps } from './dashboard/QuickActionsPanel';
 export { EntityMonitoringSection, type EntityMonitoringSectionProps } from './dashboard/EntityMonitoringSection';
+export { HeroSection } from './dashboard/HeroSection';
+export { FooterStatsBar } from './dashboard/FooterStatsBar';
+export { ErrorState } from './dashboard/ErrorState';
+export { BackgroundEffects } from './dashboard/BackgroundEffects';
 
 // ============================================================================
 // UI - Shared Components

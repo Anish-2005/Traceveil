@@ -103,11 +103,23 @@ def get_total_events_count():
         return 2847
 
     try:
-        # Get count from events collection
+        # Optimized count using aggregation query
+        # access aggregation query via the collection reference
         events_ref = db.collection('events')
-        docs = events_ref.stream()
+        # Use aggregation count if available in the SDK version
+        # Otherwise fallback to iterating but maybe limit it for safety
+        
+        # Checking if count() is available (recent firebase-admin)
+        if hasattr(events_ref, 'count'):
+             aggregate_query = events_ref.count()
+             results = aggregate_query.get()
+             return results[0][0].value
+        
+        # Fallback for older SDKs: stream but just count
+        # Still O(N) but avoids loading full objects if possible using select
+        docs = events_ref.select([]).stream() # Only fetch IDs
         count = sum(1 for _ in docs)
-        return max(count, 1)  # Ensure at least 1 for demo
+        return max(count, 1)
     except Exception as e:
         print(f"Error getting events count: {e}")
         return 2847  # Fallback
