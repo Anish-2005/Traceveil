@@ -131,46 +131,39 @@ def load_graph_model():
     return classifier, scaler
 
 def train_default_graph_model():
-    """Train a classifier on synthetic graph features"""
-    np.random.seed(42)
-    n_samples = 1000
-
-    # Generate synthetic normal user features
-    normal_features = []
-    for _ in range(n_samples // 2):
-        normal_features.append({
-            'degree_centrality': np.random.uniform(0.1, 0.5),
-            'betweenness_centrality': np.random.uniform(0, 0.1),
-            'clustering_coefficient': np.random.uniform(0.2, 0.8),
-            'shared_devices': np.random.randint(0, 2),
-            'shared_ips': np.random.randint(0, 3),
-            'community_size': np.random.randint(1, 5),
-            'is_bridge': 0
-        })
-
-    # Generate synthetic suspicious user features
-    suspicious_features = []
-    for _ in range(n_samples // 2):
-        suspicious_features.append({
-            'degree_centrality': np.random.uniform(0.6, 1.0),
-            'betweenness_centrality': np.random.uniform(0.1, 0.5),
-            'clustering_coefficient': np.random.uniform(0.1, 0.4),
-            'shared_devices': np.random.randint(3, 8),
-            'shared_ips': np.random.randint(4, 10),
-            'community_size': np.random.randint(5, 15),
-            'is_bridge': np.random.choice([0, 1], p=[0.7, 0.3])
-        })
-
-    # Prepare data
+    """Train a classifier on realistic network graph features"""
+    from app.models.data_generator import DataGenerator
+    
+    print("Generating network graph data...")
+    generator = DataGenerator()
+    events = generator.generate_network_dataset(n_users=200, n_attackers=50)
+    
+    # Build full graph
+    G = build_user_graph(events, max_nodes=5000)
+    
+    # Extract features for all users in the graph
+    print(f"Graph built: {len(G.nodes)} nodes, {len(G.edges)} edges")
+    
     X = []
     y = []
-
-    for feat in normal_features + suspicious_features:
-        X.append(list(feat.values()))
-        y.append(0 if feat in normal_features else 1)
-
+    
+    # Users are nodes starting with 'user_' (normal) or 'bot_'/'attacker_' (suspicious)
+    for node in G.nodes():
+        if node.startswith('user_'):
+            # Normal
+            features = compute_graph_features(G, node)
+            X.append(list(features.values()))
+            y.append(0)
+        elif node.startswith('bot_') or node.startswith('attacker_'):
+            # Suspicious
+            features = compute_graph_features(G, node)
+            X.append(list(features.values()))
+            y.append(1)
+            
     X = np.array(X)
     y = np.array(y)
+    
+    print(f"Training Graph Model on {len(X)} users ({sum(y==0)} normal, {sum(y==1)} suspicious)")
 
     # Scale features
     scaler = StandardScaler()

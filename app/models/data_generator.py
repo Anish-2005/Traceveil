@@ -208,3 +208,55 @@ class DataGenerator:
             0, # Cohort dev
             is_bot # 11. Pattern shift/Bot flag
         ]
+
+    def generate_network_dataset(self, n_users: int = 100, n_attackers: int = 20) -> List[Dict]:
+        """
+        Generate a dataset with network relationships (IP/Device sharing).
+        Returns a flat list of events from all users to build a graph.
+        """
+        events = []
+        
+        # 1. Normal Users: Mostly unique IPs and Devices
+        # Occasional sharing (e.g. 2 users on same IP - corporate/home)
+        shared_ips = [f"192.168.1.{i}" for i in range(5)] # Small pool of shared IPs
+        
+        for i in range(n_users):
+            user_id = f"user_{i}"
+            # 80% chance of unique IP, 20% chance of shared
+            if random.random() < 0.2:
+                ip = random.choice(shared_ips)
+            else:
+                ip = f"10.0.{i}.1"
+                
+            device_id = f"dev_{i}" # Unique device mostly
+            
+            # Generate a few events for this user context
+            session = self.generate_normal_session(user_id)
+            for e in session:
+                e['metadata']['ip'] = ip
+                e['metadata']['device_id'] = device_id
+                events.append(e)
+                
+        # 2. Attackers (Botnet): Many users -> Same IP
+        # "Botnet A": 10 attackers sharing 1 IP
+        botnet_ip = "185.100.1.66"
+        for i in range(10):
+            attacker_id = f"bot_{i}"
+            session = self.generate_attack_session(attacker_id, 'brute_force')
+            for e in session:
+                e['metadata']['ip'] = botnet_ip
+                e['metadata']['device_id'] = f"dev_bot_{i}" # Unique devices
+                events.append(e)
+                
+        # 3. Attackers (Sybil): One user -> Many devices
+        # "Sybil B": 1 attacker using 10 devices
+        sybil_user = "attacker_sybil"
+        for i in range(10):
+            session = self.generate_attack_session(sybil_user, 'crawling')
+            for e in session:
+                e['metadata']['ip'] = "200.1.1.1" # Static IP
+                e['metadata']['device_id'] = f"dev_sybil_{i}" # Rotating devices
+                events.append(e)
+                
+        random.shuffle(events)
+        return events
