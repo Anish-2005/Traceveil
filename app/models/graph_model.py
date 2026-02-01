@@ -25,9 +25,17 @@ def build_user_graph(all_events: List, max_nodes: int = 1000) -> nx.Graph:
     nodes_added = set()
 
     for event in events:
-        user = event.user_id
-        device = event.event_metadata.get('device_id', 'unknown')
-        ip = event.event_metadata.get('ip', 'unknown')
+        # Handle both Event objects and dictionaries
+        if isinstance(event, dict):
+            user = event.get('user_id')
+            metadata = event.get('metadata', {})
+            device = metadata.get('device_id', 'unknown')
+            ip = metadata.get('ip', 'unknown')
+        else:
+            user = event.user_id
+            metadata = event.event_metadata
+            device = metadata.get('device_id', 'unknown')
+            ip = metadata.get('ip', 'unknown')
 
         # Add nodes
         for node in [user, device, ip]:
@@ -47,6 +55,45 @@ def build_user_graph(all_events: List, max_nodes: int = 1000) -> nx.Graph:
             G.add_edge(device, ip, weight=0.5, type='device_ip')
 
     return G
+
+# ... (omitted)
+
+def compute_graph_risk(user_id: str) -> Tuple[float, Dict[str, float]]:
+    """Compute graph-based risk score and features for a user"""
+    # Get all events for graph construction (in production, this would be cached)
+    # For demo, we'll use the user's events and simulate some global context
+    user_events = get_user_events(user_id, limit=100)
+
+    if len(user_events) < 3:
+        return 0.0, {}
+
+    # Build graph from user's events
+    G = build_user_graph(user_events)
+
+    # Compute graph features
+    features = compute_graph_features(G, user_id)
+    feature_values = np.array(list(features.values())).reshape(1, -1)
+
+    # Load model and predict
+    classifier, scaler = load_graph_model()
+
+    try:
+        feature_scaled = scaler.transform(feature_values)
+        risk_score = classifier.predict_proba(feature_scaled)[0][1]  # Probability of suspicious
+    except:
+        # Fallback to rule-based scoring
+        risk_score = min(1.0, (
+            features['shared_devices'] * 0.2 +
+            features['shared_ips'] * 0.15 +
+            features['degree_centrality'] * 0.3 +
+            features['is_bridge'] * 0.2
+        ))
+
+    # Additional heuristics
+    if features['shared_devices'] > 5 or features['shared_ips'] > 7:
+        risk_score = min(1.0, risk_score + 0.3)  # Boost for highly connected suspicious users
+
+    return min(1.0, max(0.0, risk_score)), features
 
 def compute_graph_features(G: nx.Graph, user_id: str) -> Dict[str, float]:
     """Compute graph-based features for a user"""

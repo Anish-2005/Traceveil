@@ -100,21 +100,38 @@ def explain_sequence_score(user_id: str, sequence_score: float) -> Dict[str, Any
         'method': 'pattern_matching'
     }
 
-def explain_graph_score(user_id: str, graph_score: float) -> Dict[str, Any]:
-    """Explain graph-based risk score"""
+def explain_graph_score(user_id: str, graph_score: float, features: Dict[str, float] = None) -> Dict[str, Any]:
+    """Explain graph-based risk score using features"""
     explanations = []
-
-    if graph_score > 0.5:
-        explanations.append({
-            'factor': 'shared_devices',
-            'weight': 0.4,
-            'description': 'Device shared with multiple suspicious users'
-        })
-
+    
+    if features:
+        if features.get('shared_devices', 0) > 2:
+            explanations.append({
+                'factor': 'shared_devices',
+                'weight': 0.4,
+                'description': f"User shares devices with {features['shared_devices']} other subjects"
+            })
+            
+        if features.get('shared_ips', 0) > 3:
+            explanations.append({
+                'factor': 'shared_ips',
+                'weight': 0.3,
+                'description': f"User shares IPs with {features['shared_ips']} other subjects"
+            })
+            
+        if features.get('community_size', 0) > 5 and graph_score > 0.6:
+             explanations.append({
+                'factor': 'community_size',
+                'weight': 0.2,
+                'description': f"User is part of a large cluster ({features['community_size']} nodes)"
+            })
+            
+    # Fallback if no features or generic high score
+    if not explanations and graph_score > 0.5:
         explanations.append({
             'factor': 'network_connections',
             'weight': 0.3,
-            'description': 'Connected to suspicious network clusters'
+            'description': 'Suspicious network connectivity patterns'
         })
 
     return {
@@ -124,7 +141,7 @@ def explain_graph_score(user_id: str, graph_score: float) -> Dict[str, Any]:
     }
 
 def generate_explanation(features: Dict[str, Any], anomaly_score: float,
-                        sequence_risk: float, graph_risk: float) -> str:
+                        sequence_risk: float, graph_risk: float, graph_features: Dict[str, Any] = None) -> str:
     """
     Generate comprehensive human-readable explanation
     """
@@ -133,7 +150,7 @@ def generate_explanation(features: Dict[str, Any], anomaly_score: float,
     # Get detailed explanations
     anomaly_exp = explain_anomaly_score(features, anomaly_score)
     sequence_exp = explain_sequence_score(list(features.keys())[0] if features else 'user', sequence_risk)
-    graph_exp = explain_graph_score(list(features.keys())[0] if features else 'user', graph_risk)
+    graph_exp = explain_graph_score(list(features.keys())[0] if features else 'user', graph_risk, graph_features)
 
     # Anomaly-based explanations
     if anomaly_score > 0.5:

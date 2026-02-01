@@ -40,8 +40,10 @@ async def ingest_event(event: EventData):
 
     # Get risk scores from models
     anomaly_score = detect_anomaly(features)
+    # Get risk scores from models
+    anomaly_score = detect_anomaly(features)
     sequence_risk = predict_sequence_risk(event.user_id)
-    graph_risk = compute_graph_risk(event.user_id)
+    graph_risk, graph_features = compute_graph_risk(event.user_id)
 
     # Calculate final risk
     final_risk = calculate_risk_score(anomaly_score, sequence_risk, graph_risk)
@@ -53,7 +55,7 @@ async def ingest_event(event: EventData):
     db_event.risk_score = final_risk
 
     # Generate explanation
-    explanation = generate_explanation(features, anomaly_score, sequence_risk, graph_risk)
+    explanation = generate_explanation(features, anomaly_score, sequence_risk, graph_risk, graph_features)
 
     return {
         "event_id": db_event.id,
@@ -85,12 +87,14 @@ async def get_user_risk(user_id: str):
     # Compute current risk
     features = compute_features(user_id)
     anomaly_score = detect_anomaly(features)
+    features = compute_features(user_id)
+    anomaly_score = detect_anomaly(features)
     sequence_risk = predict_sequence_risk(user_id)
-    graph_risk = compute_graph_risk(user_id)
+    graph_risk, graph_features = compute_graph_risk(user_id)
     final_risk = calculate_risk_score(anomaly_score, sequence_risk, graph_risk)
 
     risk_assessment = get_risk_assessment(final_risk)
-    explanation = generate_explanation(features, anomaly_score, sequence_risk, graph_risk)
+    explanation = generate_explanation(features, anomaly_score, sequence_risk, graph_risk, graph_features)
 
     return {
         "user_id": user_id,
