@@ -27,10 +27,10 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
 
         if (!highRiskEntities || highRiskEntities.length === 0) {
             return [
-                { id: 'user_4829', type: 'User Account', riskScore: 94, flags: ['Velocity', 'Geo'], status: 'critical' },
-                { id: 'ip_192.168', type: 'IP Address', riskScore: 87, flags: ['Proxy', 'VPN'], status: 'investigating' },
-                { id: 'device_a8f2', type: 'Device', riskScore: 76, flags: ['New', 'Multiple'], status: 'monitoring' },
-                { id: 'session_9x7k', type: 'Session', riskScore: 68, flags: ['Duration'], status: 'monitoring' },
+                { id: 'user_4829', type: 'User Account', riskScore: 94, flags: ['Velocity', 'Geo'], status: 'critical', explanation: 'High velocity geo-hopping detected' },
+                { id: 'ip_192.168', type: 'IP Address', riskScore: 87, flags: ['Proxy', 'VPN'], status: 'investigating', explanation: 'Known exit node traffic' },
+                { id: 'device_a8f2', type: 'Device', riskScore: 76, flags: ['New', 'Multiple'], status: 'monitoring', explanation: 'New device associated with multiple accounts' },
+                { id: 'session_9x7k', type: 'Session', riskScore: 68, flags: ['Duration'], status: 'monitoring', explanation: 'Unusual session duration' },
             ];
         }
 
@@ -44,6 +44,7 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
                 riskScore: Math.round(entity.risk_score * 100),
                 flags: [...(entity.flags || [])].slice(0, 3),
                 status,
+                explanation: entity.explanation,
             };
         });
     }, [metrics?.high_risk_entities]);
@@ -118,6 +119,7 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
                                 riskScore={entity.riskScore}
                                 flags={entity.flags}
                                 status={entity.status}
+                                explanation={entity.explanation}
                             />
                         </div>
                     ))}

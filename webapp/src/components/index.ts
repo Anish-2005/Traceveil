@@ -15,6 +15,7 @@ export { SystemStatus } from './dashboard/SystemStatus';
 export { ModelCard } from './dashboard/ModelCard';
 export { QuickAction } from './dashboard/QuickAction';
 export { EntityCard } from './dashboard/EntityCard';
+export { EventSimulator } from './dashboard/EventSimulator';
 
 // ============================================================================
 // DASHBOARD - Layout Components
@@ -41,3 +42,4 @@ export { BackgroundEffects } from './dashboard/BackgroundEffects';
 // ============================================================================
 export { LoadingSkeleton, DashboardSkeleton } from './ui/LoadingSkeleton';
 export { ErrorBoundary } from './ui/ErrorBoundary';
+export { Modal } from './ui/Modal';

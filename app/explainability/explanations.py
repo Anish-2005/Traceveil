@@ -141,40 +141,52 @@ def explain_graph_score(user_id: str, graph_score: float, features: Dict[str, fl
     }
 
 def generate_explanation(features: Dict[str, Any], anomaly_score: float,
-                        sequence_risk: float, graph_risk: float, graph_features: Dict[str, Any] = None) -> str:
+                        sequence_risk: float, graph_risk: float, graph_features: Dict[str, Any] = None) -> Dict[str, Any]:
     """
-    Generate comprehensive human-readable explanation
+    Generate comprehensive structured explanation
     """
-    explanations = []
-
+    factors = []
+    
     # Get detailed explanations
     anomaly_exp = explain_anomaly_score(features, anomaly_score)
     sequence_exp = explain_sequence_score(list(features.keys())[0] if features else 'user', sequence_risk)
     graph_exp = explain_graph_score(list(features.keys())[0] if features else 'user', graph_risk, graph_features)
 
-    # Anomaly-based explanations
+    # Anomaly-based factors
     if anomaly_score > 0.5:
         for contributor in anomaly_exp['top_contributors']:
-            explanations.append(contributor['description'])
+            factors.append(contributor['description'])
 
-    # Sequence-based explanations
+    # Sequence-based factors
     if sequence_risk > 0.5:
         for pattern in sequence_exp['detected_patterns']:
-            explanations.append(pattern['description'])
+            factors.append(pattern['description'])
 
-    # Graph-based explanations
+    # Graph-based factors
     if graph_risk > 0.5:
         for factor in graph_exp['risk_factors']:
-            explanations.append(factor['description'])
+            factors.append(factor['description'])
 
-    # Default explanations
-    if not explanations:
+    # Summary logic
+    if not factors:
         if anomaly_score < 0.3 and sequence_risk < 0.3 and graph_risk < 0.3:
-            explanations.append("Normal behavior patterns detected")
+            summary = "Activity matches normal behavior patterns."
         else:
-            explanations.append("Moderate risk indicators present")
+            summary = "Moderate risk indicators present, but no specific high-severity patterns confirmed."
+    else:
+        summary = f"High risk detected due to {len(factors)} key indicators including {factors[0].lower()}."
 
-    return "; ".join(explanations)
+    # Recommendations
+    recommendations = []
+    if factors:
+        recommendations.append("Limit account access immediately.")
+        recommendations.append("Investigate associated IP addresses and devices.")
+
+    return {
+        "summary": summary,
+        "factors": factors,
+        "recommendations": recommendations
+    }
 
 def generate_detailed_explanation(features: Dict[str, Any], anomaly_score: float,
                                 sequence_risk: float, graph_risk: float) -> Dict[str, Any]:
