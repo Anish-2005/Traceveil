@@ -40,8 +40,6 @@ async def ingest_event(event: EventData):
 
     # Get risk scores from models
     anomaly_score = detect_anomaly(features)
-    # Get risk scores from models
-    anomaly_score = detect_anomaly(features)
     sequence_risk = predict_sequence_risk(event.user_id)
     graph_risk, graph_features = compute_graph_risk(event.user_id)
 
@@ -86,7 +84,6 @@ async def get_user_risk(user_id: str):
 
     # Compute current risk
     features = compute_features(user_id)
-    anomaly_score = detect_anomaly(features)
     features = compute_features(user_id)
     anomaly_score = detect_anomaly(features)
     sequence_risk = predict_sequence_risk(user_id)

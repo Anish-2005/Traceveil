@@ -196,7 +196,7 @@ def generate_detailed_explanation(features: Dict[str, Any], anomaly_score: float
         'anomaly_analysis': explain_anomaly_score(features, anomaly_score),
         'sequence_analysis': explain_sequence_score(list(features.keys())[0] if features else 'user', sequence_risk),
         'graph_analysis': explain_graph_score(list(features.keys())[0] if features else 'user', graph_risk),
-        'summary': generate_explanation(features, anomaly_score, sequence_risk, graph_risk),
+        'summary': generate_explanation(features, anomaly_score, sequence_risk, graph_risk)['summary'],
         'confidence': min(0.95, 0.5 + abs(anomaly_score - 0.5) * 0.4)  # Higher confidence for extreme scores
     }
 
