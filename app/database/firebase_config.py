@@ -59,8 +59,8 @@ def create_credentials_from_env():
 USE_MOCK_FIREBASE = os.getenv("USE_MOCK_FIREBASE", "true").lower() == "true"
 
 if USE_MOCK_FIREBASE:
-    print("🔧 Using mock Firebase client for development")
-    print("💡 Set USE_MOCK_FIREBASE=false to enable real Firebase")
+    print("Using mock Firebase client for development")
+    print("Set USE_MOCK_FIREBASE=false to enable real Firebase")
     firebase_admin.initialize_app()
 else:
     try:
@@ -69,7 +69,7 @@ else:
             cred = create_credentials_from_env()
             if cred:
                 firebase_admin.initialize_app(cred)
-                print("✅ Firebase initialized successfully from environment variables")
+                print("Firebase initialized successfully from environment variables")
             else:
                 # Fallback to file-based credentials
                 cred_path = os.getenv("FIREBASE_CREDENTIALS_PATH", "firebase-credentials.json")
@@ -86,20 +86,20 @@ else:
                         firebase_admin.initialize_app(cred)
                         print("✅ Firebase initialized successfully from credentials file")
                     else:
-                        print("⚠️  Firebase credentials file contains invalid/placeholder data")
-                        print("🔧 Using mock Firebase client for development")
+                        print("Firebase credentials file contains invalid/placeholder data")
+                        print("Using mock Firebase client for development")
                         firebase_admin.initialize_app()
                 else:
-                    print("⚠️  No Firebase credentials found (file or environment variables)")
-                    print("🔧 Using mock Firebase client for development")
-                    print("💡 To enable Firebase:")
+                    print("No Firebase credentials found (file or environment variables)")
+                    print("Using mock Firebase client for development")
+                    print("To enable Firebase:")
                     print("   Option 1: Set environment variables (see .env.example)")
                     print("   Option 2: Place service account JSON at firebase-credentials.json")
                     print("   Then set USE_MOCK_FIREBASE=false")
                     firebase_admin.initialize_app()
     except Exception as e:
-        print(f"❌ Firebase initialization failed: {e}")
-        print("🔧 Using mock Firebase client for development")
+        print(f"Firebase initialization failed: {e}")
+        print("Using mock Firebase client for development")
         try:
             if not firebase_admin._apps:
                 firebase_admin.initialize_app()

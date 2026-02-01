@@ -50,14 +50,95 @@ class LSTMSequenceModel(nn.Module):
         out, _ = self.lstm(x, (h0, c0))
         # out shape: (batch_size, seq_len, hidden_size * 2)
         
-        # We can take the last time step, or pool them. 
-        # For BiLSTM, the last step of forward direction is usually concatenated with first step of backward direction
-        # But standard pytorch implementation returns concatenated hidden states at each step.
-        # Let's take the mean over the sequence for stability
+        # Take mean over sequence
         out = torch.mean(out, dim=1) 
         
         out = self.fc(out)
         return out
+
+def extract_sequence_features(events: List) -> np.ndarray:
+    """Extract features from a sequence of events"""
+    if not events:
+        return np.zeros(11)  # Same as feature vector size
+
+    features = []
+
+    # Time-based features
+    timestamps = [e.timestamp for e in events]
+    if len(timestamps) > 1:
+        time_diffs = np.diff([t.timestamp() for t in timestamps])
+        features.extend([
+            np.mean(time_diffs),  # avg time between events
+            np.std(time_diffs),   # std of time between events
+            np.min(time_diffs),   # min time between events
+            np.max(time_diffs),   # max time between events
+        ])
+    else:
+        features.extend([0, 0, 0, 0])
+
+    # Event type diversity
+    event_types = [e.event_type for e in events]
+    unique_types = len(set(event_types))
+    
+    if len(event_types) > 0:
+        counts = list(np.unique(event_types, return_counts=True)[1])
+        probs = np.array(counts) / len(event_types)
+        type_entropy = -sum(probs * np.log(probs + 1e-9)) # Add epsilon
+    else:
+        unique_types = 0
+        type_entropy = 0
+        
+    features.extend([unique_types / max(1, len(event_types)), type_entropy])
+
+    # Metadata features
+    mouse_speeds = [e.event_metadata.get('mouse_speed', 0) for e in events if isinstance(e.event_metadata, dict) and e.event_metadata.get('mouse_speed')]
+    reaction_times = [e.event_metadata.get('reaction_time', 0) for e in events if isinstance(e.event_metadata, dict) and e.event_metadata.get('reaction_time')]
+
+    features.extend([
+        np.mean(mouse_speeds) if mouse_speeds else 0,
+        np.std(mouse_speeds) if mouse_speeds else 0,
+        np.mean(reaction_times) if reaction_times else 0,
+        np.std(reaction_times) if reaction_times else 0,
+    ])
+
+    # Pad or truncate to fixed size
+    while len(features) < 11:
+        features.append(0)
+
+    return np.array(features[:11])
+
+def create_sequences(user_events: List, sequence_length: int = 10) -> List[np.ndarray]:
+    """Create sequences from user events"""
+    sequences = []
+    if len(user_events) < sequence_length:
+        # If not enough events, pad or just return one short sequence?
+        # For training, we want consistent length. 
+        # But for new data generator, we rely on this.
+        pass
+        
+    for i in range(len(user_events) - sequence_length + 1):
+        sequence_events = user_events[i:i + sequence_length]
+        sequence_features = [extract_sequence_features([e]) for e in sequence_events]
+        sequences.append(np.array(sequence_features))
+
+    return sequences if sequences else []
+
+def load_sequence_model():
+    """Load trained sequence model or create default"""
+    if os.path.exists(SEQUENCE_MODEL_PATH):
+        try:
+            checkpoint = torch.load(SEQUENCE_MODEL_PATH)
+            model = LSTMSequenceModel(checkpoint['input_size'], checkpoint['hidden_size'], checkpoint['num_layers'])
+            model.load_state_dict(checkpoint['model_state_dict'])
+            model.eval()
+            return model
+        except Exception as e:
+            print(f"Error loading sequence model: {e}")
+
+    # Create and train default model
+    print("Training default sequence model...")
+    model = train_default_sequence_model()
+    return model
 
 def train_default_sequence_model():
     """Train a sequence model on realistic synthetic data"""
@@ -69,28 +150,12 @@ def train_default_sequence_model():
     sequences_normal, labels_normal, raw_normal = generator.generate_dataset(n_normal=200, n_attack=0)
     sequences_attack, labels_attack, raw_attack = generator.generate_dataset(n_normal=0, n_attack=200)
     
-    # Convert raw event lists to feature sequences
-    # We need to create sequences of features for the LSTM
-    # This matches `create_sequences` logic in this file but adapted for generated data
-    
     def process_raw_sessions(sessions):
         processed_seqs = []
         for session in sessions:
-            # Each session is a list of events
-            # We treat the whole session as a sequence, or chunks of it
-            # For simplicity let's rely on create_sequences from this file
-            # But we need "Event" objects for that helper...
-            # So let's just implement a direct feature extractor here
-            if len(session) < 5: continue
+            if len(session) < 11: continue # Need at least sequence_length + 1?
             
-            # Extract features for each event sliding window? 
-            # Or is one session = one sequence?
-            # The model expects (batch, seq_len, features)
-            # Let's assume we extract features for chunks of time
-            
-            # Simplified: One session -> One aggregate sequence of length 10?
-            # Actually, `create_sequences` expects a list of event objects.
-            # Let's mock the event objects to reuse the logic
+            # Mock Event class
             class MockEvent:
                 def __init__(self, data):
                     self.timestamp = data['timestamp']
@@ -98,6 +163,7 @@ def train_default_sequence_model():
                     self.event_metadata = data.get('metadata', {})
             
             events = [MockEvent(e) for e in session]
+            # Use chunks of 10
             seqs = create_sequences(events, sequence_length=10)
             processed_seqs.extend(seqs)
             
@@ -108,6 +174,7 @@ def train_default_sequence_model():
     
     if not X_normal or not X_attack:
         print("Warning: Not enough data generated for sequence training")
+        # Fallback to random if generator fails (shouldn't happen)
         return None
 
     X = np.array(X_normal + X_attack)
@@ -124,7 +191,7 @@ def train_default_sequence_model():
     dataset = EventDataset(X, y)
     dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-    for epoch in range(20): # 20 epochs enough for this demo size
+    for epoch in range(20): 
         model.train()
         epoch_loss = 0
         for sequences, labels in dataloader:
@@ -163,6 +230,7 @@ def predict_sequence_risk(user_id: str) -> float:
 
     # Load model and predict
     model = load_sequence_model()
+    if not model: return 0.0
 
     with torch.no_grad():
         # Take the most recent sequence
@@ -193,53 +261,3 @@ def predict_sequence_risk(user_id: str) -> float:
     final_score = 0.7 * risk_score + 0.3 * rule_based_score
 
     return min(1.0, max(0.0, final_score))
-
-    return risk_score
-
-# Placeholder for actual LSTM model
-# In production, would train on sequences of events
-def train_sequence_model():
-    # TODO: Implement LSTM training
-    pass
-
-def train_lstm_model(X_train, X_test, y_train, y_test, epochs=50, batch_size=32):
-    """Train LSTM model for sequence anomaly detection"""
-    # Determine input dimensions based on data shape
-    if X_train.ndim == 3:
-        # Sequence data: (batch_size, seq_len, n_features)
-        input_size = X_train.shape[2]
-        seq_len = X_train.shape[1]
-        print(f"Training LSTM on sequence data: {X_train.shape[0]} sequences, length {seq_len}, {input_size} features")
-    elif X_train.ndim == 2:
-        # Tabular data: treat as single time step
-        input_size = X_train.shape[1]
-        X_train = X_train.unsqueeze(1)  # Add sequence dimension: (batch_size, 1, n_features)
-        X_test = X_test.unsqueeze(1)
-        print(f"Training LSTM on tabular data: {X_train.shape[0]} samples, {input_size} features")
-    else:
-        raise ValueError(f"Unsupported data dimensionality: {X_train.ndim}D")
-    
-    model = LSTMSequenceModel(input_size)
-    
-    # Convert to tensors
-    X_train_tensor = torch.FloatTensor(X_train)
-    y_train_tensor = torch.FloatTensor(y_train)
-    X_test_tensor = torch.FloatTensor(X_test)
-    y_test_tensor = torch.FloatTensor(y_test)
-    
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-    
-    # Training loop
-    for epoch in range(epochs):
-        model.train()
-        optimizer.zero_grad()
-        outputs = model(X_train_tensor)
-        loss = criterion(outputs.squeeze(), y_train_tensor)
-        loss.backward()
-        optimizer.step()
-        
-        if (epoch + 1) % 10 == 0:
-            print(f"Epoch {epoch+1}/{epochs}, Loss: {loss.item():.4f}")
-    
-    return model
