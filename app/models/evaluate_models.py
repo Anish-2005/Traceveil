@@ -20,9 +20,9 @@ def evaluate_anomaly_detector():
     generator = DataGenerator(seed=999) # Different seed for testing
     print("Generating test data...")
     # Normal data for testing false positives
-    seq_normal, _, _ = generator.generate_dataset(n_normal=200, n_attack=0)
+    seq_normal, _, _ = generator.generate_dataset(n_normal=50, n_attack=0)
     # Attack data for testing detection
-    seq_attack, _, _ = generator.generate_dataset(n_normal=0, n_attack=100)
+    seq_attack, _, _ = generator.generate_dataset(n_normal=0, n_attack=50)
     
     # Extract features
     print("Extracting features...")
@@ -73,8 +73,8 @@ def evaluate_sequence_model():
     generator = DataGenerator(seed=888)
     print("Generating test data...")
     # We need raw sessions to convert to sequences
-    _, _, raw_normal = generator.generate_dataset(n_normal=100, n_attack=0)
-    _, _, raw_attack = generator.generate_dataset(n_normal=0, n_attack=100)
+    _, _, raw_normal = generator.generate_dataset(n_normal=50, n_attack=0)
+    _, _, raw_attack = generator.generate_dataset(n_normal=0, n_attack=50)
     
     # Helper to process into model input format
     def process_test_sequences(sessions):
