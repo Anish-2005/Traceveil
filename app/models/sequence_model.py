@@ -182,28 +182,65 @@ def train_default_sequence_model():
     
     print(f"Training Sequence Model on {len(X)} sequences ({len(X_normal)} normal, {len(X_attack)} attack)")
 
+    # Split into Train/Val
+    indices = np.random.permutation(len(X))
+    split_idx = int(len(X) * 0.8)
+    train_idx, val_idx = indices[:split_idx], indices[split_idx:]
+    
+    X_train, X_val = X[train_idx], X[val_idx]
+    y_train, y_val = y[train_idx], y[val_idx]
+
     # Train model
     input_size = 11
     model = LSTMSequenceModel(input_size, hidden_size=64, num_layers=2)
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-    dataset = EventDataset(X, y)
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+    train_dataset = EventDataset(X_train, y_train)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    
+    val_dataset = EventDataset(X_val, y_val)
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 
-    for epoch in range(20): 
+    print(f"Split: {len(X_train)} Train, {len(X_val)} Validation")
+
+    for epoch in range(30): # Increased epochs slightly
         model.train()
-        epoch_loss = 0
-        for sequences, labels in dataloader:
+        train_loss = 0
+        for sequences, labels in train_loader:
             optimizer.zero_grad()
             outputs = model(sequences.float())
             loss = criterion(outputs.squeeze(), labels.float())
             loss.backward()
             optimizer.step()
-            epoch_loss += loss.item()
+            train_loss += loss.item()
+            
+        # Validation phase
+        model.eval()
+        val_loss = 0
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for sequences, labels in val_loader:
+                outputs = model(sequences.float())
+                loss = criterion(outputs.squeeze(), labels.float())
+                val_loss += loss.item()
+                
+                predicted = (outputs.squeeze() > 0.5).float()
+                total += labels.size(0)
+                correct += (predicted == labels.float()).sum().item()
+
+        avg_train_loss = train_loss / len(train_loader)
+        avg_val_loss = val_loss / len(val_loader) if len(val_loader) > 0 else 0
+        val_acc = correct / total if total > 0 else 0
 
         if (epoch + 1) % 5 == 0:
-            print(f"Sequence Model Epoch {epoch+1}/20, Loss: {epoch_loss/len(dataloader):.4f}")
+            print(f"Epoch {epoch+1}/30 | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | Val Acc: {val_acc:.4f}")
+            
+            # Simple early stopping check
+            if val_acc > 0.99 and avg_train_loss < 0.1:
+                print("Reached high accuracy, stopping early to prevent overfitting.")
+                break
 
     # Save model
     torch.save({
