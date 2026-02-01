@@ -18,18 +18,29 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 class Autoencoder(nn.Module):
     def __init__(self, input_dim: int, hidden_dim: int = 64):
         super(Autoencoder, self).__init__()
+        # Deep Autoencoder with BatchNorm and Dropout
         self.encoder = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
+            nn.BatchNorm1d(hidden_dim),
+            nn.LeakyReLU(0.2),
+            nn.Dropout(0.2),
+            
             nn.Linear(hidden_dim, hidden_dim // 2),
-            nn.ReLU(),
-            nn.Linear(hidden_dim // 2, hidden_dim // 4)
+            nn.BatchNorm1d(hidden_dim // 2),
+            nn.LeakyReLU(0.2),
+            nn.Dropout(0.1),
+            
+            nn.Linear(hidden_dim // 2, hidden_dim // 4)  # Latent space
         )
         self.decoder = nn.Sequential(
             nn.Linear(hidden_dim // 4, hidden_dim // 2),
-            nn.ReLU(),
+            nn.BatchNorm1d(hidden_dim // 2),
+            nn.LeakyReLU(0.2),
+            
             nn.Linear(hidden_dim // 2, hidden_dim),
-            nn.ReLU(),
+            nn.BatchNorm1d(hidden_dim),
+            nn.LeakyReLU(0.2),
+            
             nn.Linear(hidden_dim, input_dim)
         )
 
@@ -40,35 +51,75 @@ class Autoencoder(nn.Module):
 
     def get_reconstruction_error(self, x):
         with torch.no_grad():
+            self.eval()
             reconstructed = self(x)
             loss = nn.MSELoss(reduction='none')(reconstructed, x)
             return loss.mean(dim=1).numpy()
 
-def train_autoencoder(X: np.ndarray, epochs: int = 100, batch_size: int = 32):
-    """Train autoencoder for anomaly detection"""
+def train_autoencoder(X: np.ndarray, epochs: int = 100, batch_size: int = 32, validation_split: float = 0.2):
+    """Train autoencoder with validation and early stopping"""
     input_dim = X.shape[1]
     model = Autoencoder(input_dim)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5, verbose=True)
 
-    # Convert to tensor
-    X_tensor = torch.FloatTensor(X)
+    # Split data
+    split_idx = int(len(X) * (1 - validation_split))
+    X_train = torch.FloatTensor(X[:split_idx])
+    X_val = torch.FloatTensor(X[split_idx:])
+
+    best_val_loss = float('inf')
+    patience = 10
+    patience_counter = 0
+    best_model_state = None
+
+    print(f"Training Autoencoder: {len(X_train)} train samples, {len(X_val)} val samples")
 
     for epoch in range(epochs):
         model.train()
-        epoch_loss = 0
-        for i in range(0, len(X), batch_size):
-            batch = X_tensor[i:i+batch_size]
+        train_loss = 0
+        
+        # Mini-batch training
+        permutation = torch.randperm(X_train.size()[0])
+        for i in range(0, X_train.size()[0], batch_size):
+            indices = permutation[i:i+batch_size]
+            batch = X_train[indices]
+            
             optimizer.zero_grad()
             output = model(batch)
             loss = criterion(output, batch)
             loss.backward()
             optimizer.step()
-            epoch_loss += loss.item()
+            train_loss += loss.item()
 
-        if (epoch + 1) % 20 == 0:
-            print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss/len(X):.4f}")
+        # Validation
+        model.eval()
+        with torch.no_grad():
+            val_output = model(X_val)
+            val_loss = criterion(val_output, X_val).item()
 
+        avg_train_loss = train_loss / (len(X_train) / batch_size)
+        scheduler.step(val_loss)
+
+        if (epoch + 1) % 10 == 0:
+            print(f"Epoch {epoch+1}/{epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {val_loss:.4f}")
+
+        # Early stopping check
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            patience_counter = 0
+            best_model_state = model.state_dict()
+        else:
+            patience_counter += 1
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch+1}")
+                break
+    
+    # Restore best model
+    if best_model_state:
+        model.load_state_dict(best_model_state)
+        
     return model
 
 def load_models():
@@ -81,7 +132,7 @@ def load_models():
             # Load autoencoder
             checkpoint = torch.load(AUTOENCODER_MODEL_PATH)
             input_dim = checkpoint['input_dim']
-            autoencoder = Autoencoder(input_dim)
+            autoencoder = Autoencoder(input_dim) # Uses new architecture
             autoencoder.load_state_dict(checkpoint['model_state_dict'])
             autoencoder.eval()
 
@@ -93,40 +144,42 @@ def load_models():
             print(f"Error loading models: {e}")
 
     # Fallback: create and train default models
-    print("Training default anomaly detection models...")
+    print("Training default anomaly detection models with NEW Data Generator...")
     autoencoder, scaler = train_default_models()
     return autoencoder, scaler
 
 def train_default_models():
-    """Train models on synthetic normal data"""
-    # Generate synthetic normal behavior data
-    np.random.seed(42)
-    n_samples = 1000
-    n_features = 11  # Based on our feature set
-
-    # Normal behavior patterns
-    X_normal = np.random.normal(0, 1, (n_samples, n_features))
-
-    # Add some realistic patterns
-    X_normal[:, 0] = np.random.uniform(0, 20, n_samples)  # action_frequency
-    X_normal[:, 1] = np.random.uniform(0, 2, n_samples)   # burstiness_score
-    X_normal[:, 4] = np.random.uniform(300, 1500, n_samples)  # mouse_speed
-    X_normal[:, 5] = np.random.uniform(0.3, 0.8, n_samples)   # working_hours
-
+    """Train models using realistic synthetic data"""
+    from app.models.data_generator import DataGenerator
+    
+    # Generate realistic data
+    generator = DataGenerator()
+    sequences, labels, _ = generator.generate_dataset(n_normal=500, n_attack=0) # Train only on normal
+    
+    # Extract features matching the model's expected input
+    # We use the simplified extractor for now since we don't have the full app context easily injected here
+    features_list = [generator.extract_features_from_sequence(seq) for seq in sequences]
+    X_normal = np.array(features_list)
+    
     # Scale the data
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_normal)
 
     # Train autoencoder
-    autoencoder = train_autoencoder(X_scaled, epochs=50)
+    autoencoder = train_autoencoder(X_scaled, epochs=100, batch_size=32)
 
     # Save models
     torch.save({
-        'input_dim': n_features,
+        'input_dim': X_scaled.shape[1],
         'model_state_dict': autoencoder.state_dict()
     }, AUTOENCODER_MODEL_PATH)
 
     joblib.dump(scaler, SCALER_PATH)
+    
+    # Train Isolation Forest as fallback
+    iso_forest = IsolationForest(contamination=0.1, random_state=42)
+    iso_forest.fit(X_scaled)
+    joblib.dump(iso_forest, ANOMALY_MODEL_PATH)
 
     return autoencoder, scaler
 
