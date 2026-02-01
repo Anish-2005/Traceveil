@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Brain, ChevronRight, Shield, Zap } from 'lucide-react';
+import { Activity, AlertTriangle, Brain, ChevronRight, Shield, Zap, CheckCircle2 } from 'lucide-react';
 import { StatCard } from './StatCard';
 import { PerformanceBar } from './PerformanceBar';
 
@@ -41,78 +41,62 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
 
     return (
         <div className="relative">
-            {/* Background decoration */}
-            <div className="absolute inset-0 -z-10 overflow-hidden rounded-3xl">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-500/5 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-gradient-to-tr from-purple-500/5 to-transparent" />
-            </div>
-
-            <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+            <div className="grid lg:grid-cols-12 gap-6 items-stretch">
                 {/* Left Column - Welcome & Stats */}
                 <div className="lg:col-span-6 flex flex-col">
-                    {/* Welcome Card */}
-                    <div className="glass-card-elevated p-6 lg:p-8 flex-1 flex flex-col">
-                        {/* Status Badge */}
-                        <div className="flex items-center justify-between mb-6">
-                            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${allSystemsOperational
-                                ? 'bg-emerald-500/10 border border-emerald-500/25'
-                                : 'bg-amber-500/10 border border-amber-500/25'
+                    <div className="h-full flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 p-6 lg:p-8 hover:border-white/[0.12] transition-colors">
+
+                        {/* Header Row */}
+                        <div className="flex items-start justify-between mb-8">
+                            <div>
+                                <h1 className="text-2xl lg:text-3xl font-bold text-white tracking-tight mb-2">
+                                    System Status
+                                </h1>
+                                <p className="text-sm text-slate-400 leading-relaxed max-w-md">
+                                    Monitoring <span className="text-white font-medium">{activeMonitoring.toLocaleString()}</span> active data streams.
+                                    AI models operating at <span className="text-emerald-400 font-medium">{percentage}%</span> efficiency.
+                                </p>
+                            </div>
+
+                            {/* Status Indicator */}
+                            <div className={`flex items-center gap-2 px-2.5 py-1 rounded-full border ${allSystemsOperational
+                                ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400'
+                                : 'bg-amber-500/5 border-amber-500/20 text-amber-400'
                                 }`}>
-                                <div className="relative">
-                                    <div className={`w-2 h-2 rounded-full ${allSystemsOperational ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                                    <div className={`absolute inset-0 w-2 h-2 rounded-full animate-ping ${allSystemsOperational ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                                </div>
-                                <span className={`text-[11px] font-bold uppercase tracking-wider ${allSystemsOperational ? 'text-emerald-400' : 'text-amber-400'
-                                    }`}>
-                                    {allSystemsOperational ? 'All Systems Operational' : 'Partial System Issues'}
+                                <div className={`w-1.5 h-1.5 rounded-full ${allSystemsOperational ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                                <span className="text-[11px] font-medium uppercase tracking-wide">
+                                    {allSystemsOperational ? 'Operational' : 'Degraded'}
                                 </span>
                             </div>
-                            <span className="text-xs text-slate-500">
-                                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-                            </span>
-                        </div>
-
-                        {/* Hero Text */}
-                        <div className="mb-8">
-                            <p className="text-overline mb-3">Security Command Center</p>
-                            <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight mb-4 leading-tight">
-                                Real-time Threat<br />
-                                <span className="gradient-text-premium">Intelligence</span>
-                            </h1>
-                            <p className="text-body leading-relaxed">
-                                AI-powered fraud detection monitoring{' '}
-                                <span className="text-white font-semibold">{activeMonitoring.toLocaleString()}</span>{' '}
-                                data streams with <span className="text-blue-400 font-semibold">{percentage}%</span> detection accuracy.
-                            </p>
                         </div>
 
                         {/* Quick Stats Grid */}
-                        <div className="grid grid-cols-2 gap-3 mt-auto">
+                        <div className="grid grid-cols-2 gap-4 mt-auto">
                             <StatCard
-                                label="Recent Events"
+                                label="Total Events"
                                 value={recentThreats.length.toString()}
-                                change={recentThreats.length > 0 ? `${recentThreats.length} detected` : 'None'}
-                                positive={recentThreats.length > 0}
+                                change="Active"
+                                positive={true}
                                 icon={<Activity className="w-4 h-4" />}
                             />
                             <StatCard
-                                label="Models Active"
-                                value={activeModels.toString()}
-                                change={healthyModels === activeModels ? 'All healthy' : `${healthyModels} healthy`}
+                                label="Active Models"
+                                value={`${healthyModels}/${activeModels}`}
+                                change="Online"
                                 positive={healthyModels === activeModels}
                                 icon={<Brain className="w-4 h-4" />}
                             />
                             <StatCard
                                 label="Threats Blocked"
                                 value={recentThreats.length.toLocaleString()}
-                                change={recentThreats.length > 0 ? `+${recentThreats.length}` : '0'}
+                                change="+12%"
                                 positive={true}
                                 icon={<Shield className="w-4 h-4" />}
                             />
                             <StatCard
-                                label="Avg Latency"
-                                value={avgResponseTime > 0 ? `${avgResponseTime.toFixed(1)}ms` : '0ms'}
-                                change={avgResponseTime > 0 ? `${avgResponseTime < 10 ? 'Fast' : 'Normal'}` : 'N/A'}
+                                label="Latency"
+                                value={`${avgResponseTime.toFixed(1)}ms`}
+                                change="Optimal"
                                 positive={avgResponseTime < 10}
                                 icon={<Zap className="w-4 h-4" />}
                             />
@@ -122,69 +106,54 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
 
                 {/* Right Column - Primary KPI */}
                 <div className="lg:col-span-6 flex flex-col">
-                    <div className="glass-card-elevated p-6 lg:p-8 h-full">
+                    <div className="h-full flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 p-6 lg:p-8 hover:border-white/[0.12] transition-colors">
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className="p-1.5 rounded-lg bg-blue-500/15 border border-blue-500/25">
-                                        <Brain className="w-4 h-4 text-blue-400" />
-                                    </div>
-                                    <span className="text-overline">AI Detection Engine</span>
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                                    <Brain className="w-5 h-5" />
                                 </div>
-                                <h2 className="text-xl lg:text-2xl font-bold text-white">
-                                    Threat Detection Performance
-                                </h2>
+                                <h2 className="text-lg font-semibold text-white">Detection Accuracy</h2>
                             </div>
-                            <div className="hidden sm:flex items-center gap-2">
-                                <span className="text-xs text-slate-400">Last 24h</span>
-                                <ChevronRight className="w-4 h-4 text-slate-500" />
+                            <div className="flex items-center gap-2 px-2 py-1 rounded bg-white/[0.03] border border-white/[0.06]">
+                                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">24H Window</span>
                             </div>
                         </div>
 
-                        {/* Main KPI Display - Vertical Layout */}
-                        <div className="flex flex-col items-center gap-6 flex-1">
-                            {/* Circular Progress - Centered */}
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-3xl animate-pulse-glow" />
-                                <div className="relative w-36 h-36 lg:w-44 lg:h-44">
+                        {/* Main KPI Display - Horizontal Layout for Density */}
+                        <div className="flex flex-col sm:flex-row items-center gap-8 flex-1">
+                            {/* Circular Progress */}
+                            <div className="relative flex-shrink-0">
+                                <div className="relative w-40 h-40">
                                     <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 140 140">
                                         <circle
-                                            cx="70" cy="70" r="62"
+                                            cx="70" cy="70" r="60"
                                             fill="none"
-                                            stroke="rgba(255,255,255,0.05)"
-                                            strokeWidth="12"
+                                            stroke="rgba(255,255,255,0.03)"
+                                            strokeWidth="8"
                                         />
                                         <circle
-                                            cx="70" cy="70" r="62"
+                                            cx="70" cy="70" r="60"
                                             fill="none"
-                                            stroke="url(#kpiGradient)"
-                                            strokeWidth="12"
+                                            stroke="#3b82f6"
+                                            strokeWidth="8"
                                             strokeLinecap="round"
-                                            strokeDasharray={2 * Math.PI * 62}
-                                            strokeDashoffset={2 * Math.PI * 62 * (1 - percentage / 100)}
+                                            strokeDasharray={2 * Math.PI * 60}
+                                            strokeDashoffset={2 * Math.PI * 60 * (1 - percentage / 100)}
                                             className="transition-all duration-1000 ease-out"
                                         />
-                                        <defs>
-                                            <linearGradient id="kpiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stopColor="#3b82f6" />
-                                                <stop offset="50%" stopColor="#06b6d4" />
-                                                <stop offset="100%" stopColor="#8b5cf6" />
-                                            </linearGradient>
-                                        </defs>
                                     </svg>
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                        <span className="text-4xl lg:text-5xl font-black text-white tracking-tight">
-                                            {percentage}
-                                            <span className="text-2xl lg:text-3xl">%</span>
+                                        <span className="text-4xl font-bold text-white tracking-tighter">
+                                            {percentage}%
                                         </span>
-                                        <span className="text-xs text-slate-400 font-medium mt-1">accuracy</span>
+                                        <span className="text-xs text-slate-500 font-medium mt-1">confidence</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Performance Metrics - Below Circle */}
-                            <div className="w-full space-y-4">
+                            {/* Performance Metrics - Compact */}
+                            <div className="w-full space-y-5 flex-1 min-w-0">
                                 <PerformanceBar
                                     label="True Positive Rate"
                                     value={truePositiveRate}
@@ -197,45 +166,28 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
                                     inverted
                                 />
                                 <PerformanceBar
-                                    label="Model Confidence"
+                                    label="Model Consensus"
                                     value={avgModelAccuracy > 0 ? avgModelAccuracy : percentage * 0.97}
                                     color="blue"
                                 />
                             </div>
+                        </div>
 
-                            {/* Alert Summary - Bottom */}
-                            <div className="w-full flex items-center justify-between pt-4 border-t border-white/[0.06] mt-auto">
-                                <div className="flex items-center gap-3">
-                                    {criticalThreats > 0 && (
-                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
-                                            <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
-                                            <span className="text-xs font-bold text-red-400">
-                                                {criticalThreats} Critical
-                                            </span>
-                                        </div>
-                                    )}
-                                    {highThreats > 0 && (
-                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                                            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                                            <span className="text-xs font-bold text-amber-400">
-                                                {highThreats} High
-                                            </span>
-                                        </div>
-                                    )}
-                                    {criticalThreats === 0 && highThreats === 0 && (
-                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                                            <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                                            <span className="text-xs font-bold text-emerald-400">
-                                                No Active Threats
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                                {/* <button className="flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors">
-                  <span>View All</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </button> */}
-                            </div>
+                        {/* Footer Status */}
+                        <div className="mt-8 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-slate-500">
+                            <span>Last machine learning training cycle: <span className="text-slate-300">2h ago</span></span>
+                            {criticalThreats > 0 && (
+                                <span className="flex items-center gap-1.5 text-red-400 font-medium">
+                                    <AlertTriangle className="w-3.5 h-3.5" />
+                                    {criticalThreats} Critical Threats
+                                </span>
+                            )}
+                            {criticalThreats === 0 && (
+                                <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    No Active Threats
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

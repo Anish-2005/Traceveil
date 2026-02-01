@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useMemo } from 'react';
-import { AlertTriangle, ChevronRight, Clock, Filter } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Clock, Filter, Activity } from 'lucide-react';
 import { DashboardMetrics } from '@/lib/api';
 import { ThreatActivity } from './ThreatActivity';
 import {
@@ -52,55 +52,34 @@ export const ThreatActivityTimeline = memo(function ThreatActivityTimeline({
     const threatCount = threatEvents.length;
 
     return (
-        <div className={`glass-card overflow-hidden ${className}`}>
+        <div className={`flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 overflow-hidden hover:border-white/[0.12] transition-colors ${className}`}>
             {/* Header */}
-            <div className="p-6 lg:p-8 pb-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="p-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/20">
-                                <AlertTriangle className="w-4 h-4 text-cyan-400" />
-                            </div>
-                            <span className="text-overline">Event Log</span>
+            <div className="p-6 border-b border-white/[0.06]">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400">
+                            <Activity className="w-5 h-5" />
                         </div>
-                        <h3 className="text-xl lg:text-2xl font-bold text-white tracking-tight">
-                            Recent Threat Activity
-                        </h3>
-                        <p className="text-caption mt-1">
-                            {threatCount} events in the last 24 hours
-                        </p>
+                        <div>
+                            <h3 className="text-lg font-semibold text-white">Activity Log</h3>
+                            <p className="text-xs text-slate-400">Recent security events</p>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            className="btn-ghost text-sm flex items-center gap-2"
-                        >
+                        <button className="p-1.5 text-slate-400 hover:text-white transition-colors">
                             <Filter className="w-4 h-4" />
-                            <span>Filter</span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onViewAll}
-                            className="btn-primary text-sm flex items-center gap-1.5"
-                        >
-                            <span>View All</span>
-                            <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Timeline */}
-            <div className="px-4 lg:px-6 pb-4 lg:pb-6">
+            <div className="flex-1 p-0 overflow-hidden">
                 <div
-                    className="space-y-3 max-h-[420px] overflow-y-auto pr-2"
+                    className="max-h-[400px] overflow-y-auto px-6 py-4 space-y-4"
                     role="feed"
                     aria-label="Recent threat activity feed"
-                    style={{
-                        scrollbarWidth: 'thin',
-                        scrollbarColor: 'rgba(255,255,255,0.15) transparent',
-                    }}
                 >
                     {threatEvents.map((event, index) => (
                         <div
@@ -121,18 +100,19 @@ export const ThreatActivityTimeline = memo(function ThreatActivityTimeline({
             </div>
 
             {/* Footer stats */}
-            <div className="px-6 lg:px-8 py-4 bg-white/[0.02] border-t border-white/[0.04]">
-                <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4 text-slate-400">
-                        <div className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4" />
-                            <span>Auto-refreshing every 30s</span>
-                        </div>
-                    </div>
-                    <span className="text-slate-500">
-                        Showing {threatEvents.length} of {metrics?.recent_threats?.length ?? threatEvents.length} events
+            <div className="px-6 py-3 bg-white/[0.02] border-t border-white/[0.04] flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span>
+                        LIVE FEED
                     </span>
                 </div>
+                <button
+                    onClick={onViewAll}
+                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-1"
+                >
+                    VIEW ALL events <ChevronRight className="w-3 h-3" />
+                </button>
             </div>
         </div>
     );

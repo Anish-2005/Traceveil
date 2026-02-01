@@ -68,39 +68,26 @@ export const SystemHealthPanel = memo(function SystemHealthPanel({
     const operationalCount = services.filter(s => s.status === 'operational').length;
 
     return (
-        <div className={`glass-card p-5 lg:p-6 ${className}`}>
+        <div className={`flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 overflow-hidden hover:border-white/[0.12] transition-colors ${className}`}>
             {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${allOperational ? 'bg-emerald-500/15 border-emerald-500/25' : 'bg-amber-500/15 border-amber-500/25'} border`}>
-                        {allOperational ? (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        ) : (
-                            <AlertCircle className="w-4 h-4 text-amber-400" />
-                        )}
-                    </div>
-                    <div>
-                        <h3 className="text-base font-bold text-white">System Status</h3>
-                        <p className="text-xs text-slate-400">
-                            {operationalCount}/{services.length} services online
-                        </p>
-                    </div>
+            <div className="p-5 border-b border-white/[0.06] flex items-center justify-between">
+                <div>
+                    <h3 className="text-base font-semibold text-white">System Status</h3>
+                    <p className="text-xs text-slate-400">{operationalCount}/{services.length} services online</p>
                 </div>
-
-                {/* Overall status badge */}
                 <div className={`
-          px-3 py-1 rounded-full text-xs font-semibold
-          ${allOperational
-                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
-                        : 'bg-amber-500/15 text-amber-400 border border-amber-500/25'
+                        px-2 pt-0.5 pb-1 rounded text-[10px] font-bold uppercase tracking-wider
+                        ${allOperational
+                        ? 'bg-emerald-500/10 text-emerald-500'
+                        : 'bg-amber-500/10 text-amber-500'
                     }
-        `}>
-                    {allOperational ? 'All Healthy' : 'Degraded'}
+                    `}>
+                    {allOperational ? 'Healthy' : 'Degraded'}
                 </div>
             </div>
 
             {/* Services list */}
-            <div className="space-y-2" role="list" aria-label="System services status">
+            <div className="p-4 space-y-2" role="list" aria-label="System services status">
                 {services.map((service, index) => (
                     <ServiceRow
                         key={service.name}
@@ -114,14 +101,14 @@ export const SystemHealthPanel = memo(function SystemHealthPanel({
             </div>
 
             {/* Uptime stats */}
-            <div className="mt-5 pt-4 border-t border-white/[0.06]">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-400">30-day Uptime</span>
-                    <span className="font-bold text-emerald-400">99.97%</span>
+            <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.04]">
+                <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-500">30-day Availability</span>
+                    <span className="font-mono font-medium text-emerald-400">99.97%</span>
                 </div>
-                <div className="mt-2 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="mt-2 h-1 bg-white/[0.06] rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full"
+                        className="h-full bg-emerald-500 rounded-full"
                         style={{ width: '99.97%' }}
                     />
                 </div>
@@ -145,16 +132,16 @@ const ServiceRow = memo(function ServiceRow({ name, icon, status, value, index }
     const isOperational = status === 'operational';
 
     const StatusIcon = isOperational ? CheckCircle2 : status === 'degraded' ? AlertCircle : XCircle;
-    const statusColor = isOperational ? 'text-emerald-400' : status === 'degraded' ? 'text-amber-400' : 'text-red-400';
+    const statusColor = isOperational ? 'text-emerald-500' : status === 'degraded' ? 'text-amber-500' : 'text-red-500';
 
     return (
         <div
-            className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200 group"
+            className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors group"
             role="listitem"
             style={{ animationDelay: `${index * 50}ms` }}
         >
             <div className="flex items-center gap-3">
-                <div className="p-1.5 rounded-lg bg-white/[0.04] text-slate-400 group-hover:text-slate-300 transition-colors">
+                <div className="text-slate-500 group-hover:text-slate-400 transition-colors">
                     {icon}
                 </div>
                 <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
@@ -163,8 +150,8 @@ const ServiceRow = memo(function ServiceRow({ name, icon, status, value, index }
             </div>
 
             <div className="flex items-center gap-3">
-                <span className="text-xs font-mono text-slate-400">{value}</span>
-                <StatusIcon className={`w-4 h-4 ${statusColor}`} />
+                <span className="text-xs font-mono text-slate-500">{value}</span>
+                <StatusIcon className={`w-3.5 h-3.5 ${statusColor}`} />
             </div>
         </div>
     );

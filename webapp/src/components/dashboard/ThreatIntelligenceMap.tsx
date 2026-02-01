@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useMemo } from 'react';
-import { Network, Radio, Globe, Wifi } from 'lucide-react';
+import { Network, Radio, Globe, Wifi, Activity } from 'lucide-react';
 import { DashboardMetrics } from '@/lib/api';
 import { ThreatIndicator } from './ThreatIndicator';
 import {
@@ -59,77 +59,64 @@ export const ThreatIntelligenceMap = memo(function ThreatIntelligenceMap({
     const totalThreats = threatCounts.critical + threatCounts.high + threatCounts.medium + threatCounts.low;
 
     return (
-        <div className={`glass-card-elevated overflow-hidden ${className}`}>
+        <div className={`flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 overflow-hidden hover:border-white/[0.12] transition-colors ${className}`}>
             {/* Header */}
-            <div className="p-6 lg:p-8 pb-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="p-1.5 rounded-lg bg-purple-500/15 border border-purple-500/20">
-                                <Globe className="w-4 h-4 text-purple-400" />
-                            </div>
-                            <span className="text-overline">Real-time Analysis</span>
+            <div className="p-6 border-b border-white/[0.06]">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+                            <Globe className="w-5 h-5" />
                         </div>
-                        <h3 className="text-xl lg:text-2xl font-bold text-white tracking-tight">
-                            Threat Intelligence Map
-                        </h3>
-                        <p className="text-caption mt-1 max-w-md">
-                            Global threat monitoring with AI-powered anomaly detection
-                        </p>
+                        <div>
+                            <h3 className="text-lg font-semibold text-white">Threat Intelligence</h3>
+                            <p className="text-xs text-slate-400">Global anomaly detection</p>
+                        </div>
                     </div>
 
-                    {/* Live indicator */}
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25">
-                            <div className="relative">
-                                <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full" />
-                                <div className="absolute inset-0 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
-                            </div>
-                            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                                Live
-                            </span>
+                    {/* Live Indicator */}
+                    <div className="flex items-center gap-2 px-2.5 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5">
+                        <div className="relative flex w-2 h-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </div>
+                        <span className="text-[10px] font-medium text-emerald-500 uppercase tracking-wide">Live</span>
                     </div>
                 </div>
 
-                {/* Stats bar */}
-                <div className="flex flex-wrap gap-4 pb-6 border-b border-white/[0.06]">
+                {/* Stats Row */}
+                <div className="flex flex-wrap gap-2">
                     <StatPill color="red" label="Critical" count={threatCounts.critical} />
                     <StatPill color="amber" label="High" count={threatCounts.high} />
-                    <StatPill color="yellow" label="Medium" count={threatCounts.medium} />
-                    <StatPill color="blue" label="Low" count={threatCounts.low} />
-                    <div className="hidden sm:flex items-center gap-2 ml-auto text-sm text-slate-400">
-                        <Wifi className="w-4 h-4" />
-                        <span>{totalThreats} active threats detected</span>
-                    </div>
+                    <StatPill color="blue" label="Total" count={totalThreats} />
                 </div>
             </div>
 
-            {/* Radar Visualization */}
-            <div className="relative h-80 lg:h-96 bg-gradient-to-b from-slate-900/50 to-slate-950/80">
-                {/* Grid overlay */}
+            {/* Radar Visualization Area */}
+            <div className="relative h-80 bg-[#030712]/20">
+                {/* Minimal Grid Background */}
                 <div
-                    className="absolute inset-0 opacity-[0.03]"
+                    className="absolute inset-0 opacity-[0.05]"
                     style={{
-                        backgroundImage: `
-              radial-gradient(circle at center, rgba(255,255,255,0.1) 1px, transparent 1px)
-            `,
-                        backgroundSize: '30px 30px',
+                        backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
+                        backgroundSize: '40px 40px'
                     }}
-                    aria-hidden="true"
                 />
 
-                {/* Center radar */}
-                <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                    {/* Animated rings */}
-                    <div className="absolute w-24 h-24 rounded-full border border-blue-500/30 animate-radar-ping" />
-                    <div className="absolute w-40 h-40 rounded-full border border-purple-500/20 animate-radar-ping" style={{ animationDelay: '0.8s' }} />
-                    <div className="absolute w-56 h-56 rounded-full border border-cyan-500/15 animate-radar-ping" style={{ animationDelay: '1.6s' }} />
-                    <div className="absolute w-72 h-72 rounded-full border border-blue-500/10 animate-radar-ping" style={{ animationDelay: '2.4s' }} />
+                {/* Radar Content */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Concentric Rings */}
+                    <div className="absolute w-32 h-32 rounded-full border border-white/[0.03]" />
+                    <div className="absolute w-56 h-56 rounded-full border border-white/[0.03]" />
+                    <div className="absolute w-80 h-80 rounded-full border border-white/[0.03]" />
 
-                    {/* Center icon */}
-                    <div className="relative z-10 p-4 rounded-2xl bg-slate-900/80 border border-white/10 backdrop-blur-sm">
-                        <Radio className="w-8 h-8 text-blue-400" />
+                    {/* Scanner Effect - Simplified */}
+                    <div className="absolute w-80 h-80 rounded-full animate-[spin_4s_linear_infinite] opacity-20">
+                        <div className="w-1/2 h-1/2 origin-bottom-right border-r border-b border-blue-500/50 bg-gradient-to-br from-transparent to-blue-500/10 rounded-tl-full" />
+                    </div>
+
+                    {/* Center Point */}
+                    <div className="relative z-10 p-3 rounded-full bg-[#030712] border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                        <Activity className="w-5 h-5 text-blue-500" />
                     </div>
                 </div>
 
@@ -143,12 +130,9 @@ export const ThreatIntelligenceMap = memo(function ThreatIntelligenceMap({
                     />
                 ))}
 
-                {/* Timestamp */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/60 border border-white/[0.06] backdrop-blur-sm text-xs text-slate-400">
-                    <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-pulse" />
-                    <time dateTime={lastUpdated.toISOString()}>
-                        Updated {lastUpdated.toLocaleTimeString()}
-                    </time>
+                {/* Footer / Timestamp */}
+                <div className="absolute bottom-4 right-4 text-[10px] text-slate-500 font-mono">
+                    UPDATED: {lastUpdated.toLocaleTimeString()}
                 </div>
             </div>
         </div>
@@ -156,7 +140,7 @@ export const ThreatIntelligenceMap = memo(function ThreatIntelligenceMap({
 });
 
 /**
- * Stat pill component
+ * Minimal Stat pill component
  */
 interface StatPillProps {
     color: 'red' | 'amber' | 'yellow' | 'blue';
@@ -166,24 +150,17 @@ interface StatPillProps {
 
 const StatPill = memo(function StatPill({ color, label, count }: StatPillProps) {
     const config = {
-        red: 'bg-red-500/15 border-red-500/25 text-red-400',
-        amber: 'bg-amber-500/15 border-amber-500/25 text-amber-400',
-        yellow: 'bg-yellow-500/15 border-yellow-500/25 text-yellow-400',
-        blue: 'bg-blue-500/15 border-blue-500/25 text-blue-400',
-    }[color];
-
-    const dotColor = {
-        red: 'bg-red-500',
-        amber: 'bg-amber-500',
-        yellow: 'bg-yellow-500',
-        blue: 'bg-blue-500',
+        red: 'text-red-400 bg-red-500/10',
+        amber: 'text-amber-400 bg-amber-500/10',
+        yellow: 'text-yellow-400 bg-yellow-500/10',
+        blue: 'text-blue-400 bg-blue-500/10',
     }[color];
 
     return (
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${config}`}>
-            <div className={`w-2 h-2 rounded-full ${dotColor}`} />
-            <span className="text-xs font-semibold">{label}</span>
-            <span className="text-xs font-bold ml-0.5">{count}</span>
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium ${config}`}>
+            <span>{label}</span>
+            <span className="opacity-60">|</span>
+            <span>{count}</span>
         </div>
     );
 });

@@ -1,4 +1,4 @@
-import { ArrowUpRight, TrendingUp } from 'lucide-react';
+import { ArrowUpRight, TrendingUp, CheckCircle2 } from 'lucide-react';
 
 interface FooterStatsBarProps {
     lastUpdated: Date;
@@ -13,32 +13,29 @@ export function FooterStatsBar({ lastUpdated, metrics }: FooterStatsBarProps) {
     const uptimePercentage = ((healthyCount / totalCount) * 100).toFixed(1);
 
     return (
-        <div className="glass-card p-4 lg:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-6 text-sm">
+        <div className="border-t border-white/[0.06] pt-6 mt-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+                <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                        <span className="text-slate-400">
-                            Last updated:{' '}
-                            <time className="text-white font-medium" dateTime={lastUpdated.toISOString()}>
-                                {lastUpdated.toLocaleTimeString()}
-                            </time>
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                        <span>
+                            System Status: <span className="text-emerald-500 font-medium">Functional</span>
                         </span>
                     </div>
-                    <div className="hidden sm:flex items-center gap-2 text-slate-400">
-                        <TrendingUp className="w-4 h-4 text-emerald-400" />
-                        <span>{uptimePercentage}% uptime ({healthyCount}/{totalCount} systems healthy)</span>
+                    <div className="hidden sm:flex items-center gap-1.5">
+                        <TrendingUp className="w-3.5 h-3.5" />
+                        <span>{uptimePercentage}% uptime</span>
+                    </div>
+                    <div className="hidden sm:flex items-center gap-1.5">
+                        <span>Last syc: {lastUpdated.toLocaleTimeString()}</span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button className="btn-ghost text-sm flex items-center gap-2">
-                        <span>View Analytics</span>
-                        <ArrowUpRight className="w-4 h-4" />
-                    </button>
-                    <button className="btn-primary text-sm">
-                        Generate Report
-                    </button>
+                <div className="flex items-center gap-4">
+                    <button className="hover:text-white transition-colors">Privacy Policy</button>
+                    <button className="hover:text-white transition-colors">Support</button>
+                    <span className="text-slate-700">|</span>
+                    <span className="opacity-60">v2.4.0-stable</span>
                 </div>
             </div>
         </div>

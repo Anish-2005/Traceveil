@@ -2,17 +2,10 @@
 
 import { memo } from 'react';
 import { TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
-import { MetricCardProps, COLORS, CARD_STYLES, TYPOGRAPHY } from '@/types/dashboard';
+import { MetricCardProps } from '@/types/dashboard';
 
 /**
- * Premium metric card with sophisticated animations and visual hierarchy
- * 
- * Features:
- * - Gradient icon backgrounds with glow effects
- * - Animated trend indicators
- * - Progress bar with shimmer effect
- * - Hover micro-interactions
- * - Accessibility-first design
+ * Minimal metric card for high-density dashboard layouts
  */
 export const MetricCard = memo(function MetricCard({
   icon,
@@ -26,110 +19,84 @@ export const MetricCard = memo(function MetricCard({
 }: MetricCardProps) {
   const colorConfig = {
     emerald: {
-      gradient: 'from-emerald-500 to-green-400',
-      bgLight: 'bg-emerald-500/10',
-      border: 'border-emerald-500/20',
-      text: 'text-emerald-400',
-      glow: 'rgba(16, 185, 129, 0.2)',
-      progress: 'from-emerald-500 via-green-400 to-emerald-500',
+      iconBg: 'bg-emerald-500/10',
+      iconColor: 'text-emerald-500',
+      trendText: 'text-emerald-500',
+      bar: 'bg-emerald-500',
     },
     red: {
-      gradient: 'from-red-500 to-rose-400',
-      bgLight: 'bg-red-500/10',
-      border: 'border-red-500/20',
-      text: 'text-red-400',
-      glow: 'rgba(239, 68, 68, 0.2)',
-      progress: 'from-red-500 via-rose-400 to-red-500',
+      iconBg: 'bg-red-500/10',
+      iconColor: 'text-red-500',
+      trendText: 'text-red-500',
+      bar: 'bg-red-500',
     },
     amber: {
-      gradient: 'from-amber-500 to-yellow-400',
-      bgLight: 'bg-amber-500/10',
-      border: 'border-amber-500/20',
-      text: 'text-amber-400',
-      glow: 'rgba(245, 158, 11, 0.2)',
-      progress: 'from-amber-500 via-yellow-400 to-amber-500',
+      iconBg: 'bg-amber-500/10',
+      iconColor: 'text-amber-500',
+      trendText: 'text-amber-500',
+      bar: 'bg-amber-500',
     },
-  }[color];
+    blue: {
+      iconBg: 'bg-blue-500/10',
+      iconColor: 'text-blue-500',
+      trendText: 'text-blue-500',
+      bar: 'bg-blue-500',
+    }
+  }[color] || {
+    iconBg: 'bg-slate-500/10',
+    iconColor: 'text-slate-500',
+    trendText: 'text-slate-500',
+    bar: 'bg-slate-500',
+  };
 
   return (
     <article
-      className="glass-card p-5 lg:p-6 hover:scale-[1.02] hover-lift group cursor-pointer"
-      role="region"
-      aria-label={`${label}: ${value}`}
+      className="relative flex flex-col p-5 rounded-xl border border-white/[0.08] bg-[#030712]/40 hover:bg-[#030712]/60 hover:border-white/[0.12] transition-all duration-200 cursor-pointer group"
     >
-      {/* Header row */}
-      <div className="flex items-start justify-between mb-4">
-        {/* Icon */}
-        <div className="relative">
-          <div
-            className="absolute inset-0 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            style={{ backgroundColor: colorConfig.glow }}
-            aria-hidden="true"
-          />
-          <div className={`
-            relative p-3 rounded-xl ${colorConfig.bgLight} ${colorConfig.border} border
-            transition-transform duration-300 group-hover:scale-110
-          `}>
-            <div className={colorConfig.text}>
-              {icon}
-            </div>
-          </div>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-3">
+        <div className={`p-2 rounded-lg ${colorConfig.iconBg} ${colorConfig.iconColor}`}>
+          {icon}
         </div>
 
-        {/* Trend & Pulse */}
-        <div className="flex items-center gap-2">
-          {pulse && (
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
-            </span>
-          )}
-          <span className={`
-            flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold
-            ${trendUp
-              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
-              : 'bg-red-500/15 text-red-400 border border-red-500/20'
-            }
-          `}>
-            {trendUp ? (
-              <TrendingUp className="w-3 h-3" />
-            ) : (
-              <TrendingDown className="w-3 h-3" />
+        {/* Trend Indicator */}
+        {(trend || pulse) && (
+          <div className="flex items-center gap-2">
+            {pulse && (
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+              </span>
             )}
-            {trend}
-          </span>
-        </div>
+            {trend && (
+              <span className={`flex items-center gap-1 text-xs font-medium ${trendUp ? 'text-emerald-400' : 'text-red-400'}`}>
+                {trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                {trend}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="space-y-1 mb-4">
-        <p className="text-overline">{label}</p>
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl lg:text-3xl font-bold text-white tracking-tight">
-            {value}
-          </span>
+      <div className="flex-1">
+        <h3 className="text-sm font-medium text-slate-400 mb-1">{label}</h3>
+        <div className="flex items-baseline gap-2 mb-1">
+          <span className="text-2xl font-bold text-white tracking-tight">{value}</span>
         </div>
-        <p className="text-caption">{subtext}</p>
+        {subtext && (
+          <p className="text-xs text-slate-500">{subtext}</p>
+        )}
       </div>
 
-      {/* Progress bar */}
-      <div className="progress-bar">
-        <div
-          className={`progress-bar-fill bg-gradient-to-r ${colorConfig.progress}`}
-          style={{ width: trendUp ? '78%' : '42%' }}
-          role="progressbar"
-          aria-valuenow={trendUp ? 78 : 42}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        />
-      </div>
-
-      {/* Bottom link - appears on hover */}
-      <div className="mt-4 pt-3 border-t border-white/[0.04] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
-          <span>View details</span>
-          <ArrowUpRight className="w-3 h-3" />
-        </button>
+      {/* Footer / Interaction Hint */}
+      <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="w-full bg-white/[0.06] h-1 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full ${colorConfig.bar}`}
+            style={{ width: trendUp ? '75%' : '30%' }}
+          />
+        </div>
       </div>
     </article>
   );

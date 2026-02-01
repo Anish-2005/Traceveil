@@ -35,11 +35,15 @@ const navItems: NavItem[] = [
 interface PageHeaderProps {
     alertCount?: number;
     actions?: React.ReactNode;
+    title?: string;
+    subtitle?: string;
 }
 
 export function PageHeader({
     alertCount = 0,
     actions,
+    title,
+    subtitle,
 }: PageHeaderProps) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const pathname = usePathname();
@@ -79,10 +83,17 @@ export function PageHeader({
                         </div>
 
                         {/* Workspace / Context Selector */}
-                        <button className="hidden lg:flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white transition-colors px-2 py-1 -ml-2 rounded-md hover:bg-white/[0.04]">
-                            <span>Production</span>
-                            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
-                        </button>
+                        {title ? (
+                            <div className="hidden sm:flex flex-col">
+                                <h1 className="text-sm font-bold text-slate-200 leading-tight">{title}</h1>
+                                {subtitle && <span className="text-[10px] text-slate-500 font-medium leading-tight">{subtitle}</span>}
+                            </div>
+                        ) : (
+                            <button className="hidden lg:flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white transition-colors px-2 py-1 -ml-2 rounded-md hover:bg-white/[0.04]">
+                                <span>Production</span>
+                                <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                            </button>
+                        )}
                     </div>
 
                     {/* Center: Minimal Navigation */}
@@ -109,6 +120,11 @@ export function PageHeader({
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-2 lg:gap-4">
+                        {actions && (
+                            <div className="flex items-center mr-2">
+                                {actions}
+                            </div>
+                        )}
                         {/* Search */}
                         <div className="hidden lg:flex items-center gap-2 px-2 py-1.5 rounded-md border border-white/[0.08] bg-white/[0.02] text-xs text-slate-500 hover:border-white/[0.12] transition-colors cursor-text min-w-[200px]">
                             <Search className="w-3.5 h-3.5" />
