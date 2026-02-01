@@ -43,7 +43,7 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
         <div className="relative">
             <div className="grid lg:grid-cols-12 gap-6 items-stretch">
                 {/* Left Column - Welcome & Stats */}
-                <div className="lg:col-span-6 flex flex-col">
+                <div className="lg:col-span-6 flex flex-col scroll-reveal-left reveal-delay-100">
                     <div className="h-full flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 p-6 lg:p-8 hover:border-white/[0.12] transition-colors">
 
                         {/* Header Row */}
@@ -78,6 +78,7 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
                                 change="Active"
                                 positive={true}
                                 icon={<Activity className="w-4 h-4" />}
+                                className="scroll-reveal reveal-delay-200"
                             />
                             <StatCard
                                 label="Active Models"
@@ -85,6 +86,7 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
                                 change="Online"
                                 positive={healthyModels === activeModels}
                                 icon={<Brain className="w-4 h-4" />}
+                                className="scroll-reveal reveal-delay-300"
                             />
                             <StatCard
                                 label="Threats Blocked"
@@ -92,6 +94,7 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
                                 change="+12%"
                                 positive={true}
                                 icon={<Shield className="w-4 h-4" />}
+                                className="scroll-reveal reveal-delay-400"
                             />
                             <StatCard
                                 label="Latency"
@@ -99,13 +102,14 @@ export function HeroSection({ metrics, models }: HeroSectionProps) {
                                 change="Optimal"
                                 positive={avgResponseTime < 10}
                                 icon={<Zap className="w-4 h-4" />}
+                                className="scroll-reveal reveal-delay-500"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Right Column - Primary KPI */}
-                <div className="lg:col-span-6 flex flex-col">
+                <div className="lg:col-span-6 flex flex-col scroll-reveal-right reveal-delay-200">
                     <div className="h-full flex flex-col rounded-xl border border-white/[0.08] bg-[#030712]/50 p-6 lg:p-8 hover:border-white/[0.12] transition-colors">
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">

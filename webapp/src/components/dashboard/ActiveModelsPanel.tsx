@@ -85,9 +85,9 @@ const ModelCard = memo(function ModelCard({ name, status, accuracy, index }: Mod
 
     return (
         <div
-            className="p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200 group"
+            className="p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200 group scroll-reveal"
             role="listitem"
-            style={{ animationDelay: `${index * 50}ms` }}
+            style={{ transitionDelay: `${index * 50}ms` }}
         >
             <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors truncate">

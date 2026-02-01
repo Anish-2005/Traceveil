@@ -136,9 +136,9 @@ const ServiceRow = memo(function ServiceRow({ name, icon, status, value, index }
 
     return (
         <div
-            className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors group"
+            className="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors group scroll-reveal"
             role="listitem"
-            style={{ animationDelay: `${index * 50}ms` }}
+            style={{ transitionDelay: `${index * 50}ms` }}
         >
             <div className="flex items-center gap-3">
                 <div className="text-slate-500 group-hover:text-slate-400 transition-colors">
