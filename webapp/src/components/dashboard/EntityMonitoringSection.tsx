@@ -109,8 +109,8 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
                     {entities.map((entity, index) => (
                         <div
                             key={entity.id}
-                            className="animate-fade-up"
-                            style={{ animationDelay: `${index * 50}ms` }}
+                            className="scroll-reveal"
+                            style={{ transitionDelay: `${index * 50}ms` }}
                         >
                             <EntityCard
                                 id={entity.id}

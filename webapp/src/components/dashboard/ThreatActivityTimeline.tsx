@@ -84,8 +84,8 @@ export const ThreatActivityTimeline = memo(function ThreatActivityTimeline({
                     {threatEvents.map((event, index) => (
                         <div
                             key={`threat-activity-${index}`}
-                            className="animate-fade-up"
-                            style={{ animationDelay: `${index * 50}ms` }}
+                            className="scroll-reveal"
+                            style={{ transitionDelay: `${index * 50}ms` }}
                         >
                             <ThreatActivity
                                 severity={event.severity}

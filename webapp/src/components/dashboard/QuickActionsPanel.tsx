@@ -87,8 +87,8 @@ const QuickActionCard = memo(function QuickActionCard({
     return (
         <Link
             href={href}
-            className="group flex flex-col p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200"
-            style={{ animationDelay: `${index * 30}ms` }}
+            className="group flex flex-col p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.04] hover:border-white/[0.08] transition-all duration-200 scroll-reveal"
+            style={{ transitionDelay: `${index * 30}ms` }}
         >
             <div className="flex items-start justify-between mb-2">
                 <div className="text-slate-500 group-hover:text-blue-400 transition-colors">

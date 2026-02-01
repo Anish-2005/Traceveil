@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ScrollObserver } from "@/components/ui/ScrollObserver";
 
 // Premium font configuration with performance optimization
 const inter = Inter({
@@ -160,6 +161,8 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
+        <ScrollObserver />
+
         {/* Skip to main content for accessibility */}
         <a
           href="#main-content"
