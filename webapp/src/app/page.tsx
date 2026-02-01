@@ -9,11 +9,13 @@
  * Optimized with component lazy loading for performance.
  */
 
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useScrollReveal } from '@/hooks';
 import { Navbar } from '@/components/landing/Navbar';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { BackgroundEffects } from '@/components/landing/BackgroundEffects';
+import { LoadingScreen } from '@/components/shared/LoadingScreen';
 
 // Lazy load below-the-fold components
 const TrustedBySection = dynamic(() => import('@/components/landing/TrustedBySection').then(mod => mod.TrustedBySection));
@@ -24,18 +26,29 @@ const CTASection = dynamic(() => import('@/components/landing/CTASection').then(
 const Footer = dynamic(() => import('@/components/landing/Footer').then(mod => mod.Footer));
 
 export default function LandingPage() {
-  // Initialize scroll animations
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <>
+      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      {!isLoading && <MainContent />}
+    </>
+  );
+}
+
+function MainContent() {
+  // Initialize scroll animations only when content is mounted
   useScrollReveal();
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden">
-      {/* Background Effects (Eager loaded for immediate visual impact) */}
+    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden animate-fade-in">
+      {/* Background Effects */}
       <BackgroundEffects />
 
-      {/* Navigation (Eager loaded) */}
+      {/* Navigation */}
       <Navbar />
 
-      {/* Hero Section (Eager loaded) */}
+      {/* Hero Section */}
       <HeroSection />
 
       {/* Trusted By Section */}
