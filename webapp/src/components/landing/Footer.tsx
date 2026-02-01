@@ -9,8 +9,13 @@ export function Footer() {
                     {/* Brand */}
                     <div className="scroll-reveal max-w-sm">
                         <Link href="/" className="flex items-center gap-3 mb-6">
-                            <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                                <div className="h-4 w-4 bg-blue-500 rounded-sm" />
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-blue-500/20 rounded-md blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <img
+                                    src="/traceveil-logo.svg"
+                                    alt="Traceveil"
+                                    className="relative h-8 w-8 transition-transform duration-500 group-hover:scale-110"
+                                />
                             </div>
                             <span className="font-bold text-lg text-white tracking-tight">Traceveil</span>
                         </Link>

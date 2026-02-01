@@ -47,41 +47,41 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#030712] flex items-center justify-center p-4 relative overflow-hidden font-sans selection:bg-blue-500/30">
+        <div className="min-h-screen bg-[#030712] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-blue-500/30">
             {/* Unified Background Effects */}
             <BackgroundEffects />
 
             <div className="w-full max-w-[420px] relative z-20 flex flex-col items-center">
                 {/* Header Section */}
-                <div className="text-center mb-10 animate-fade-up">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 mb-6 shadow-2xl shadow-blue-500/10 relative group cursor-default">
+                <div className="text-center mb-6 sm:mb-10 animate-fade-up">
+                    <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 mb-4 sm:mb-6 shadow-2xl shadow-blue-500/10 relative group cursor-default">
                         <div className="absolute inset-0 rounded-3xl bg-blue-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <img
                             src="/traceveil-logo.svg"
                             alt="Traceveil Logo"
-                            className="w-12 h-12 relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                            className="w-10 h-10 sm:w-12 sm:h-12 relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                         />
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tight mb-3 text-white">
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2 sm:mb-3 text-white">
                         Traceveil
                     </h1>
-                    <p className="text-slate-400 text-sm font-medium tracking-wide uppercase opacity-80">
+                    <p className="text-slate-400 text-xs sm:text-sm font-medium tracking-wide uppercase opacity-80">
                         Intelligence & Fraud Detection
                     </p>
                 </div>
 
                 {/* Glass Card */}
-                <div className="w-full glass-card-elevated p-8 animate-fade-up stagger-1 backdrop-blur-3xl border border-white/10">
-                    <form onSubmit={handleLogin} className="space-y-5">
+                <div className="w-full glass-card-elevated p-6 sm:p-8 animate-fade-up stagger-1 backdrop-blur-3xl border border-white/10">
+                    <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
                         {error && (
-                            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3 animate-scale-in">
+                            <div className="p-3 sm:p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3 animate-scale-in">
                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                                 {error}
                             </div>
                         )}
 
-                        <div className="space-y-2 group">
-                            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1 group-focus-within:text-blue-400 transition-colors">Email Access</label>
+                        <div className="space-y-1.5 sm:space-y-2 group">
+                            <label className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1 group-focus-within:text-blue-400 transition-colors">Email Access</label>
                             <div className="relative transform transition-transform duration-200 group-focus-within:scale-[1.01]">
                                 <div className="absolute left-4 top-3.5 text-slate-500 group-focus-within:text-blue-500 transition-colors">
                                     <Mail className="w-5 h-5" />
@@ -97,8 +97,8 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-2 group">
-                            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1 group-focus-within:text-blue-400 transition-colors">Secure Key</label>
+                        <div className="space-y-1.5 sm:space-y-2 group">
+                            <label className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1 group-focus-within:text-blue-400 transition-colors">Secure Key</label>
                             <div className="relative transform transition-transform duration-200 group-focus-within:scale-[1.01]">
                                 <div className="absolute left-4 top-3.5 text-slate-500 group-focus-within:text-blue-500 transition-colors">
                                     <Lock className="w-5 h-5" />
@@ -133,7 +133,7 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    <div className="relative my-8">
+                    <div className="relative my-6 sm:my-8">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-white/[0.08]"></div>
                         </div>

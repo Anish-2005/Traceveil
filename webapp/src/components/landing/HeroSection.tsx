@@ -1,72 +1,81 @@
 import Link from 'next/link';
-import { ArrowRight, Terminal, Shield, Cpu, Activity, Copy, Check } from 'lucide-react';
+import { ArrowRight, Terminal, Shield, Cpu, Activity, Copy, Check, ChevronRight, Play } from 'lucide-react';
 import { useCountUp } from '@/hooks';
 import { useState } from 'react';
 
 export function HeroSection() {
     return (
-        <section className="relative min-h-screen pt-32 pb-20 lg:pt-20 lg:pb-32 overflow-hidden flex items-center bg-[#030712]">
-            {/* Technical Grid Background */}
+        <section className="relative min-h-screen pt-24 pb-16 lg:pt-32 lg:pb-32 overflow-hidden flex items-center bg-[#030712]">
+            {/* Premium Ambient Background */}
             <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-1/4 w-[1000px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] mix-blend-screen animate-pulse-glow" />
+                <div className="absolute bottom-0 right-1/4 w-[800px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] mix-blend-screen" />
                 <div
-                    className="absolute inset-0 opacity-[0.03]"
+                    className="absolute inset-0 opacity-[0.02]"
                     style={{
                         backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
-                        backgroundSize: '50px 50px'
+                        backgroundSize: '40px 40px'
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#030712] via-transparent to-[#030712]" />
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-                <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
-                    {/* Left Column: Technical Copy */}
-                    <div className="flex-1 max-w-2xl">
-                        <div className="scroll-reveal inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-8">
+                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                    {/* Left Column: Brand & Copy */}
+                    <div className="flex-1 max-w-2xl text-center lg:text-left pt-8 lg:pt-0">
+                        {/* New Status Pill */}
+                        <div className="scroll-reveal inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.05] transition-colors cursor-pointer group">
                             <span className="flex h-2 w-2 relative">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            v2.4.0 Stable
+                            <span className="text-xs font-medium text-slate-300 group-hover:text-white transition-colors">v2.4 Is Live</span>
+                            <ChevronRight className="w-3 h-3 text-slate-500 group-hover:text-white transition-colors" />
                         </div>
 
-                        <h1 className="scroll-reveal reveal-delay-1 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.05]">
+                        <h1 className="scroll-reveal reveal-delay-1 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1] lg:leading-[1.05]">
                             The security layer for <br />
-                            <span className="text-slate-500">modern platforms.</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 animate-gradient">
+                                modern platforms.
+                            </span>
                         </h1>
 
-                        <p className="scroll-reveal reveal-delay-2 text-lg text-slate-400 mb-10 leading-relaxed max-w-lg">
-                            Traceveil provides real-time fraud detection APIs for fintech, crypto, and enterprise platforms.
-                            <span className="text-slate-300"> Integrate in &lt;5ms.</span>
+                        <p className="scroll-reveal reveal-delay-2 text-lg sm:text-xl text-slate-400 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                            Detect fraud in <span className="text-white font-semibold">real-time</span> with our distributed edge network.
+                            Integrate our API in minutes, not months.
                         </p>
 
-                        <div className="scroll-reveal reveal-delay-3 flex flex-col sm:flex-row items-center gap-4">
-                            <Link href="/dashboard" className="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-white text-black font-semibold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2 text-sm">
+                        <div className="scroll-reveal reveal-delay-3 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                            <Link href="/dashboard" className="w-full sm:w-auto group relative px-8 py-4 rounded-xl bg-white text-black font-bold text-sm hover:bg-slate-200 transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2">
                                 Start Building
-                                <ArrowRight className="w-4 h-4" />
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </Link>
-                            <div className="w-full sm:w-auto relative group">
-                                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <button className="relative w-full px-8 py-3.5 rounded-lg border border-white/10 bg-[#0a0f1a] text-slate-300 hover:text-white font-medium transition-colors flex items-center justify-center gap-2 text-sm">
-                                    <Terminal className="w-4 h-4" />
-                                    Read Documentation
-                                </button>
-                            </div>
+
+                            <button className="w-full sm:w-auto group px-8 py-4 rounded-xl border border-white/[0.08] bg-white/[0.02] text-slate-300 hover:text-white hover:bg-white/[0.05] font-medium text-sm transition-all flex items-center justify-center gap-3">
+                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/[0.1] group-hover:bg-white/[0.2] transition-colors">
+                                    <Play className="w-3 h-3 fill-current ml-0.5" />
+                                </span>
+                                Watch Demo
+                            </button>
                         </div>
 
-                        <div className="scroll-reveal reveal-delay-4 mt-12 flex items-center gap-8 text-xs font-mono text-slate-500">
-                            <span>// TRUSTED BY ENGINEERING TEAMS AT</span>
-                        </div>
-                        <div className="scroll-reveal reveal-delay-5 mt-4 flex flex-wrap gap-x-8 gap-y-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                            {['Mercury', 'Ramp', 'Vercel', 'Linear'].map(brand => (
-                                <span key={brand} className="text-sm font-semibold text-white">{brand}</span>
-                            ))}
+                        <div className="scroll-reveal reveal-delay-4 mt-16 pt-8 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 sm:gap-12">
+                            <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">Trusted By</span>
+                            <div className="flex flex-wrap justify-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+                                {['Mercury', 'Linear', 'Ramp', 'Vercel'].map(brand => (
+                                    <span key={brand} className="text-sm font-bold text-white tracking-tight">{brand}</span>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Right Column: Code/Terminal Visual */}
-                    <div className="flex-1 w-full max-w-xl lg:max-w-none scroll-reveal-right">
-                        <TerminalVisual />
+                    {/* Right Column: High-Fidelity Terminal */}
+                    <div className="flex-1 w-full max-w-xl lg:max-w-none scroll-reveal-right mt-10 lg:mt-0 relative group perspective-[2000px]">
+                        {/* 3D Tilt Effect Container (Subtle) */}
+                        <div className="relative transform transition-transform duration-700 hover:rotate-y-[2deg] hover:rotate-x-[2deg]">
+                            <TerminalVisual />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,98 +93,77 @@ function TerminalVisual() {
     };
 
     return (
-        <div className="relative group">
-            {/* Subtle Glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-transparent rounded-xl blur-xl opacity-50" />
+        <div className="relative w-full">
+            {/* Ambient Glow Behind Terminal */}
+            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-2xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-700" />
 
-            {/* Terminal Window */}
-            <div className="relative rounded-xl border border-white/[0.08] bg-[#0a0f1a] shadow-2xl overflow-hidden font-mono text-xs sm:text-sm">
-                {/* Window Controls */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-white/[0.02]">
+            {/* Main Window */}
+            <div className="relative rounded-xl border border-white/[0.08] bg-[#0B0F19]/95 backdrop-blur-xl shadow-2xl overflow-hidden ring-1 ring-white/[0.05]">
+
+                {/* Header Bar */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
-                        <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />
-                        <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
+                        <div className="flex gap-1.5">
+                            <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/50" />
+                            <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/50" />
+                            <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/50" />
+                        </div>
                     </div>
-                    <div className="text-slate-500">investigation.json</div>
-                    <button onClick={handleCopy} className="text-slate-500 hover:text-white transition-colors">
-                        {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-black/40 border border-white/[0.05] text-[10px] sm:text-xs font-mono text-slate-400">
+                        <Terminal className="w-3 h-3" />
+                        <span>security_protocol.json</span>
+                    </div>
+
+                    <button
+                        onClick={handleCopy}
+                        className="p-1.5 rounded hover:bg-white/[0.05] text-slate-500 hover:text-white transition-colors"
+                        title="Copy Code"
+                    >
+                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                 </div>
 
                 {/* Code Content */}
-                <div className="p-6 overflow-x-auto">
-                    <div className="space-y-1">
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">01</span>
-                            <span className="text-purple-400">{"{"}</span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">02</span>
-                            <span className="pl-4">
-                                <span className="text-blue-400">"event_id"</span>: <span className="text-emerald-400">"evt_84729104"</span>,
-                            </span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">03</span>
-                            <span className="pl-4">
-                                <span className="text-blue-400">"risk_score"</span>: <span className="text-rose-400 font-bold">0.98</span>,
-                            </span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">04</span>
-                            <span className="pl-4">
-                                <span className="text-blue-400">"ip_address"</span>: <span className="text-emerald-400">"192.168.1.1"</span>,
-                            </span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">05</span>
-                            <span className="pl-4">
-                                <span className="text-blue-400">"signals"</span>: [
-                            </span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">06</span>
-                            <span className="pl-8">
-                                <span className="text-emerald-400">"velocity_check"</span>, <span className="text-emerald-400">"suspicious_device"</span>
-                            </span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">07</span>
-                            <span className="pl-4">],</span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">08</span>
-                            <span className="pl-4">
-                                <span className="text-blue-400">"action"</span>: <span className="text-rose-400 font-bold">"BLOCK"</span>
-                            </span>
-                        </div>
-                        <div className="flex gap-4">
-                            <span className="text-slate-600 select-none">09</span>
-                            <span className="text-purple-400">{"}"}</span>
-                        </div>
-                    </div>
+                <div className="p-4 sm:p-6 overflow-x-auto custom-scrollbar">
+                    <pre className="font-mono text-[11px] sm:text-xs md:text-[13px] leading-relaxed">
+                        <code className="block min-w-max">
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">1</span><span className="text-purple-400">{'{'}</span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">2</span><span className="pl-4"><span className="text-sky-400">"event_id"</span>: <span className="text-emerald-400">"evt_84729104"</span>,</span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">3</span><span className="pl-4"><span className="text-sky-400">"timestamp"</span>: <span className="text-amber-400">"{new Date().toISOString()}"</span>,</span></div>
+                            <div className="flex bg-red-500/10 -mx-4 sm:-mx-6 px-4 sm:px-6 border-l-2 border-red-500/50"><span className="w-6 text-slate-700 select-none mr-2">4</span><span className="pl-4"><span className="text-sky-400">"risk_score"</span>: <span className="text-red-400 font-bold">0.98</span>,</span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">5</span><span className="pl-4"><span className="text-sky-400">"signals"</span>: [</span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">6</span><span className="pl-8"><span className="text-emerald-400">"velocity_check"</span>,</span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">7</span><span className="pl-8"><span className="text-emerald-400">"suspicious_device"</span></span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">8</span><span className="pl-4">],</span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">9</span><span className="pl-4"><span className="text-sky-400">"action"</span>: <span className="text-red-400 font-bold">"BLOCK"</span></span></div>
+                            <div className="flex"><span className="w-6 text-slate-700 select-none mr-2">10</span><span className="text-purple-400">{'}'}</span></div>
+                        </code>
+                    </pre>
                 </div>
 
-                {/* Status Footer */}
-                <div className="px-4 py-2 border-t border-white/[0.08] bg-white/[0.02] flex items-center justify-between text-[10px] text-slate-500 uppercase tracking-wider">
-                    <div className="flex items-center gap-2">
-                        <Activity className="w-3 h-3 text-blue-500" />
-                        <span>Processing: {(threats.count * 1.5).toFixed(0)} req/s</span>
+                {/* Live Activity Footer */}
+                <div className="px-4 py-2.5 bg-[#050912] border-t border-white/[0.05] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 text-[10px] text-blue-400 font-mono">
+                            <Activity className="w-3 h-3" />
+                            <span className="animate-pulse">Analyzing Stream...</span>
+                        </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Shield className="w-3 h-3 text-emerald-500" />
-                        <span>Mode: Active Block</span>
+                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                        <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Connected</span>
                     </div>
                 </div>
             </div>
 
-            {/* Floating Tag */}
-            <div className="absolute -right-4 top-12 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-bounce-subtle">
-                <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-medium text-emerald-400">Threat Detected</span>
+            {/* Floating Context Card (Desktop only/Responsive) */}
+            <div className="absolute -right-4 md:-right-8 top-20 px-4 py-3 bg-[#1e293b]/90 border border-white/10 rounded-xl shadow-2xl backdrop-blur-md animate-fade-up hidden sm:block">
+                <div className="flex items-center gap-3 mb-1">
+                    <Shield className="w-4 h-4 text-red-400" />
+                    <span className="text-xs font-bold text-white">Anomalous Activity</span>
                 </div>
+                <div className="text-[10px] text-slate-400 font-mono">IP: 192.168.1.1 blocked</div>
             </div>
         </div>
     );
