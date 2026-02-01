@@ -59,11 +59,15 @@ class UserProfile:
             last_updated=data.get('last_updated')
         )
 
+# In-memory storage for development/demo without Firebase
+_IN_MEMORY_EVENTS = []
+
 # Firestore operations
 def save_event(event):
     db = get_firestore_client()
     if db is None:
-        print("Mock: Event saved (not really)")
+        print(f"Mock: Event saved to in-memory store ({event.id})")
+        _IN_MEMORY_EVENTS.append(event)
         return
     doc_ref = db.collection('events').document(event.id)
     doc_ref.set(event.to_dict())
@@ -71,8 +75,11 @@ def save_event(event):
 def get_user_events(user_id, limit=1000):
     db = get_firestore_client()
     if db is None:
-        print("Mock: Returning empty events list")
-        return []
+        # Filter in-memory events
+        events = [e for e in _IN_MEMORY_EVENTS if e.user_id == user_id]
+        events.sort(key=lambda x: x.timestamp, reverse=True)
+        return events[:limit]
+        
     events_ref = db.collection('events').where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit)
     docs = events_ref.stream()
     return [Event.from_dict(doc.to_dict()) for doc in docs]
@@ -99,48 +106,45 @@ def get_total_events_count():
     """Get total number of events in the system"""
     db = get_firestore_client()
     if db is None:
-        # Mock data for development
-        return 2847
+        return len(_IN_MEMORY_EVENTS)
 
     try:
         # Optimized count using aggregation query
-        # access aggregation query via the collection reference
         events_ref = db.collection('events')
-        # Use aggregation count if available in the SDK version
-        # Otherwise fallback to iterating but maybe limit it for safety
-        
-        # Checking if count() is available (recent firebase-admin)
         if hasattr(events_ref, 'count'):
              aggregate_query = events_ref.count()
              results = aggregate_query.get()
              return results[0][0].value
         
-        # Fallback for older SDKs: stream but just count
-        # Still O(N) but avoids loading full objects if possible using select
-        docs = events_ref.select([]).stream() # Only fetch IDs
+        docs = events_ref.select([]).stream()
         count = sum(1 for _ in docs)
         return max(count, 1)
     except Exception as e:
         print(f"Error getting events count: {e}")
-        return 2847  # Fallback
+        return 0
 
 def get_recent_high_risk_events(limit=10):
     """Get recent high-risk events"""
     db = get_firestore_client()
     if db is None:
-        # Mock data for development
-        return [
-            {
-                "id": f"event_{i}",
-                "user_id": f"user_{i}",
-                "event_type": "high_risk_transaction" if i % 2 == 0 else "suspicious_login",
-                "risk_score": 0.85 + (i * 0.02),
-                "timestamp": datetime.now(),
-                "description": f"High-risk event {i}",
-                "severity": "high" if i % 3 == 0 else "critical",
-                "flags": ["velocity", "geo-anomaly"] if i % 2 == 0 else ["new_device", "pattern_shift"]
-            } for i in range(min(limit, 5))
-        ]
+        # Return in-memory high risk events, or empty list if none
+        high_risk = [e for e in _IN_MEMORY_EVENTS if (e.risk_score or 0) > 0.7]
+        high_risk.sort(key=lambda x: x.timestamp, reverse=True)
+        
+        result = []
+        for e in high_risk[:limit]:
+            result.append({
+                "id": e.id,
+                "user_id": e.user_id,
+                "event_type": e.event_type,
+                "risk_score": e.risk_score,
+                "timestamp": e.timestamp,
+                "description": f"High risk {e.event_type} detected",
+                "severity": "critical" if (e.risk_score or 0) > 0.9 else "high",
+                "flags": ["simulated"]
+            })
+            
+        return result
 
     try:
         # Get recent events with high risk scores
@@ -169,16 +173,4 @@ def get_recent_high_risk_events(limit=10):
         return high_risk_events
     except Exception as e:
         print(f"Error getting high-risk events: {e}")
-        # Return mock data as fallback
-        return [
-            {
-                "id": f"event_{i}",
-                "user_id": f"user_{i}",
-                "event_type": "high_risk_transaction",
-                "risk_score": 0.85 + (i * 0.02),
-                "timestamp": datetime.now(),
-                "description": f"High-risk event {i}",
-                "severity": "high",
-                "flags": ["velocity", "geo-anomaly"]
-            } for i in range(min(limit, 3))
-        ]
+        return []

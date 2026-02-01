@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ScrollObserver } from "@/components/ui/ScrollObserver";
+import { AuthProvider } from "@/context/AuthContext";
 
 // Premium font configuration with performance optimization
 const inter = Inter({
@@ -171,7 +172,9 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
 
         {/* Performance: Preload critical resources */}
         <link
