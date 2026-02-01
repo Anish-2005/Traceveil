@@ -62,7 +62,7 @@ def train_autoencoder(X: np.ndarray, epochs: int = 100, batch_size: int = 32, va
     model = Autoencoder(input_dim)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5, verbose=True)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
 
     # Split data
     split_idx = int(len(X) * (1 - validation_split))
