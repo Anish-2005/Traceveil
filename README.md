@@ -7,10 +7,15 @@ A sophisticated behavioral machine learning system for detecting fraud and cheat
 Traditional fraud detection relies on rules and simple thresholds. This system learns normal behavior patterns, detects subtle deviations, and adapts over time using a layered intelligence approach.
 
 **🎯 Now Trained on Industry-Standard Datasets:**
+
 - IEEE-CIS Fraud Detection (Kaggle) - Real transaction data
+
 - European Credit Card Fraud - Classic benchmark dataset
+
 - NAB Time Series Anomaly - Yahoo anomaly detection data
+
 - Synthetic Exam Behavior - Realistic cheating patterns
+
 - Synthetic Fraud Networks - Graph-based fraud detection
 
 ## 🏗️ System Architecture
@@ -22,14 +27,20 @@ Raw Events → Feature Intelligence → Multiple ML Models → Risk Engine → E
 ### Core Components
 
 1. **Data Ingestion Layer**: Event-driven architecture storing timestamped user actions
+
 2. **Feature Engineering**: Temporal, behavioral, and statistical drift features
+
 3. **Multi-Model ML Architecture**:
    - **Unsupervised Anomaly Detection**: Autoencoder (trained on IEEE-CIS + Credit Card data)
    - **Sequential/Temporal Models**: LSTM (trained on exam behavior + time series)
    - **Graph-Based Fraud Detection**: Node2Vec + Community Detection (trained on fraud networks)
+
 4. **Risk Scoring Engine**: Weighted combination with adaptive thresholds
+
 5. **Real-Time Decision Pipeline**: Sub-200ms inference latency
+
 6. **Explainability**: SHAP values and human-readable explanations
+
 7. **Feedback & Self-Learning**: Active learning with model drift detection and versioning
 
 ## � Industry-Standard Training Datasets
