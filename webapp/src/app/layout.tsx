@@ -3,6 +3,7 @@ import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ScrollObserver } from "@/components/ui/ScrollObserver";
 import { AuthProvider } from "@/context/AuthContext";
+import { APIStatus } from '@/components/shared/APIStatus';
 
 // Premium font configuration with performance optimization
 const outfit = Outfit({
@@ -174,6 +175,7 @@ export default function RootLayout({
 
         <AuthProvider>
           {children}
+          <APIStatus />
         </AuthProvider>
 
         {/* Performance: Preload critical resources */}
