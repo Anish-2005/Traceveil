@@ -44,29 +44,29 @@ def compute_features(user_id: str):
         burstiness_score = 0
 
     # Reaction time entropy (simplified)
-    reaction_times = [e['metadata'].get('reaction_time', 1) for e in recent_events if 'reaction_time' in e['metadata']]
+    reaction_times = [e.event_metadata.get('reaction_time', 1) for e in recent_events if 'reaction_time' in e.event_metadata]
     if reaction_times:
         reaction_time_entropy = -sum((np.array(reaction_times) / sum(reaction_times)) * np.log(np.array(reaction_times) / sum(reaction_times)))
     else:
         reaction_time_entropy = 0
 
     # Session duration variance (simplified)
-    session_durations = [e['metadata'].get('session_duration', 0) for e in recent_events if 'session_duration' in e['metadata']]
+    session_durations = [e.event_metadata.get('session_duration', 0) for e in recent_events if 'session_duration' in e.event_metadata]
     session_duration_variance = np.var(session_durations) if session_durations else 0
 
     # Behavioral Fingerprints
-    mouse_speeds = [e['metadata'].get('mouse_speed', 0) for e in recent_events if 'mouse_speed' in e['metadata']]
+    mouse_speeds = [e.event_metadata.get('mouse_speed', 0) for e in recent_events if 'mouse_speed' in e.event_metadata]
     mouse_speed = np.mean(mouse_speeds) if mouse_speeds else 0
 
     # Working hours (simplified: hour of day)
     hours = df['timestamp'].dt.hour
     working_hours = hours.between(9, 17).sum() / len(hours) if len(hours) > 0 else 0
 
-    decision_latencies = [e['metadata'].get('decision_latency', 0) for e in recent_events if 'decision_latency' in e['metadata']]
+    decision_latencies = [e.event_metadata.get('decision_latency', 0) for e in recent_events if 'decision_latency' in e.event_metadata]
     decision_latency = np.mean(decision_latencies) if decision_latencies else 0
 
     # Device stability (count unique devices)
-    devices = [e['metadata'].get('device_id', 'unknown') for e in recent_events]
+    devices = [e.event_metadata.get('device_id', 'unknown') for e in recent_events]
     device_stability = len(set(devices)) / len(devices) if devices else 0
 
     # Statistical Drift Features (simplified)

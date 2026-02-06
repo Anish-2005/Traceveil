@@ -1,6 +1,7 @@
 'use client';
 
 import { memo } from 'react';
+import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 
 export interface EntityCardProps {
@@ -104,13 +105,14 @@ export const EntityCard = memo(function EntityCard({
       </div>
 
       {/* Action */}
-      <button
-        className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] rounded-lg border border-white/[0.04] hover:border-white/[0.1] transition-all duration-200 relative z-10"
-        tabIndex={-1}
+      <Link
+        href={`/users?id=${id}`}
+        className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-slate-400 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] rounded-lg border border-white/[0.04] hover:border-white/[0.1] transition-all duration-200 relative z-10 group-action"
+        tabIndex={0}
       >
         <span>View Analysis</span>
-        <ArrowUpRight className="w-3 h-3" />
-      </button>
+        <ArrowUpRight className="w-3 h-3 group-action-hover:translate-x-0.5 group-action-hover:-translate-y-0.5 transition-transform" />
+      </Link>
     </article>
   );
 });

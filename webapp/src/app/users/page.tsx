@@ -7,47 +7,49 @@
  * with real-time risk visualization and detailed explanations.
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
-  Search,
-  User,
-  AlertTriangle,
-  Shield,
-  TrendingUp,
   Activity,
+  AlertTriangle,
+  Brain,
+  CheckCircle,
+  ChevronRight,
   Clock,
   FileText,
-  CheckCircle,
-  XCircle,
-  ChevronRight,
-  Zap,
+  Search,
+  Shield,
   Target,
-  Brain
+  TrendingUp,
+  User,
+  XCircle,
+  // ... (imports remain)
 } from 'lucide-react';
 import { PageLayout, PageHeader } from '@/components/shared';
 import { traceveilApi, UserRisk } from '@/lib/api';
 
 export default function UsersPage() {
+  const searchParams = useSearchParams();
   const [userId, setUserId] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [userRisk, setUserRisk] = useState<UserRisk | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userId.trim()) return;
+  const fetchUserRisk = useCallback(async (id: string) => {
+    if (!id.trim()) return;
 
     setIsSearching(true);
     setError(null);
     setUserRisk(null);
+    setUserId(id);
 
     try {
-      const result = await traceveilApi.getUserRisk(userId.trim());
+      const result = await traceveilApi.getUserRisk(id.trim());
       setUserRisk(result);
       // Add to search history
       setSearchHistory(prev => {
-        const newHistory = [userId.trim(), ...prev.filter(id => id !== userId.trim())].slice(0, 5);
+        const newHistory = [id.trim(), ...prev.filter(x => x !== id.trim())].slice(0, 5);
         return newHistory;
       });
     } catch (err) {
@@ -55,17 +57,23 @@ export default function UsersPage() {
     } finally {
       setIsSearching(false);
     }
+  }, []);
+
+  // Handle URL query param
+  useEffect(() => {
+    const idFromUrl = searchParams.get('id');
+    if (idFromUrl) {
+      fetchUserRisk(idFromUrl);
+    }
+  }, [searchParams, fetchUserRisk]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchUserRisk(userId);
   };
 
   const handleQuickSearch = (id: string) => {
-    setUserId(id);
-    // Trigger search
-    const fakeEvent = { preventDefault: () => { } } as React.FormEvent;
-    setUserId(id);
-    setTimeout(() => {
-      const form = document.getElementById('search-form') as HTMLFormElement;
-      form?.requestSubmit();
-    }, 0);
+    fetchUserRisk(id);
   };
 
   const getRiskColor = (level: string) => {

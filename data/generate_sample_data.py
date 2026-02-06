@@ -19,7 +19,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.dataset_loader import dataset_loader
 
-API_URL = "http://localhost:8000/ingest"
+API_URL = "http://127.0.0.1:8000/events/submit"
 
 # Enhanced event types based on industry datasets
 EVENT_TYPES = [
@@ -117,7 +117,7 @@ class RealisticDataGenerator:
             # Suspicious users have different behavior patterns
             weights = [0.1, 0.3, 0.05, 0.05, 0.1, 0.1, 0.1, 0.1, 0.05, 0.02, 0.02, 0.01]
         else:
-            weights = [0.2, 0.1, 0.05, 0.05, 0.15, 0.15, 0.1, 0.1, 0.02, 0.02, 0.02, 0.03]
+            weights = [0.2, 0.1, 0.05, 0.05, 0.15, 0.15, 0.1, 0.1, 0.02, 0.02, 0.02, 0.04]
 
         event_type = np.random.choice(EVENT_TYPES, p=weights)
 
@@ -285,12 +285,55 @@ def main():
     print("Options:")
     print("1. Continuous generation (Ctrl+C to stop)")
     print("2. Bulk generation (specify number of events)")
+    print("3. Simulate Critical Attack (Forces high-risk event)")
     print()
 
     try:
-        choice = input("Choose mode (1/2) [1]: ").strip() or "1"
+        choice = input("Choose mode (1-3) [1]: ").strip() or "1"
 
-        if choice == "2":
+        if choice == "3":
+            print("\n🚨 Simulating Critical Attack Scenario...")
+            # Force a suspicious user
+            attacker_id = f"attacker_{np.random.randint(1000, 9999)}"
+            data_generator.user_profiles[attacker_id] = {
+                'is_suspicious': True,
+                'device_fingerprint': "kali-linux-tool",
+                'ip_history': ["192.168.1.105", "10.0.0.5"],
+                'behavior_baseline': {
+                    'avg_mouse_speed': 2000,
+                    'tab_switches_per_minute': 20,
+                    'session_duration': 60,
+                    'question_time': 5
+                },
+                'last_activity': datetime.now(),
+                'risk_score': 0.95
+            }
+            
+            # Generate a burst of high-risk events
+            actions = ["fast_login", "ip_change", "transaction_attempt", "transaction_attempt"]
+            
+            for action_type in actions:
+                if action_type == "fast_login":
+                     event = {
+                        "user_id": attacker_id,
+                        "event_type": "login_attempt",
+                        "metadata": {
+                            "device_fingerprint": "kali-linux-tool", 
+                            "ip": "10.0.0.5",
+                            "login_method": "password",
+                            "user_agent": "sqlmap/1.5.2"
+                        },
+                        "timestamp": datetime.now().isoformat()
+                     }
+                else:
+                    event = data_generator.generate_realistic_event(attacker_id)
+                
+                send_event(event) # This will print the risk score
+                time.sleep(0.5)
+                
+            print("✅ Attack simulation completed. Check dashboard High-Risk Entities.")
+
+        elif choice == "2":
             n_events = int(input("Number of events to generate [1000]: ") or "1000")
             generate_bulk_events(n_events)
         else:

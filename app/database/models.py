@@ -128,7 +128,7 @@ def get_recent_high_risk_events(limit=10):
     db = get_firestore_client()
     if db is None:
         # Return in-memory high risk events, or empty list if none
-        high_risk = [e for e in _IN_MEMORY_EVENTS if (e.risk_score or 0) > 0.7]
+        high_risk = [e for e in _IN_MEMORY_EVENTS if (e.risk_score or 0) >= 0.0]
         high_risk.sort(key=lambda x: x.timestamp, reverse=True)
         
         result = []
@@ -147,9 +147,9 @@ def get_recent_high_risk_events(limit=10):
         return result
 
     try:
-        # Get recent events with high risk scores
+        # Get recent events with high risk scores (Modified to show ALL events for demo)
         events_ref = db.collection('events') \
-            .where('risk_score', '>', 0.7) \
+            .where('risk_score', '>=', 0.0) \
             .order_by('risk_score', direction=firestore.Query.DESCENDING) \
             .order_by('timestamp', direction=firestore.Query.DESCENDING) \
             .limit(limit)

@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from 'react';
 import Link from 'next/link';
-import { Users, ArrowUpRight, AlertTriangle } from 'lucide-react';
+import { Users, ArrowUpRight, AlertTriangle, Shield } from 'lucide-react';
 import { DashboardMetrics } from '@/lib/api';
 import { EntityCard } from './EntityCard';
 import { getSeverityFromScore, getStatusFromSeverity, ENTITY_DISPLAY_LIMITS } from '@/lib/constants';
@@ -23,18 +23,9 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
     className = '',
 }: EntityMonitoringSectionProps) {
     const entities = useMemo(() => {
-        const highRiskEntities = metrics?.high_risk_entities?.slice(0, ENTITY_DISPLAY_LIMITS.maxDisplay);
+        const highRiskEntities = metrics?.high_risk_entities ?? [];
 
-        if (!highRiskEntities || highRiskEntities.length === 0) {
-            return [
-                { id: 'user_4829', type: 'User Account', riskScore: 94, flags: ['Velocity', 'Geo'], status: 'critical', explanation: 'High velocity geo-hopping detected' },
-                { id: 'ip_192.168', type: 'IP Address', riskScore: 87, flags: ['Proxy', 'VPN'], status: 'investigating', explanation: 'Known exit node traffic' },
-                { id: 'device_a8f2', type: 'Device', riskScore: 76, flags: ['New', 'Multiple'], status: 'monitoring', explanation: 'New device associated with multiple accounts' },
-                { id: 'session_9x7k', type: 'Session', riskScore: 68, flags: ['Duration'], status: 'monitoring', explanation: 'Unusual session duration' },
-            ];
-        }
-
-        return highRiskEntities.map((entity) => {
+        return highRiskEntities.slice(0, 4).map((entity) => {
             const severity = getSeverityFromScore(entity.risk_score);
             const status = getStatusFromSeverity(severity);
 
@@ -62,7 +53,7 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
                             <span className="text-overline">Risk Assessment</span>
                         </div>
                         <h3 className="text-xl font-bold text-white tracking-tight">
-                            High-Risk Entities
+                            Real-Time Entity Monitoring
                         </h3>
                     </div>
 
@@ -89,7 +80,7 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
                 <div className="flex items-center gap-8 text-sm">
                     <div className="flex flex-col">
                         <span className="text-xl font-bold text-white">{entities.length}</span>
-                        <span className="text-xs text-slate-500">Flagged</span>
+                        <span className="text-xs text-slate-500">Active</span>
                     </div>
                     <div className="w-px h-8 bg-white/[0.06]" />
                     <div className="flex flex-col">
@@ -107,22 +98,32 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
             {/* Entity Grid */}
             <div className="p-6 bg-[#030712]/20">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {entities.map((entity, index) => (
-                        <div
-                            key={entity.id}
-                            className="scroll-reveal"
-                            style={{ transitionDelay: `${index * 50}ms` }}
-                        >
-                            <EntityCard
-                                id={entity.id}
-                                type={entity.type}
-                                riskScore={entity.riskScore}
-                                flags={entity.flags}
-                                status={entity.status}
-                                explanation={entity.explanation}
-                            />
+                    {entities.length > 0 ? (
+                        entities.map((entity, index) => (
+                            <div
+                                key={entity.id}
+                                className="scroll-reveal"
+                                style={{ transitionDelay: `${index * 50}ms` }}
+                            >
+                                <EntityCard
+                                    id={entity.id}
+                                    type={entity.type}
+                                    riskScore={entity.riskScore}
+                                    flags={entity.flags}
+                                    status={entity.status}
+                                    explanation={entity.explanation}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="col-span-full py-12 text-center border border-dashed border-white/[0.06] rounded-xl bg-white/[0.01]">
+                            <div className="flex flex-col items-center gap-3 text-slate-500">
+                                <Shield className="w-8 h-8 opacity-50" />
+                                <span className="text-sm font-medium">No entities detected yet</span>
+                                <span className="text-xs opacity-60 max-w-xs">Values will appear here when traffic is detected by the system.</span>
+                            </div>
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
         </div>
