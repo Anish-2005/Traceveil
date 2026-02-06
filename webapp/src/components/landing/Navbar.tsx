@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronRight } from 'lucide-react';
 import { useNavbarScroll } from '@/hooks';
+import { useAuth } from '@/context/AuthContext';
 import { BackgroundEffects } from '@/components';
 
 export function Navbar() {
+    const { user } = useAuth();
     const scrolled = useNavbarScroll();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -37,10 +39,10 @@ export function Navbar() {
                                 <img
                                     src="/traceveil-logo.svg"
                                     alt="Traceveil"
-                                    className={`relative transition-all duration-500 w-8 h-8 group-hover:scale-110`}
+                                    className={`relative transition-all duration-500 w-10 h-10 group-hover:scale-110`}
                                 />
                             </div>
-                            <span className="font-bold text-white tracking-tight text-lg">Traceveil</span>
+                            <span className="font-bold text-white tracking-tight text-xl sm:text-2xl">Traceveil</span>
                         </Link>
 
                         {/* Desktop Nav Links */}
@@ -49,7 +51,7 @@ export function Navbar() {
                                 { href: '#features', label: 'Platform' },
                                 { href: '#models', label: 'Technology' },
                                 { href: '#stats', label: 'Company' },
-                                { href: 'https://docs.traceveil.com', label: 'Documentation' },
+                                { href: '/docs', label: 'Documentation' },
                             ].map((link) => (
                                 <a
                                     key={link.href}
@@ -63,21 +65,35 @@ export function Navbar() {
 
                         {/* Right Side */}
                         <div className="hidden md:flex items-center gap-4">
-                            <Link
-                                href="/login"
-                                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
-                            >
-                                Sign In
-                            </Link>
-                            <Link
-                                href="/dashboard"
-                                className="group flex items-center gap-2 pl-5 pr-2 py-1.5 bg-white text-black rounded-full text-sm font-semibold hover:bg-slate-200 transition-all hover:scale-105"
-                            >
-                                <span>Get Started</span>
-                                <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                                    <ChevronRight className="w-4 h-4" />
-                                </div>
-                            </Link>
+                            {!user ? (
+                                <>
+                                    <Link
+                                        href="/login"
+                                        className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                                    >
+                                        Sign In
+                                    </Link>
+                                    <Link
+                                        href="/dashboard"
+                                        className="group flex items-center gap-2 pl-5 pr-2 py-1.5 bg-white text-black rounded-full text-sm font-semibold hover:bg-slate-200 transition-all hover:scale-105"
+                                    >
+                                        <span>Get Started</span>
+                                        <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                                            <ChevronRight className="w-4 h-4" />
+                                        </div>
+                                    </Link>
+                                </>
+                            ) : (
+                                <Link
+                                    href="/dashboard"
+                                    className="group flex items-center gap-2 pl-5 pr-2 py-1.5 bg-white text-black rounded-full text-sm font-semibold hover:bg-slate-200 transition-all hover:scale-105"
+                                >
+                                    <span>Dashboard</span>
+                                    <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                                        <ChevronRight className="w-4 h-4" />
+                                    </div>
+                                </Link>
+                            )}
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -113,8 +129,8 @@ export function Navbar() {
                             { href: '#features', label: 'Platform', desc: 'Core capabilities & modules' },
                             { href: '#models', label: 'Technology', desc: 'AI models & architecture' },
                             { href: '#stats', label: 'Company', desc: 'About Traceveil & metric' },
-                            { href: 'https://docs.traceveil.com', label: 'Documentation', desc: 'API references & guides' },
-                            { href: '/login', label: 'Sign In', desc: 'Access your console' },
+                            { href: '/docs', label: 'Documentation', desc: 'API references & guides' },
+                            ...(user ? [] : [{ href: '/login', label: 'Sign In', desc: 'Access your console' }]),
                         ].map((link, i) => (
                             <a
                                 key={link.href}
@@ -153,7 +169,7 @@ export function Navbar() {
                             onClick={() => setMobileMenuOpen(false)}
                             className="flex items-center justify-center gap-3 w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold tracking-wide shadow-lg shadow-blue-500/25 active:scale-95 transition-all"
                         >
-                            <span>Start Building Now</span>
+                            <span>{user ? 'Go to Dashboard' : 'Start Building Now'}</span>
                             <ChevronRight className="w-5 h-5" />
                         </Link>
 
