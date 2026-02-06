@@ -13,21 +13,33 @@ import dynamic from 'next/dynamic';
 import { useDashboardData } from '@/hooks';
 import {
   MetricCard,
-  DashboardSkeleton,
   HeroSection,
   BackgroundEffects,
   ErrorState,
+  LoadingSkeleton,
 } from '@/components';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { formatResponseTime } from '@/lib/constants';
 
 // Lazy load below-the-fold content to improve TTI/LCP
-const ThreatIntelligenceMap = dynamic(() => import('@/components').then(mod => mod.ThreatIntelligenceMap));
-const ThreatActivityTimeline = dynamic(() => import('@/components').then(mod => mod.ThreatActivityTimeline));
-const SystemHealthPanel = dynamic(() => import('@/components').then(mod => mod.SystemHealthPanel));
-const ActiveModelsPanel = dynamic(() => import('@/components').then(mod => mod.ActiveModelsPanel));
-const QuickActionsPanel = dynamic(() => import('@/components').then(mod => mod.QuickActionsPanel));
-const EntityMonitoringSection = dynamic(() => import('@/components').then(mod => mod.EntityMonitoringSection));
+const ThreatIntelligenceMap = dynamic(() => import('@/components').then(mod => mod.ThreatIntelligenceMap), {
+  loading: () => <LoadingSkeleton className="h-[400px] w-full" />
+});
+const ThreatActivityTimeline = dynamic(() => import('@/components').then(mod => mod.ThreatActivityTimeline), {
+  loading: () => <LoadingSkeleton className="h-[300px] w-full bg-white/[0.02]" />
+});
+const SystemHealthPanel = dynamic(() => import('@/components').then(mod => mod.SystemHealthPanel), {
+  loading: () => <LoadingSkeleton className="h-[250px] w-full" />
+});
+const ActiveModelsPanel = dynamic(() => import('@/components').then(mod => mod.ActiveModelsPanel), {
+  loading: () => <LoadingSkeleton className="h-[200px] w-full" />
+});
+const QuickActionsPanel = dynamic(() => import('@/components').then(mod => mod.QuickActionsPanel), {
+  loading: () => <LoadingSkeleton className="h-[150px] w-full" />
+});
+const EntityMonitoringSection = dynamic(() => import('@/components').then(mod => mod.EntityMonitoringSection), {
+  loading: () => <LoadingSkeleton className="h-[300px] w-full" />
+});
 const FooterStatsBar = dynamic(() => import('@/components').then(mod => mod.FooterStatsBar));
 
 // ============================================================================
@@ -44,10 +56,10 @@ export default function DashboardPage() {
     refresh,
   } = useDashboardData();
 
-  // Premium Loading State
-  if (isLoading) {
-    return <DashboardSkeleton />;
-  }
+  // Premium Loading State - REMOVED blocking skeleton for progressive loading
+  // if (isLoading) {
+  //   return <DashboardSkeleton />;
+  // }
 
   // Premium Error State
   if (error) {
@@ -76,7 +88,14 @@ export default function DashboardPage() {
       >
         {/* Hero Section - Welcome & Primary KPI (Eager Loaded) */}
         <section>
-          <HeroSection metrics={metrics} models={models} />
+          {isLoading ? (
+            <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 min-h-[400px]">
+              <div className="lg:col-span-6"><LoadingSkeleton className="h-full w-full rounded-2xl bg-white/[0.03]" /></div>
+              <div className="lg:col-span-6"><LoadingSkeleton className="h-full w-full rounded-2xl bg-white/[0.03]" /></div>
+            </div>
+          ) : (
+            <HeroSection metrics={metrics} models={models} />
+          )}
         </section>
 
         {/* Key Metrics Grid (Eager Loaded) */}
@@ -85,49 +104,57 @@ export default function DashboardPage() {
           aria-label="Key performance indicators"
         >
           <div className="scroll-reveal reveal-delay-100">
-            <MetricCard
-              icon={<Activity className="w-5 h-5" />}
-              label="Active Monitoring"
-              value={activeMonitoringCount.toLocaleString()}
-              subtext="real-time streams"
-              trend={activeMonitoringCount ? `+${((activeMonitoringCount / 2500) * 8.2).toFixed(1)}%` : '0%'}
-              trendUp={true}
-              color="emerald"
-            />
+            {isLoading ? <LoadingSkeleton className="h-44 rounded-xl bg-white/[0.03]" /> : (
+              <MetricCard
+                icon={<Activity className="w-5 h-5" />}
+                label="Active Monitoring"
+                value={activeMonitoringCount.toLocaleString()}
+                subtext="real-time streams"
+                trend={activeMonitoringCount ? `+${((activeMonitoringCount / 2500) * 8.2).toFixed(1)}%` : '0%'}
+                trendUp={true}
+                color="emerald"
+              />
+            )}
           </div>
           <div className="scroll-reveal reveal-delay-200">
-            <MetricCard
-              icon={<AlertTriangle className="w-5 h-5" />}
-              label="Critical Threats"
-              value={criticalThreatsCount.toString()}
-              subtext="require immediate action"
-              trend={criticalThreatsCount ? `-${Math.round(100 / (criticalThreatsCount + 1))}%` : '0%'}
-              trendUp={false}
-              color="red"
-              pulse={criticalThreatsCount > 0}
-            />
+            {isLoading ? <LoadingSkeleton className="h-44 rounded-xl bg-white/[0.03]" /> : (
+              <MetricCard
+                icon={<AlertTriangle className="w-5 h-5" />}
+                label="Critical Threats"
+                value={criticalThreatsCount.toString()}
+                subtext="require immediate action"
+                trend={criticalThreatsCount ? `-${Math.round(100 / (criticalThreatsCount + 1))}%` : '0%'}
+                trendUp={false}
+                color="red"
+                pulse={criticalThreatsCount > 0}
+              />
+            )}
           </div>
           <div className="scroll-reveal reveal-delay-300">
-            <MetricCard
-              icon={<Zap className="w-5 h-5" />}
-              label="Avg Response"
-              value={avgResponse ? formatResponseTime(avgResponse) : '0ms'}
-              subtext="detection latency"
-              trend={avgResponse ? `-${Math.round(avgResponse * 10)}ms` : '0ms'}
-              trendUp={false}
-              color="amber"
-            />
+            {isLoading ? <LoadingSkeleton className="h-44 rounded-xl bg-white/[0.03]" /> : (
+              <MetricCard
+                icon={<Zap className="w-5 h-5" />}
+                label="Avg Response"
+                value={avgResponse ? formatResponseTime(avgResponse) : '0ms'}
+                subtext="detection latency"
+                trend={avgResponse ? `-${Math.round(avgResponse * 10)}ms` : '0ms'}
+                trendUp={false}
+                color="amber"
+              />
+            )}
           </div>
           <div className="scroll-reveal reveal-delay-400">
-            <MetricCard
-              icon={<Shield className="w-5 h-5" />}
-              label="Threats Blocked"
-              value={threatsBlockedCount.toLocaleString()}
-              subtext="last 24 hours"
-              trend={threatsBlockedCount ? `+${Math.round((threatsBlockedCount / 10) * 100)}%` : '0%'}
-              trendUp={true}
-              color="emerald"
-            />
+            {isLoading ? <LoadingSkeleton className="h-44 rounded-xl bg-white/[0.03]" /> : (
+              <MetricCard
+                icon={<Shield className="w-5 h-5" />}
+                label="Threats Blocked"
+                value={threatsBlockedCount.toLocaleString()}
+                subtext="last 24 hours"
+                trend={threatsBlockedCount ? `+${Math.round((threatsBlockedCount / 10) * 100)}%` : '0%'}
+                trendUp={true}
+                color="emerald"
+              />
+            )}
           </div>
         </section>
 

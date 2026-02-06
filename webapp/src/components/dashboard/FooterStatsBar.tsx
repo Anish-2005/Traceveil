@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { ArrowUpRight, TrendingUp, CheckCircle2 } from 'lucide-react';
 
 interface FooterStatsBarProps {
@@ -6,6 +9,12 @@ interface FooterStatsBarProps {
 }
 
 export function FooterStatsBar({ lastUpdated, metrics }: FooterStatsBarProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     // Calculate uptime from system health
     const systemHealth = metrics?.system_health ?? {};
     const healthyCount = Object.values(systemHealth).filter((s: any) => s?.status === 'healthy').length;
@@ -27,7 +36,7 @@ export function FooterStatsBar({ lastUpdated, metrics }: FooterStatsBarProps) {
                         <span>{uptimePercentage}% uptime</span>
                     </div>
                     <div className="hidden sm:flex items-center gap-1.5">
-                        <span>Last syc: {lastUpdated.toLocaleTimeString()}</span>
+                        <span>Last sync: {mounted ? lastUpdated.toLocaleTimeString() : '--:--:--'}</span>
                     </div>
                 </div>
 

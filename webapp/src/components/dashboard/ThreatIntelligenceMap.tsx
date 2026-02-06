@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, useEffect } from 'react';
 import { Network, Radio, Globe, Wifi, Activity } from 'lucide-react';
 import { DashboardMetrics } from '@/lib/api';
 import { ThreatIndicator } from './ThreatIndicator';
@@ -27,6 +27,12 @@ export const ThreatIntelligenceMap = memo(function ThreatIntelligenceMap({
     lastUpdated,
     className = '',
 }: ThreatIntelligenceMapProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const threatCounts = useMemo(() => {
         const threats = metrics?.recent_threats ?? [];
         return {
@@ -132,7 +138,7 @@ export const ThreatIntelligenceMap = memo(function ThreatIntelligenceMap({
 
                 {/* Footer / Timestamp */}
                 <div className="absolute bottom-4 right-4 text-[10px] text-slate-500 font-mono">
-                    UPDATED: {lastUpdated.toLocaleTimeString()}
+                    UPDATED: {mounted ? lastUpdated.toLocaleTimeString() : '--:--:--'}
                 </div>
             </div>
         </div>

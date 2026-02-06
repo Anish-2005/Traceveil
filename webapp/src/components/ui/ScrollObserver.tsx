@@ -47,14 +47,13 @@ export function ScrollObserver() {
         // Function to find and observe elements
         const observeElements = () => {
             const elements = document.querySelectorAll(
-                '.scroll-reveal:not([data-observed]), .scroll-reveal-left:not([data-observed]), .scroll-reveal-right:not([data-observed]), .scroll-reveal-scale:not([data-observed])'
+                '.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale'
             );
 
             elements.forEach((el) => {
                 if (!observedElements.has(el)) {
                     observer.observe(el);
                     observedElements.add(el);
-                    el.setAttribute('data-observed', 'true');
                 }
             });
         };

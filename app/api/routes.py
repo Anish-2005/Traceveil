@@ -24,7 +24,7 @@ class FeedbackData(BaseModel):
     actual_label: int  # 0=normal, 1=suspicious
     user_feedback: Optional[str] = None
 
-@router.post("/ingest")
+@router.post("/events/submit")
 async def ingest_event(event: EventData):
     # Create and save event
     db_event = Event(
