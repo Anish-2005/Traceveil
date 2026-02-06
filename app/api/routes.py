@@ -115,6 +115,12 @@ async def get_model_status():
         "current_models": list(model_manager.current_models.keys())
     }
 
+@router.get("/events/recent")
+async def get_recent_events(limit: int = 50):
+    """Get recent events for the entities view"""
+    from app.database.models import get_recent_high_risk_events
+    return get_recent_high_risk_events(limit=limit)
+
 @router.get("/dashboard/metrics")
 async def get_dashboard_metrics():
     """Get real-time dashboard metrics"""

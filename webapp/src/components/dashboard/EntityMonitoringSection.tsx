@@ -30,7 +30,8 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
             const status = getStatusFromSeverity(severity);
 
             return {
-                id: entity.id,
+                eventId: entity.id,
+                id: entity.user_id || 'Unknown',
                 type: entity.event_type || 'Entity',
                 riskScore: Math.round(entity.risk_score * 100),
                 flags: [...(entity.flags || [])].slice(0, 3),
@@ -99,22 +100,27 @@ export const EntityMonitoringSection = memo(function EntityMonitoringSection({
             <div className="p-6 bg-[#030712]/20">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {entities.length > 0 ? (
-                        entities.map((entity, index) => (
-                            <div
-                                key={entity.id}
-                                className="scroll-reveal"
-                                style={{ transitionDelay: `${index * 50}ms` }}
-                            >
-                                <EntityCard
-                                    id={entity.id}
-                                    type={entity.type}
-                                    riskScore={entity.riskScore}
-                                    flags={entity.flags}
-                                    status={entity.status}
-                                    explanation={entity.explanation}
-                                />
-                            </div>
-                        ))
+                        entities.map((entity, index) => {
+                            // Debug logging to verify IDs
+                            if (index === 0) console.log('Entity Mapping:', entity);
+
+                            return (
+                                <div
+                                    key={`${entity.eventId}_${index}`}
+                                    className="scroll-reveal"
+                                    style={{ transitionDelay: `${index * 50}ms` }}
+                                >
+                                    <EntityCard
+                                        id={entity.id}
+                                        type={entity.type}
+                                        riskScore={entity.riskScore}
+                                        flags={entity.flags}
+                                        status={entity.status}
+                                        explanation={entity.explanation}
+                                    />
+                                </div>
+                            );
+                        })
                     ) : (
                         <div className="col-span-full py-12 text-center border border-dashed border-white/[0.06] rounded-xl bg-white/[0.01]">
                             <div className="flex flex-col items-center gap-3 text-slate-500">
