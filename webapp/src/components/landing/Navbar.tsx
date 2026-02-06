@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronRight } from 'lucide-react';
@@ -30,7 +32,7 @@ export function Navbar() {
                     : 'bg-transparent py-4'
                     }`}
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group relative z-50" onClick={() => setMobileMenuOpen(false)}>

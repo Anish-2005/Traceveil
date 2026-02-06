@@ -19,9 +19,10 @@ export function HeroSection() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#030712] via-transparent to-[#030712]" />
             </div>
+            <div className="absolute inset-0 bg-[#030712]/90 z-0" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     {/* Left Column: Brand & Copy */}
                     <div className="flex-1 max-w-2xl text-center lg:text-left pt-8 lg:pt-0">
                         {/* New Status Pill */}

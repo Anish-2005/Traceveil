@@ -14,7 +14,7 @@ export function TrustedBySection() {
 
     return (
         <section className="py-12 border-b border-white/[0.05] bg-[#030712]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                 <p className="scroll-reveal text-center text-xs font-semibold text-slate-500 uppercase tracking-widest mb-10">
                     Trusted by security teams at
                 </p>

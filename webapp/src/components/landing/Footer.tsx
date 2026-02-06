@@ -4,7 +4,7 @@ import { Github, Twitter, Linkedin, Disc } from 'lucide-react';
 export function Footer() {
     return (
         <footer className="border-t border-white/[0.05] bg-[#030712] py-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
                     {/* Brand */}
                     <div className="scroll-reveal max-w-sm">

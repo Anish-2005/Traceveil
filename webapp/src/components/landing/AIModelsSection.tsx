@@ -2,8 +2,8 @@ import { Brain, Cpu, Zap, Lock, Terminal } from 'lucide-react';
 
 export function AIModelsSection() {
     return (
-        <section id="models" className="py-24 sm:py-32 bg-[#030712] relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <section id="models" className="py-32 relative bg-[#030712] overflow-hidden">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
                 {/* Section Header */}
                 <div className="scroll-reveal max-w-2xl mb-16">
@@ -49,8 +49,8 @@ export function AIModelsSection() {
                                 </div>
                                 <div className="col-span-4 sm:col-span-2 text-right">
                                     <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] border ${model.status === 'Active'
-                                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                                            : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500'
+                                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+                                        : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500'
                                         }`}>
                                         {model.status === 'Active' && <span className="w-1 h-1 rounded-full bg-emerald-500 mr-1.5 animate-pulse" />}
                                         {model.status.toUpperCase()}
@@ -67,7 +67,7 @@ export function AIModelsSection() {
                     </div>
                 </div>
 
-            </div>
-        </section>
+            </div >
+        </section >
     );
 }

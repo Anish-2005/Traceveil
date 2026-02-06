@@ -9,7 +9,7 @@ export function StatsSection() {
 
     return (
         <section id="stats" className="py-24 border-y border-white/[0.05] bg-[#030712] relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/[0.05]">
                     {/* Stat Item 1 */}
                     <div className="scroll-reveal">
