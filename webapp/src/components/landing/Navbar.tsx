@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronRight } from 'lucide-react';
 import { useNavbarScroll } from '@/hooks';
 import { useAuth } from '@/context/AuthContext';
@@ -9,6 +10,7 @@ import { BackgroundEffects } from '@/components';
 
 export function Navbar() {
     const { user } = useAuth();
+    const pathname = usePathname();
     const scrolled = useNavbarScroll();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -55,13 +57,13 @@ export function Navbar() {
                                 { href: '#stats', label: 'Company' },
                                 { href: '/docs', label: 'Documentation' },
                             ].map((link) => (
-                                <a
+                                <Link
                                     key={link.href}
-                                    href={link.href}
+                                    href={link.href.startsWith('#') && pathname !== '/' ? `/${link.href}` : link.href}
                                     className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.05] rounded-full transition-all"
                                 >
                                     {link.label}
-                                </a>
+                                </Link>
                             ))}
                         </div>
 
@@ -134,9 +136,9 @@ export function Navbar() {
                             { href: '/docs', label: 'Documentation', desc: 'API references & guides' },
                             ...(user ? [] : [{ href: '/login', label: 'Sign In', desc: 'Access your console' }]),
                         ].map((link, i) => (
-                            <a
+                            <Link
                                 key={link.href}
-                                href={link.href}
+                                href={link.href.startsWith('#') && pathname !== '/' ? `/${link.href}` : link.href}
                                 onClick={() => setMobileMenuOpen(false)}
                                 className="group flex items-center justify-between p-4 rounded-2xl hover:bg-white/[0.03] border border-transparent hover:border-white/[0.05] transition-all duration-300"
                                 style={{
@@ -154,7 +156,7 @@ export function Navbar() {
                                     </span>
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                            </a>
+                            </Link>
                         ))}
                     </nav>
 
