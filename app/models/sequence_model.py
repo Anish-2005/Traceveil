@@ -9,8 +9,8 @@ from typing import List, Dict, Any
 from app.database.models import get_user_events
 
 MODEL_DIR = "app/models"
-SEQUENCE_MODEL_PATH = os.path.join(MODEL_DIR, "sequence_model.pth")
-SEQUENCE_SCALER_PATH = os.path.join(MODEL_DIR, "sequence_scaler.pkl")
+SEQUENCE_MODEL_PATH = os.path.join(MODEL_DIR, "sequence_model_v2.pth")
+SEQUENCE_SCALER_PATH = os.path.join(MODEL_DIR, "sequence_scaler_v2.pkl")
 
 os.makedirs(MODEL_DIR, exist_ok=True)
 
@@ -25,24 +25,61 @@ class EventDataset(Dataset):
     def __getitem__(self, idx):
         return self.sequences[idx], self.labels[idx]
 
+class Attention(nn.Module):
+    def __init__(self, hidden_dim):
+        super(Attention, self).__init__()
+        self.attention = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.Tanh(),
+            nn.Linear(hidden_dim // 2, 1)
+        )
+        
+    def forward(self, x):
+        # x shape: (batch_size, seq_len, hidden_dim)
+        attn_weights = self.attention(x) # (batch_size, seq_len, 1)
+        attn_weights = torch.softmax(attn_weights, dim=1)
+        # Apply weights and sum along seq_len
+        context = torch.sum(attn_weights * x, dim=1) # (batch_size, hidden_dim)
+        return context, attn_weights
+
 class LSTMSequenceModel(nn.Module):
-    def __init__(self, input_size: int, hidden_size: int = 64, num_layers: int = 2):
+    def __init__(self, input_size: int, hidden_size: int = 128, num_layers: int = 3):
         super(LSTMSequenceModel, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
 
-        # Bidirectional LSTM for better context
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2, bidirectional=True)
-        # Output layer sees 2 * hidden_size because of bidirectionality
+        # Enhanced feature extraction module before LSTM
+        self.feature_extractor = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.LayerNorm(hidden_size),
+            nn.GELU(),
+            nn.Dropout(0.2)
+        )
+
+        # Bidirectional LSTM for temporal dependencies
+        self.lstm = nn.LSTM(hidden_size, hidden_size, num_layers, batch_first=True, dropout=0.3, bidirectional=True)
+        
+        # Self-Attention mechanism
+        self.attention = Attention(hidden_size * 2)
+
+        # Deeper classifier with batch normalization
         self.fc = nn.Sequential(
-            nn.Linear(hidden_size * 2, 32),
-            nn.ReLU(),
+            nn.Linear(hidden_size * 2, hidden_size),
+            nn.BatchNorm1d(hidden_size),
+            nn.GELU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_size, 32),
+            nn.BatchNorm1d(32),
+            nn.GELU(),
             nn.Dropout(0.2),
             nn.Linear(32, 1),
             nn.Sigmoid()
         )
 
     def forward(self, x):
+        # Initial feature extraction
+        x = self.feature_extractor(x)
+
         # BiLSTM requires 2 * num_layers for initial states
         h0 = torch.zeros(self.num_layers * 2, x.size(0), self.hidden_size).to(x.device)
         c0 = torch.zeros(self.num_layers * 2, x.size(0), self.hidden_size).to(x.device)
@@ -50,11 +87,12 @@ class LSTMSequenceModel(nn.Module):
         out, _ = self.lstm(x, (h0, c0))
         # out shape: (batch_size, seq_len, hidden_size * 2)
         
-        # Take mean over sequence
-        out = torch.mean(out, dim=1) 
+        # Apply Attention instead of basic mean
+        out, _ = self.attention(out) 
         
         out = self.fc(out)
         return out
+
 
 def extract_sequence_features(events: List) -> np.ndarray:
     """Extract features from a sequence of events"""
@@ -192,7 +230,7 @@ def train_default_sequence_model():
 
     # Train model
     input_size = 11
-    model = LSTMSequenceModel(input_size, hidden_size=64, num_layers=2)
+    model = LSTMSequenceModel(input_size, hidden_size=128, num_layers=3)
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -245,8 +283,8 @@ def train_default_sequence_model():
     # Save model
     torch.save({
         'input_size': input_size,
-        'hidden_size': 64,
-        'num_layers': 2,
+        'hidden_size': 128,
+        'num_layers': 3,
         'model_state_dict': model.state_dict()
     }, SEQUENCE_MODEL_PATH)
 

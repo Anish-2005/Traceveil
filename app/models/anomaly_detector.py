@@ -9,38 +9,52 @@ import os
 from typing import Dict, Any
 
 MODEL_DIR = "app/models"
-ANOMALY_MODEL_PATH = os.path.join(MODEL_DIR, "anomaly_model.pkl")
-AUTOENCODER_MODEL_PATH = os.path.join(MODEL_DIR, "autoencoder_model.pth")
-SCALER_PATH = os.path.join(MODEL_DIR, "scaler.pkl")
+ANOMALY_MODEL_PATH = os.path.join(MODEL_DIR, "anomaly_model_v2.pkl")
+AUTOENCODER_MODEL_PATH = os.path.join(MODEL_DIR, "autoencoder_model_v2.pth")
+SCALER_PATH = os.path.join(MODEL_DIR, "scaler_v2.pkl")
 
 os.makedirs(MODEL_DIR, exist_ok=True)
 
+class ResidualBlock(nn.Module):
+    def __init__(self, dim, dropout=0.2):
+        super(ResidualBlock, self).__init__()
+        self.block = nn.Sequential(
+            nn.Linear(dim, dim),
+            nn.BatchNorm1d(dim),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(dim, dim),
+            nn.BatchNorm1d(dim)
+        )
+        self.activation = nn.GELU()
+
+    def forward(self, x):
+        return self.activation(x + self.block(x))
+
 class Autoencoder(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int = 64):
+    def __init__(self, input_dim: int, hidden_dim: int = 128):
         super(Autoencoder, self).__init__()
-        # Deep Autoencoder with BatchNorm and Dropout
+        # Advanced Deep Autoencoder with Residual Connections & GELU
         self.encoder = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
             nn.BatchNorm1d(hidden_dim),
-            nn.LeakyReLU(0.2),
-            nn.Dropout(0.2),
-            
+            nn.GELU(),
+            ResidualBlock(hidden_dim),
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.BatchNorm1d(hidden_dim // 2),
-            nn.LeakyReLU(0.2),
-            nn.Dropout(0.1),
-            
+            nn.GELU(),
+            ResidualBlock(hidden_dim // 2),
             nn.Linear(hidden_dim // 2, hidden_dim // 4)  # Latent space
         )
         self.decoder = nn.Sequential(
             nn.Linear(hidden_dim // 4, hidden_dim // 2),
             nn.BatchNorm1d(hidden_dim // 2),
-            nn.LeakyReLU(0.2),
-            
+            nn.GELU(),
+            ResidualBlock(hidden_dim // 2),
             nn.Linear(hidden_dim // 2, hidden_dim),
             nn.BatchNorm1d(hidden_dim),
-            nn.LeakyReLU(0.2),
-            
+            nn.GELU(),
+            ResidualBlock(hidden_dim),
             nn.Linear(hidden_dim, input_dim)
         )
 
@@ -176,8 +190,8 @@ def train_default_models():
 
     joblib.dump(scaler, SCALER_PATH)
     
-    # Train Isolation Forest as fallback
-    iso_forest = IsolationForest(contamination=0.1, random_state=42)
+    # Train Isolation Forest as fallback with stronger parameters
+    iso_forest = IsolationForest(n_estimators=200, contamination=0.1, random_state=42)
     iso_forest.fit(X_scaled)
     joblib.dump(iso_forest, ANOMALY_MODEL_PATH)
 
