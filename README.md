@@ -25,6 +25,15 @@
 | **F1-Score** | `96.0%` | Harmonic mean of precision & recall |
 | **F.P.R.** | `<1.5%` | Minimal False Positives (Smooth user UX) |
 
+<br>
+
+### 🛠️ Training Scale & Datasets
+The v2 models are robustly trained on **>1.2 Million combined records** and hold over **400k+ trainable parameters** across the entire pipeline.
+- 💳 **European Credit Card Fraud** - `284,000` real transaction sequences.
+- 🛒 **IEEE-CIS Fraud Detection** - `600,000+` highly imbalanced e-commerce logs.
+- 📈 **NAB Time Series Anomaly** - Yahoo's benchmark for timeline deviations.
+- 🎓 **Synthetic EdTech Behavior** - `200k+` generated sequences of advanced cheating mechanics (tab-switching, proxy-IPs, unnatural cursor speed).
+
 ---
 
 ## 🧠 What is Traceveil?
