@@ -12,6 +12,19 @@
   </p>
 </div>
 
+<br>
+
+## 🏆 Performance Benchmarks
+> **Validated against rigorous synthetic attacks and heavy industry benchmarks** *(IEEE-CIS, European Credit Card Flow, NAB)*.
+
+| 🎯 Metric | 📈 Score | 📝 Detail |
+| :--- | :---: | :--- |
+| **Accuracy** | `~98.5%` | Overall correctness across all domains |
+| **Precision** | `96.2%` | High confidence on flagged anomalies |
+| **Recall** | `95.8%` | Detection rate of actual fraud/cheating |
+| **F1-Score** | `96.0%` | Harmonic mean of precision & recall |
+| **F.P.R.** | `<1.5%` | Minimal False Positives (Smooth user UX) |
+
 ---
 
 ## 🧠 What is Traceveil?
@@ -37,19 +50,7 @@ Our core pipeline is built on three pillars to catch what standard systems miss:
    <code>Raw Events ➔ Feature Extraction ➔ Multi-Model AI Engine ➔ Explainable Risk Score ➔ Feedback Loop</code>
 </div>
 
----
 
-## 📊 Performance Benchmark
-
-Validated against heavy synthetic attacks and industry benchmarks (IEEE-CIS, European Credit Card Flow, NAB):
-
-| Metric | Score | Detail |
-| :--- | :---: | :--- |
-| **Accuracy** | `~98.5%` | Overall correctness across domains |
-| **Precision** | `96.2%` | High confidence on flagged anomalies |
-| **Recall** | `95.8%` | Detection rate of actual frauds |
-| **F1-Score** | `96.0%` | Harmonic mean of precision/recall |
-| **F.P.R.** | `<1.5%` | Minimal False Positives (Good user friction) |
 
 ---
 
