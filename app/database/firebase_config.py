@@ -5,13 +5,13 @@ import json
 
 # Firebase configuration for client-side (web) SDK
 FIREBASE_CLIENT_CONFIG = {
-    "apiKey": "AIzaSyBHErElHJCQ6Mfqwt2tYjaOtis4jtVICKE",
-    "authDomain": "traceveil-core.firebaseapp.com",
-    "projectId": "traceveil-core",
-    "storageBucket": "traceveil-core.firebasestorage.app",
-    "messagingSenderId": "835304134617",
-    "appId": "1:835304134617:web:3443bef7eb340665d8ebc8",
-    "measurementId": "G-ZZFPVSCH3J"
+    "apiKey": os.getenv("FIREBASE_API_KEY", ""),
+    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", ""),
+    "projectId": os.getenv("FIREBASE_PROJECT_ID", ""),
+    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", ""),
+    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", ""),
+    "appId": os.getenv("FIREBASE_APP_ID", ""),
+    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID", "")
 }
 
 def get_firebase_credentials_from_env():
