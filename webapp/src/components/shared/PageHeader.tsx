@@ -66,10 +66,8 @@ export function PageHeader({
     return (
         <>
             <header
-                className={`fixed top-0 left-0 right-0 z-[80] border-b app-header-surface backdrop-blur-md transition-all duration-300 ${
-                    isCompact
-                        ? 'border-white/[0.12] shadow-[0_10px_30px_rgba(2,6,23,0.55)]'
-                        : 'border-white/[0.08]'
+                className={`fixed top-0 left-0 right-0 z-[80] border-b app-header-surface app-header-frame backdrop-blur-md transition-all duration-300 ${
+                    isCompact ? 'app-header-frame-compact' : ''
                 }`}
             >
                 <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
@@ -98,26 +96,26 @@ export function PageHeader({
                             </div>
                         </Link>
 
-                        <div className="hidden lg:flex items-center text-slate-600">
+                        <div className="hidden lg:flex items-center app-text-muted">
                             <Slash className="w-4 h-4 -rotate-12" />
                         </div>
 
                         {/* Workspace / Context Selector */}
                         {title ? (
                             <div className="hidden sm:flex flex-col">
-                                <h1 className="text-sm font-bold text-slate-200 leading-tight">{title}</h1>
-                                {subtitle && !isCompact && <span className="text-[10px] text-slate-500 font-medium leading-tight">{subtitle}</span>}
+                                <h1 className="text-sm font-bold app-text-secondary leading-tight">{title}</h1>
+                                {subtitle && !isCompact && <span className="text-[10px] app-text-muted font-medium leading-tight">{subtitle}</span>}
                             </div>
                         ) : (
-                            <button className={`hidden lg:flex items-center gap-2 font-medium text-slate-300 hover:text-white transition-colors -ml-2 rounded-md hover:bg-white/[0.04] ${isCompact ? 'text-xs px-2 py-1' : 'text-sm px-2 py-1'}`}>
+                            <button className={`hidden lg:flex items-center gap-2 font-medium app-header-link transition-colors -ml-2 rounded-md ${isCompact ? 'text-xs px-2 py-1' : 'text-sm px-2 py-1'}`}>
                                 <span>Production</span>
-                                <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                                <ChevronDown className="w-3.5 h-3.5 app-text-muted" />
                             </button>
                         )}
                     </div>
 
                     {/* Center: Minimal Navigation */}
-                    <nav className={`hidden md:flex items-center absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${isCompact ? 'gap-0.5 px-1 py-1 rounded-full border border-white/[0.1] bg-white/[0.03]' : 'gap-1'}`}>
+                    <nav className={`hidden md:flex items-center absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${isCompact ? 'gap-0.5 px-1 py-1 rounded-full app-nav-pill' : 'gap-1'}`}>
                         {navItems.map((item) => {
                             const isActive = pathname.startsWith(item.href);
                             return (
@@ -128,8 +126,8 @@ export function PageHeader({
                                         rounded-md font-medium transition-all duration-200
                                         ${isCompact ? 'px-2.5 py-1 text-xs' : 'px-3.5 py-1.5 text-sm'}
                                         ${isActive
-                                            ? 'text-white bg-white/[0.06]'
-                                            : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]'
+                                            ? 'app-header-link-active'
+                                            : 'app-header-link'
                                         }
                                     `}
                                 >
@@ -147,16 +145,16 @@ export function PageHeader({
                             </div>
                         )}
                         {/* Search */}
-                        <div className={`hidden lg:flex items-center rounded-md border border-white/[0.08] bg-white/[0.02] text-xs text-slate-500 hover:border-white/[0.12] transition-all cursor-text ${isCompact ? 'gap-1.5 px-2 py-1 min-w-[140px]' : 'gap-2 px-2 py-1.5 min-w-[200px]'}`}>
+                        <div className={`hidden lg:flex items-center rounded-md app-search-chip text-xs transition-all cursor-text ${isCompact ? 'gap-1.5 px-2 py-1 min-w-[140px]' : 'gap-2 px-2 py-1.5 min-w-[200px]'}`}>
                             <Search className="w-3.5 h-3.5" />
                             {!isCompact && <span>Search...</span>}
                             <div className="ml-auto flex gap-1">
-                                <kbd className="px-1 rounded bg-white/[0.05] border border-white/[0.05]">Ctrl</kbd>
-                                <kbd className="px-1 rounded bg-white/[0.05] border border-white/[0.05]">K</kbd>
+                                <kbd className="px-1 rounded border app-kbd">Ctrl</kbd>
+                                <kbd className="px-1 rounded border app-kbd">K</kbd>
                             </div>
                         </div>
 
-                        <div className="h-4 w-px bg-white/[0.08] hidden lg:block" />
+                        <div className="h-4 w-px app-divider hidden lg:block" />
 
                         <ThemeToggle compact={isCompact} />
 
@@ -164,7 +162,7 @@ export function PageHeader({
                         <button
                             type="button"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden p-2 text-slate-400 hover:text-white"
+                            className="md:hidden p-2 app-icon-btn"
                         >
                             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
@@ -174,12 +172,12 @@ export function PageHeader({
 
                 {/* Simple Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden border-t border-white/[0.08] app-header-mobile p-4 space-y-2">
+                    <div className="md:hidden border-t app-header-frame app-header-mobile p-4 space-y-2">
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className="block px-4 py-3 rounded-lg bg-white/[0.03] text-sm font-medium text-slate-300"
+                                className="block px-4 py-3 rounded-lg bg-white/[0.03] text-sm font-medium app-header-link"
                             >
                                 {item.label}
                             </Link>
