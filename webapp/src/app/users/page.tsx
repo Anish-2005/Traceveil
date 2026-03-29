@@ -26,7 +26,9 @@ import {
   // ... (imports remain)
 } from 'lucide-react';
 import { PageLayout, PageHeader } from '@/components/shared';
+import { ModelIntelligenceStrip } from '@/components/shared';
 import { traceveilApi, UserRisk } from '@/lib/api';
+import { useModelIntelligence } from '@/hooks';
 
 export default function UsersPage() {
   const searchParams = useSearchParams();
@@ -35,6 +37,9 @@ export default function UsersPage() {
   const [userRisk, setUserRisk] = useState<UserRisk | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const { data: modelSnapshot, isLoading: isModelSnapshotLoading } = useModelIntelligence({
+    refreshInterval: 30000,
+  });
 
   const fetchUserRisk = useCallback(async (id: string) => {
     if (!id.trim()) return;
@@ -104,6 +109,10 @@ export default function UsersPage() {
       />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="mb-6">
+          <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
+        </div>
+
         <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Left Column - Search & History */}
           <div className="lg:col-span-4 space-y-6">

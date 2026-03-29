@@ -24,6 +24,8 @@ import {
   Shield
 } from 'lucide-react';
 import { PageLayout, PageHeader } from '@/components/shared';
+import { ModelIntelligenceStrip } from '@/components/shared';
+import { useModelIntelligence } from '@/hooks';
 import { traceveilApi, FeedbackStats, DashboardMetrics, DashboardModels } from '@/lib/api';
 
 export default function AnalyticsPage() {
@@ -32,9 +34,14 @@ export default function AnalyticsPage() {
   const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { data: modelSnapshot, isLoading: isModelSnapshotLoading } = useModelIntelligence({
+    refreshInterval: 30000,
+  });
 
   const loadAnalytics = useCallback(async () => {
     try {
+      setError(null);
       const [metricsData, modelsData, feedbackData] = await Promise.all([
         traceveilApi.getDashboardMetrics(),
         traceveilApi.getDashboardModels(),
@@ -44,7 +51,7 @@ export default function AnalyticsPage() {
       setModels(modelsData);
       setFeedbackStats(feedbackData);
     } catch (error) {
-      console.error('Failed to load analytics:', error);
+      setError('Unable to load analytics data from the model pipeline.');
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -97,6 +104,17 @@ export default function AnalyticsPage() {
       />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8">
+        <ModelIntelligenceStrip
+          snapshot={modelSnapshot}
+          loading={isModelSnapshotLoading}
+        />
+
+        {error && (
+          <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            {error}
+          </div>
+        )}
+
         {/* KPI Cards */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard

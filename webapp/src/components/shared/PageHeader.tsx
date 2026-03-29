@@ -28,8 +28,10 @@ interface NavItem {
 const navItems: NavItem[] = [
     { href: '/dashboard', label: 'Overview' },
     { href: '/analytics', label: 'Analytics' },
-    { href: '/events', label: 'Events' },
-    { href: '/settings', label: 'Settings' },
+    { href: '/events/new', label: 'Events' },
+    { href: '/entities', label: 'Entities' },
+    { href: '/models', label: 'Models' },
+    { href: '/users', label: 'Users' },
 ];
 
 interface PageHeaderProps {

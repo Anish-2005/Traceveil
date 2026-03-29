@@ -10,7 +10,7 @@
 import { Activity, AlertTriangle, Zap, Shield } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-import { useDashboardData } from '@/hooks';
+import { useDashboardData, useModelIntelligence } from '@/hooks';
 import {
   MetricCard,
   HeroSection,
@@ -19,6 +19,7 @@ import {
   LoadingSkeleton,
 } from '@/components';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { ModelIntelligenceStrip } from '@/components/shared';
 import { formatResponseTime } from '@/lib/constants';
 
 // Lazy load below-the-fold content to improve TTI/LCP
@@ -55,6 +56,9 @@ export default function DashboardPage() {
     lastUpdated,
     refresh,
   } = useDashboardData();
+  const { data: modelSnapshot, isLoading: isModelSnapshotLoading } = useModelIntelligence({
+    refreshInterval: 30000,
+  });
 
   // Premium Loading State - REMOVED blocking skeleton for progressive loading
   // if (isLoading) {
@@ -96,6 +100,13 @@ export default function DashboardPage() {
           ) : (
             <HeroSection metrics={metrics} models={models} />
           )}
+        </section>
+
+        <section>
+          <ModelIntelligenceStrip
+            snapshot={modelSnapshot}
+            loading={isModelSnapshotLoading}
+          />
         </section>
 
         {/* Key Metrics Grid (Eager Loaded) */}

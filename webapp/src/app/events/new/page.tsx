@@ -24,7 +24,9 @@ import {
   Sparkles
 } from 'lucide-react';
 import { PageLayout, PageHeader } from '@/components/shared';
+import { ModelIntelligenceStrip } from '@/components/shared';
 import { traceveilApi, EventData, RiskAssessment } from '@/lib/api';
+import { useModelIntelligence } from '@/hooks';
 
 const eventTypes = [
   { value: 'login', label: 'Login', icon: <User className="w-4 h-4" />, color: 'blue' },
@@ -55,6 +57,9 @@ export default function NewEventPage() {
   const [result, setResult] = useState<RiskAssessment | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [jsonError, setJsonError] = useState<string | null>(null);
+  const { data: modelSnapshot, isLoading: isModelSnapshotLoading } = useModelIntelligence({
+    refreshInterval: 30000,
+  });
 
   const handleEventTypeChange = (type: string) => {
     setFormData(prev => ({ ...prev, event_type: type }));
@@ -137,6 +142,10 @@ export default function NewEventPage() {
       />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="mb-6">
+          <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
+        </div>
+
         <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Form Column */}
           <div className="lg:col-span-6">

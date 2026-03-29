@@ -26,7 +26,9 @@ import {
     Layers
 } from 'lucide-react';
 import { PageLayout, PageHeader } from '@/components/shared';
-import { traceveilApi, DashboardModels, ModelStatus } from '@/lib/api';
+import { ModelIntelligenceStrip } from '@/components/shared';
+import { useModelIntelligence } from '@/hooks';
+import { traceveilApi, DashboardModels, ModelStatus, DashboardMetrics } from '@/lib/api';
 
 interface ModelCardData {
     name: string;
@@ -37,26 +39,33 @@ interface ModelCardData {
     icon: React.ReactNode;
     color: 'blue' | 'purple' | 'emerald' | 'amber';
     type: string;
-    lastTrained?: string;
     predictions?: number;
 }
 
 export default function ModelsPage() {
     const [modelsData, setModelsData] = useState<DashboardModels | null>(null);
     const [modelStatus, setModelStatus] = useState<ModelStatus | null>(null);
+    const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const { data: modelSnapshot, isLoading: isModelSnapshotLoading } = useModelIntelligence({
+        refreshInterval: 30000,
+    });
 
     const loadModels = useCallback(async () => {
         try {
-            const [models, status] = await Promise.all([
+            setError(null);
+            const [models, status, metricsPayload] = await Promise.all([
                 traceveilApi.getDashboardModels(),
                 traceveilApi.getModelStatus(),
+                traceveilApi.getDashboardMetrics(),
             ]);
             setModelsData(models);
             setModelStatus(status);
+            setMetrics(metricsPayload);
         } catch (error) {
-            console.error('Failed to load models:', error);
+            setError('Unable to load model registry from backend.');
         } finally {
             setIsLoading(false);
             setIsRefreshing(false);
@@ -72,74 +81,119 @@ export default function ModelsPage() {
         loadModels();
     };
 
-    // Enhanced model data with descriptions
+    // Enhanced model data with descriptions sourced from actual backend model list.
     const getEnhancedModelData = (): ModelCardData[] => {
         const baseModels: ModelCardData[] = [
             {
                 name: 'Anomaly Detector',
                 version: modelStatus?.model_versions?.anomaly_detector || 'v1.0.0',
-                accuracy: '94.2%',
+                accuracy: '0.0%',
                 status: 'active',
                 description: 'Autoencoder-based neural network for detecting unusual behavioral patterns and transaction anomalies.',
                 icon: <Activity className="w-6 h-6" />,
                 color: 'blue',
                 type: 'Deep Learning',
-                lastTrained: '2 hours ago',
-                predictions: 15247,
             },
             {
                 name: 'Sequence Model',
                 version: modelStatus?.model_versions?.sequence_model || 'v1.0.0',
-                accuracy: '91.8%',
+                accuracy: '0.0%',
                 status: 'active',
                 description: 'LSTM-based recurrent network for analyzing temporal patterns and predicting user behavior sequences.',
                 icon: <Layers className="w-6 h-6" />,
                 color: 'purple',
                 type: 'LSTM Network',
-                lastTrained: '4 hours ago',
-                predictions: 12893,
             },
             {
                 name: 'Graph Analyzer',
                 version: modelStatus?.model_versions?.graph_model || 'v1.0.0',
-                accuracy: '96.5%',
+                accuracy: '0.0%',
                 status: 'active',
                 description: 'Graph-based classifier for detecting network fraud patterns and relationship anomalies.',
                 icon: <Network className="w-6 h-6" />,
                 color: 'emerald',
                 type: 'Graph Neural Network',
-                lastTrained: '1 hour ago',
-                predictions: 8742,
             },
         ];
 
-        // Merge with API data if available
-        if (modelsData?.models) {
-            return baseModels.map((base, idx) => {
-                const apiModel = modelsData.models[idx];
-                if (apiModel) {
-                    return {
-                        ...base,
-                        name: apiModel.name || base.name,
-                        version: apiModel.version || base.version,
-                        accuracy: apiModel.accuracy || base.accuracy,
-                        status: apiModel.status || base.status,
-                    };
-                }
-                return base;
-            });
+        const apiModels = modelsData?.models || [];
+        if (!apiModels.length) {
+            return baseModels;
         }
 
-        return baseModels;
+        const predictionsPerModel = Math.round((metrics?.active_monitoring || 0) / Math.max(apiModels.length, 1));
+
+        return apiModels.map((apiModel, index) => {
+            const seed = baseModels[index % baseModels.length];
+            const normalizedName = (apiModel.name || seed.name).toLowerCase();
+
+            if (normalizedName.includes('anomaly')) {
+                return {
+                    ...seed,
+                    name: apiModel.name || seed.name,
+                    version: apiModel.version || seed.version,
+                    accuracy: apiModel.accuracy || seed.accuracy,
+                    status: apiModel.status || seed.status,
+                    predictions: predictionsPerModel,
+                    type: 'Deep Learning',
+                    description: 'Autoencoder pipeline tuned on historical normal behaviour and anomaly outliers.',
+                    icon: <Activity className="w-6 h-6" />,
+                    color: 'blue',
+                };
+            }
+
+            if (normalizedName.includes('sequence') || normalizedName.includes('lstm')) {
+                return {
+                    ...seed,
+                    name: apiModel.name || seed.name,
+                    version: apiModel.version || seed.version,
+                    accuracy: apiModel.accuracy || seed.accuracy,
+                    status: apiModel.status || seed.status,
+                    predictions: predictionsPerModel,
+                    type: 'Temporal Model',
+                    description: 'Sequence model trained to detect suspicious transitions in user activity timelines.',
+                    icon: <Layers className="w-6 h-6" />,
+                    color: 'purple',
+                };
+            }
+
+            if (normalizedName.includes('graph') || normalizedName.includes('network')) {
+                return {
+                    ...seed,
+                    name: apiModel.name || seed.name,
+                    version: apiModel.version || seed.version,
+                    accuracy: apiModel.accuracy || seed.accuracy,
+                    status: apiModel.status || seed.status,
+                    predictions: predictionsPerModel,
+                    type: 'Graph Model',
+                    description: 'Graph classifier tracks relationship anomalies across users, devices, and IP networks.',
+                    icon: <Network className="w-6 h-6" />,
+                    color: 'emerald',
+                };
+            }
+
+            return {
+                ...seed,
+                name: apiModel.name || seed.name,
+                version: apiModel.version || seed.version,
+                accuracy: apiModel.accuracy || seed.accuracy,
+                status: apiModel.status || seed.status,
+                predictions: predictionsPerModel,
+                type: 'Hybrid Model',
+                description: 'Ensemble model deployed in production inference pipeline.',
+                icon: <Brain className="w-6 h-6" />,
+                color: 'amber',
+            };
+        });
     };
 
     const models = getEnhancedModelData();
     const activeModels = models.filter(m => m.status === 'active' || m.status === 'deployed').length;
     const totalPredictions = models.reduce((sum, m) => sum + (m.predictions || 0), 0);
-    const avgAccuracy = models.reduce((sum, m) => {
+    const avgAccuracy = models.length ? models.reduce((sum, m) => {
         const acc = parseFloat(m.accuracy.replace('%', ''));
         return sum + acc;
-    }, 0) / models.length;
+    }, 0) / models.length : 0;
 
     return (
         <PageLayout>
@@ -159,6 +213,14 @@ export default function ModelsPage() {
             />
 
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8">
+                <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} />
+
+                {error && (
+                    <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+                        {error}
+                    </div>
+                )}
+
                 {/* Overview Stats */}
                 <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatsCard
@@ -185,7 +247,7 @@ export default function ModelsPage() {
                     <StatsCard
                         icon={<Clock className="w-5 h-5" />}
                         label="Avg Latency"
-                        value="4.2ms"
+                        value={`${((metrics?.avg_response_time || 0) * 1000).toFixed(1)}ms`}
                         subtext="inference time"
                         color="amber"
                     />
@@ -238,32 +300,34 @@ export default function ModelsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {modelStatus?.current_models?.map((modelName, idx) => (
-                                    <tr key={idx} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-                                        <td className="py-4 px-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 rounded-lg bg-white/[0.04]">
-                                                    <Cpu className="w-4 h-4 text-slate-400" />
+                                {(modelStatus?.current_models?.length ? modelStatus.current_models : models.map((m) => m.name)).length > 0 ? (
+                                    (modelStatus?.current_models?.length ? modelStatus.current_models : models.map((m) => m.name)).map((modelName, idx) => (
+                                        <tr key={idx} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 rounded-lg bg-white/[0.04]">
+                                                        <Cpu className="w-4 h-4 text-slate-400" />
+                                                    </div>
+                                                    <span className="text-sm font-medium text-white">{modelName}</span>
                                                 </div>
-                                                <span className="text-sm font-medium text-white">{modelName}</span>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <span className="text-sm text-slate-300 font-mono">
-                                                {modelStatus.model_versions?.[modelName] || 'v1.0.0'}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                                                <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                                                Active
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4 text-sm text-slate-400">
-                                            Just now
-                                        </td>
-                                    </tr>
-                                )) || (
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <span className="text-sm text-slate-300 font-mono">
+                                                    {modelStatus?.model_versions?.[modelName] || models[idx]?.version || 'v1.0.0'}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                                                    <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                                                    Active
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4 text-sm text-slate-400">
+                                                Auto-refreshing
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
                                         <tr>
                                             <td colSpan={4} className="py-8 text-center text-slate-400">
                                                 No models loaded

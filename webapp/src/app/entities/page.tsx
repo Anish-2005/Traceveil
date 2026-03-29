@@ -2,22 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { PageLayout, PageHeader } from '@/components/shared';
+import { ModelIntelligenceStrip } from '@/components/shared';
 import { EntityCard } from '@/components/dashboard/EntityCard';
 import { traceveilApi, HighRiskEntity } from '@/lib/api';
 import { Activity, Search, Filter, RefreshCw, AlertTriangle, Shield } from 'lucide-react';
 import { getSeverityFromScore, getStatusFromSeverity } from '@/lib/constants';
+import { useModelIntelligence } from '@/hooks';
 
 // Add this to api.ts if not present, or use axios directly for now
 // But consistent with codebase, I'll extend the api object in this file locally or update api.ts later.
 // For now, I'll fetch directly or assume I update api.ts next.
 // Actually, I should update api.ts first. But I can use the same pattern here for simplicity.
-import { api } from '@/lib/api';
-
 export default function EntitiesPage() {
     const [entities, setEntities] = useState<HighRiskEntity[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const { data: modelSnapshot, isLoading: isModelSnapshotLoading } = useModelIntelligence({
+        refreshInterval: 30000,
+    });
 
     const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +28,8 @@ export default function EntitiesPage() {
         try {
             setLoading(true);
             setError(null);
-            const response = await api.get('/events/recent?limit=100');
-            setEntities(response.data);
+            const response = await traceveilApi.getRecentEvents(100);
+            setEntities(response);
         } catch (err) {
             console.error('Failed to fetch entities:', err);
             setError('Failed to load entities. Please try again.');
@@ -93,6 +96,10 @@ export default function EntitiesPage() {
             />
 
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="mb-6">
+                    <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
+                </div>
+
                 {/* Filters */}
                 <div className="mb-8 flex flex-col sm:flex-row gap-4">
                     <div className="relative flex-1 max-w-md">
