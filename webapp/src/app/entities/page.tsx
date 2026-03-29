@@ -62,7 +62,7 @@ export default function EntitiesPage() {
         return (
             <PageLayout>
                 <PageHeader title="Entity Monitoring" subtitle="Real-time view of all detected entities and events" />
-                <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <main className="app-main-container py-16 sm:py-20">
                     <div className="flex flex-col items-center justify-center text-center p-8 rounded-xl bg-red-500/10 border border-red-500/20 max-w-lg mx-auto">
                         <AlertTriangle className="w-12 h-12 text-red-400 mb-4" />
                         <h3 className="text-lg font-bold text-white mb-2">Connection Error</h3>
@@ -96,7 +96,7 @@ export default function EntitiesPage() {
                 }
             />
 
-            <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="app-main-container app-content-spacing">
                 <AnimatedSection className="mb-6" delayMs={80}>
                     <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
                 </AnimatedSection>

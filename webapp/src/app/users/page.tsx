@@ -109,7 +109,7 @@ function UsersPageContent() {
         subtitle="Threat Hunting & Analysis"
       />
 
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="app-main-container app-content-spacing">
         <AnimatedSection className="mb-6" delayMs={80}>
           <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
         </AnimatedSection>
@@ -280,7 +280,7 @@ function UsersPageContent() {
                   </div>
 
                   {/* Metrics Row */}
-                  <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/[0.06]">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/[0.06]">
                     <div className="text-center">
                       <p className="text-2xl font-bold text-white">
                         {(userRisk.risk_assessment.risk_score * 100).toFixed(1)}%
@@ -359,16 +359,16 @@ function UsersPageContent() {
 
                 {/* Actions */}
                 <AnimatedSection className="glass-card p-6" variant="right" delayMs={260}>
-                  <div className="flex flex-wrap gap-3">
-                    <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors">
+                  <div className="mobile-stack flex-wrap gap-3">
+                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors">
                       <Activity className="w-4 h-4" />
                       View Full History
                     </button>
-                    <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] text-slate-300 font-medium transition-colors">
+                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] text-slate-300 font-medium transition-colors">
                       <FileText className="w-4 h-4" />
                       Export Report
                     </button>
-                    <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition-colors">
+                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition-colors">
                       <CheckCircle className="w-4 h-4" />
                       Mark Reviewed
                     </button>
@@ -413,7 +413,7 @@ function UserRiskSkeleton() {
           <div className="lg:col-span-2">
             <LoadingSkeleton className="h-8 w-52 mb-3" />
             <LoadingSkeleton className="h-5 w-32 mb-6" />
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <LoadingSkeleton className="h-20 rounded-xl" />
               <LoadingSkeleton className="h-20 rounded-xl" />
               <LoadingSkeleton className="h-20 rounded-xl" />

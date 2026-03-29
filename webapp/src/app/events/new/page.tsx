@@ -142,7 +142,7 @@ export default function NewEventPage() {
         subtitle="Real-time Risk Assessment"
       />
 
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="app-main-container app-content-spacing">
         <AnimatedSection className="mb-6" delayMs={80}>
           <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
         </AnimatedSection>
@@ -185,13 +185,13 @@ export default function NewEventPage() {
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Event Type <span className="text-red-400">*</span>
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {eventTypes.map((type) => (
                       <button
                         key={type.value}
                         type="button"
                         onClick={() => handleEventTypeChange(type.value)}
-                        className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all ${formData.event_type === type.value
+                        className={`flex items-center justify-start gap-2 px-4 py-3 rounded-xl border transition-all ${formData.event_type === type.value
                             ? 'bg-blue-500/15 border-blue-500/40 text-white'
                             : 'bg-white/[0.02] border-white/[0.06] text-slate-400 hover:bg-white/[0.04] hover:border-white/[0.1]'
                           }`}
@@ -314,7 +314,7 @@ export default function NewEventPage() {
                   </div>
 
                   {/* Metrics */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
                       <p className="text-xs text-slate-400 mb-1">Risk Score</p>
                       <p className="text-3xl font-black text-white">
@@ -403,7 +403,7 @@ export default function NewEventPage() {
             ) : (
               /* Empty State */
               <AnimatedSection
-                className="glass-card-elevated p-12 text-center h-full flex flex-col items-center justify-center min-h-[400px]"
+                className="glass-card-elevated p-8 sm:p-12 text-center h-full flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px]"
                 variant="right"
                 delayMs={180}
               >
@@ -417,7 +417,7 @@ export default function NewEventPage() {
                 <p className="text-slate-400 max-w-sm mx-auto">
                   Submit an event to receive real-time risk assessment powered by our ML models.
                 </p>
-                <div className="flex items-center gap-4 mt-6 text-xs text-slate-500">
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-slate-500">
                   <div className="flex items-center gap-1">
                     <Activity className="w-3 h-3" />
                     Anomaly Detection
@@ -448,7 +448,7 @@ function EventResultSkeleton() {
       </AnimatedSection>
       <AnimatedSection className="glass-card-elevated p-6 lg:p-8" variant="right" delayMs={190}>
         <LoadingSkeleton className="h-6 w-40 mb-6" />
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <LoadingSkeleton className="h-24 rounded-xl" />
           <LoadingSkeleton className="h-24 rounded-xl" />
         </div>

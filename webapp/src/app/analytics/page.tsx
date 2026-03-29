@@ -101,7 +101,7 @@ export default function AnalyticsPage() {
         }
       />
 
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8">
+      <main className="app-main-container app-content-spacing space-y-8">
         <AnimatedSection delayMs={80}>
           <ModelIntelligenceStrip
             snapshot={modelSnapshot}
@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
         )}
 
         {/* KPI Cards */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <AnimatedSection delayMs={140}>
             <KPICard
               icon={<Activity className="w-5 h-5" />}
@@ -301,13 +301,13 @@ export default function AnalyticsPage() {
             </div>
 
             {isLoading ? (
-              <div className="grid grid-cols-3 gap-4 animate-pulse">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-pulse">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="h-20 bg-white/[0.06] rounded-lg" />
                 ))}
               </div>
             ) : feedbackStats ? (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <StatBox
                   label="Total Feedback"
                   value={(feedbackStats.total_feedback ?? 0).toString()}
@@ -347,7 +347,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <MetricTile
                 label="Avg Response Time"
                 value={metrics?.avg_response_time ? `${(metrics.avg_response_time * 1000).toFixed(1)}ms` : '0ms'}

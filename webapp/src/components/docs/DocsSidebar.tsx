@@ -66,7 +66,7 @@ export function DocsSidebar() {
                 />
             )}
 
-            <aside className={`fixed top-14 bottom-0 left-0 w-72 border-r border-white/[0.08] bg-[#020712]/95 docs-sidebar-surface backdrop-blur-xl overflow-y-auto transform transition-transform duration-300 z-40 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+            <aside className={`fixed top-14 bottom-0 left-0 w-[min(20rem,86vw)] lg:w-72 border-r border-white/[0.08] bg-[#020712]/95 docs-sidebar-surface backdrop-blur-xl overflow-y-auto transform transition-transform duration-300 z-40 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
                 <div className="p-5 space-y-6">
                     <div className="space-y-3">

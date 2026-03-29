@@ -35,7 +35,7 @@ function BackgroundEffects() {
             <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
                 {/* Top-right blue orb */}
                 <div
-                    className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-30"
+                    className="absolute -top-24 -right-24 sm:-top-40 sm:-right-40 w-[340px] h-[340px] sm:w-[600px] sm:h-[600px] rounded-full opacity-30"
                     style={{
                         background: 'radial-gradient(circle, var(--ambient-orb-primary) 0%, transparent 70%)',
                         animation: 'float 8s ease-in-out infinite',
@@ -44,7 +44,7 @@ function BackgroundEffects() {
 
                 {/* Bottom-left purple orb */}
                 <div
-                    className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full opacity-25"
+                    className="absolute -bottom-28 -left-28 sm:-bottom-40 sm:-left-40 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full opacity-25"
                     style={{
                         background: 'radial-gradient(circle, var(--ambient-orb-secondary) 0%, transparent 70%)',
                         animation: 'float 10s ease-in-out infinite reverse',
@@ -54,7 +54,7 @@ function BackgroundEffects() {
 
                 {/* Center cyan accent */}
                 <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-10"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] sm:w-[800px] sm:h-[800px] rounded-full opacity-10"
                     style={{
                         background: 'radial-gradient(circle, var(--ambient-orb-tertiary) 0%, transparent 60%)',
                         animation: 'pulse-glow 6s ease-in-out infinite',

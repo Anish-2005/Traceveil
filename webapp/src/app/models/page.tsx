@@ -210,7 +210,7 @@ export default function ModelsPage() {
                 }
             />
 
-            <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8">
+            <main className="app-main-container app-content-spacing space-y-8">
                 <AnimatedSection delayMs={80}>
                     <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} />
                 </AnimatedSection>
@@ -225,7 +225,7 @@ export default function ModelsPage() {
                 )}
 
                 {/* Overview Stats */}
-                <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <AnimatedSection delayMs={140}>
                         <StatsCard
                             icon={<Brain className="w-5 h-5" />}
@@ -308,8 +308,8 @@ export default function ModelsPage() {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
+                    <div className="responsive-table-wrap">
+                        <table className="w-full responsive-table">
                             <thead>
                                 <tr className="border-b border-white/[0.06]">
                                     <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Model</th>

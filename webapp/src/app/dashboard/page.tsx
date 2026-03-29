@@ -88,12 +88,12 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main
         id="main-content"
-        className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12 space-y-10 lg:space-y-14 relative z-10"
+        className="app-main-container app-content-spacing space-y-8 sm:space-y-10 lg:space-y-14 relative z-10"
       >
         {/* Hero Section - Welcome & Primary KPI (Eager Loaded) */}
         <section>
           {isLoading ? (
-            <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 min-h-[400px]">
+            <div className="grid lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 min-h-[320px] sm:min-h-[400px]">
               <div className="lg:col-span-6"><LoadingSkeleton className="h-full w-full rounded-2xl bg-white/[0.03]" /></div>
               <div className="lg:col-span-6"><LoadingSkeleton className="h-full w-full rounded-2xl bg-white/[0.03]" /></div>
             </div>

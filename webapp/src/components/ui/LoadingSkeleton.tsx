@@ -21,18 +21,18 @@ export function DashboardSkeleton() {
       {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
         <div
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-20"
+          className="absolute -top-24 -right-24 sm:-top-40 sm:-right-40 w-[320px] h-[320px] sm:w-[600px] sm:h-[600px] rounded-full opacity-20"
           style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)' }}
         />
         <div
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full opacity-15"
+          className="absolute -bottom-28 -left-28 sm:-bottom-40 sm:-left-40 w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full opacity-15"
           style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)' }}
         />
       </div>
 
       {/* Header Skeleton */}
       <header className="sticky top-0 z-50 border-b border-white/[0.06] app-header-surface backdrop-blur-xl">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="app-main-container">
           <div className="h-16 lg:h-[72px] flex items-center justify-between">
             <div className="flex items-center gap-4">
               <LoadingSkeleton className="w-10 h-10 rounded-xl" />
@@ -51,7 +51,7 @@ export function DashboardSkeleton() {
         </div>
       </header>
 
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12 space-y-10 lg:space-y-14 relative z-10">
+      <main className="app-main-container app-content-spacing space-y-8 sm:space-y-10 lg:space-y-14 relative z-10">
         {/* Hero Section */}
         <section className="grid lg:grid-cols-12 gap-6 lg:gap-8">
           <div className="lg:col-span-5">

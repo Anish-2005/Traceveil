@@ -17,8 +17,8 @@ export default function EndpointsPage() {
       />
 
       <DocSection title="Core Routes">
-        <div className="overflow-hidden rounded-xl border border-white/[0.08]">
-          <table className="w-full text-left text-sm text-slate-300">
+        <div className="responsive-table-wrap overflow-hidden rounded-xl border border-white/[0.08]">
+          <table className="w-full responsive-table text-left text-sm text-slate-300">
             <thead className="bg-white/[0.02]">
               <tr>
                 <th className="px-5 py-3 font-semibold text-slate-100">Method</th>
