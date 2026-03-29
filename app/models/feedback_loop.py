@@ -3,7 +3,6 @@ import json
 import os
 from typing import Dict, List, Any
 from app.database.models import save_event, Event
-from app.models.model_training import trainer, evaluator
 
 FEEDBACK_DIR = "app/feedback"
 os.makedirs(FEEDBACK_DIR, exist_ok=True)
@@ -51,6 +50,13 @@ class FeedbackLoop:
     def trigger_retraining(self):
         """Trigger model retraining based on feedback"""
         print("Triggering model retraining based on feedback...")
+
+        # Import training stack lazily so API startup works even if optional ML deps are missing.
+        try:
+            from app.models.model_training import trainer
+        except Exception as e:
+            print(f"Skipping retraining: model training stack unavailable ({e})")
+            return
 
         # Analyze feedback to identify areas for improvement
         recent_feedback = self.feedback_data[-100:]  # Last 100 feedback samples

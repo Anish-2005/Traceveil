@@ -1,9 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.database.models import Event, save_event, get_user_events
 from app.features.feature_engineering import compute_features
-from app.models.anomaly_detector import detect_anomaly
-from app.models.sequence_model import predict_sequence_risk
-from app.models.graph_model import compute_graph_risk
 from app.risk_engine.scoring import calculate_risk_score, get_risk_assessment
 from app.explainability.explanations import generate_explanation
 from app.models.feedback_loop import feedback_loop
@@ -26,6 +23,14 @@ class FeedbackData(BaseModel):
 
 @router.post("/events/submit")
 async def ingest_event(event: EventData):
+    # Import model modules lazily so API startup does not fail when optional ML runtimes are unavailable.
+    try:
+        from app.models.anomaly_detector import detect_anomaly
+        from app.models.sequence_model import predict_sequence_risk
+        from app.models.graph_model import compute_graph_risk
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"ML models unavailable: {str(e)}")
+
     # Create and save event
     db_event = Event(
         user_id=event.user_id,
@@ -76,6 +81,14 @@ async def submit_feedback(feedback: FeedbackData):
 
 @router.get("/user/{user_id}/risk")
 async def get_user_risk(user_id: str):
+    # Import model modules lazily so API startup does not fail when optional ML runtimes are unavailable.
+    try:
+        from app.models.anomaly_detector import detect_anomaly
+        from app.models.sequence_model import predict_sequence_risk
+        from app.models.graph_model import compute_graph_risk
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"ML models unavailable: {str(e)}")
+
     # Get recent events
     events = get_user_events(user_id, limit=100)
 
