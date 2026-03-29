@@ -121,12 +121,20 @@ async def get_feedback_stats():
 @router.get("/models/status")
 async def get_model_status():
     """Get current model versions and status"""
-    from app.models.model_manager import model_manager
+    try:
+        from app.models.model_manager import model_manager
 
-    return {
-        "model_versions": model_manager.model_versions,
-        "current_models": list(model_manager.current_models.keys())
-    }
+        return {
+            "model_versions": model_manager.model_versions,
+            "current_models": list(model_manager.current_models.keys())
+        }
+    except Exception as e:
+        print(f"Error loading model status: {e}")
+        # Keep API responsive when optional ML runtime (torch) is unavailable.
+        return {
+            "model_versions": {},
+            "current_models": []
+        }
 
 @router.get("/events/recent")
 async def get_recent_events(limit: int = 50):

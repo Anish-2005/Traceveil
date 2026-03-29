@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Book, Code, Shield, Activity, Users, Settings, ChevronRight, Menu as MenuIcon, X } from 'lucide-react';
+import { Book, Code, Shield, Activity, Users, Settings, ChevronRight, Menu as MenuIcon, X, Search } from 'lucide-react';
 
 const sections = [
     {
@@ -35,6 +35,18 @@ const sections = [
 export function DocsSidebar() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
+    const [query, setQuery] = useState('');
+
+    const filteredSections = useMemo(() => {
+        if (!query.trim()) return sections;
+        const q = query.toLowerCase();
+        return sections
+            .map((section) => ({
+                ...section,
+                items: section.items.filter((item) => item.label.toLowerCase().includes(q)),
+            }))
+            .filter((section) => section.items.length > 0);
+    }, [query]);
 
     return (
         <>
@@ -54,12 +66,25 @@ export function DocsSidebar() {
                 />
             )}
 
-            <aside className={`fixed top-16 bottom-0 left-0 w-64 border-r border-white/[0.08] bg-[#030712]/95 backdrop-blur-xl overflow-y-auto transform transition-transform duration-300 z-40 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+            <aside className={`fixed top-14 bottom-0 left-0 w-72 border-r border-white/[0.08] bg-[#020712]/95 backdrop-blur-xl overflow-y-auto transform transition-transform duration-300 z-40 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
-                <div className="p-6 space-y-8">
-                    {sections.map((section) => (
+                <div className="p-5 space-y-6">
+                    <div className="space-y-3">
+                        <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Browse Docs</p>
+                        <div className="relative">
+                            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <input
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Search pages..."
+                                className="w-full rounded-lg bg-white/[0.03] border border-white/[0.08] py-2 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40"
+                            />
+                        </div>
+                    </div>
+
+                    {filteredSections.map((section) => (
                         <div key={section.title}>
-                            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-3">
+                            <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">
                                 {section.title}
                             </h3>
                             <div className="space-y-1">
@@ -70,8 +95,8 @@ export function DocsSidebar() {
                                             key={item.href}
                                             href={item.href}
                                             className={`group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${isActive
-                                                ? 'bg-blue-500/10 text-blue-400'
-                                                : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
+                                                ? 'bg-blue-500/12 text-blue-300 border border-blue-500/20'
+                                                : 'text-slate-400 hover:text-white hover:bg-white/[0.05] border border-transparent'
                                                 }`}
                                         >
                                             <item.icon className={`w-4 h-4 transition-colors ${isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-white'
@@ -86,6 +111,11 @@ export function DocsSidebar() {
                             </div>
                         </div>
                     ))}
+                    {filteredSections.length === 0 && (
+                        <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-3 text-sm text-slate-500">
+                            No docs page matched "{query}".
+                        </div>
+                    )}
                 </div>
             </aside>
         </>

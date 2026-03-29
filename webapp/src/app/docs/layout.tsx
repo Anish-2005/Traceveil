@@ -1,5 +1,4 @@
-import { BackgroundEffects } from '@/components/landing/BackgroundEffects';
-import { Navbar } from '@/components/landing/Navbar';
+import { PageHeader, PageLayout } from '@/components/shared';
 import { DocsSidebar } from '@/components/docs/DocsSidebar';
 
 export default function DocsLayout({
@@ -8,18 +7,16 @@ export default function DocsLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen bg-[#030712] text-slate-300">
-            <BackgroundEffects />
-            <Navbar />
-
-            <div className="flex pt-16">
+        <PageLayout>
+            <PageHeader title="Documentation" subtitle="Integration & Architecture" />
+            <div className="flex">
                 <DocsSidebar />
-                <main className="flex-1 lg:pl-64 min-h-[calc(100vh-4rem)]">
-                    <div className="max-w-4xl mx-auto px-6 py-12 lg:px-12">
+                <main id="main-content" className="flex-1 lg:pl-72 min-h-[calc(100vh-4rem)]">
+                    <div className="max-w-5xl mx-auto px-5 py-8 lg:px-10 lg:py-12">
                         {children}
                     </div>
                 </main>
             </div>
-        </div>
+        </PageLayout>
     );
 }
