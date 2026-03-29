@@ -896,20 +896,15 @@ html.theme-transitioning .docs-code {
 @keyframes route-stage-enter {
   0% {
     opacity: 0;
-    transform: translateY(14px) scale(0.995);
-    filter: saturate(0.92) blur(1px);
   }
 
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: saturate(1) blur(0);
   }
 }
 
 .route-transition-stage {
   animation: route-stage-enter 420ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform, filter;
 }
 
 @keyframes route-overlay-exit {

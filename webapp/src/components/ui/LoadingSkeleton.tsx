@@ -31,7 +31,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Header Skeleton */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.06] app-header-surface backdrop-blur-xl">
+      <header className="fixed top-0 left-0 right-0 z-[120] border-b border-white/[0.06] app-header-surface backdrop-blur-xl">
         <div className="app-main-container">
           <div className="h-16 lg:h-[72px] flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -50,6 +50,7 @@ export function DashboardSkeleton() {
           </div>
         </div>
       </header>
+      <div aria-hidden="true" className="h-16 lg:h-[72px]" />
 
       <main className="app-main-container app-content-spacing space-y-8 sm:space-y-10 lg:space-y-14 relative z-10">
         {/* Hero Section */}

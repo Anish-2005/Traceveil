@@ -66,7 +66,7 @@ export function PageHeader({
     return (
         <>
             <header
-                className={`fixed top-0 left-0 right-0 z-[80] border-b app-header-surface app-header-frame backdrop-blur-md transition-all duration-300 ${
+                className={`fixed top-0 left-0 right-0 z-[120] border-b app-header-surface app-header-frame backdrop-blur-md transition-all duration-300 ${
                     isCompact ? 'app-header-frame-compact' : ''
                 }`}
             >
@@ -185,7 +185,7 @@ export function PageHeader({
                     </div>
                 )}
             </header>
-            <div className={mobileMenuOpen ? 'h-[220px] md:h-14' : isCompact ? 'h-12' : 'h-14'} />
+            <div aria-hidden="true" className="h-14" />
         </>
     );
 }

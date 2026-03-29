@@ -37,7 +37,7 @@ export function Navbar() {
     return (
         <>
             <nav
-                className="fixed top-0 left-0 right-0 z-[70] px-2 sm:px-4 pt-2 transition-all duration-300"
+                className="fixed top-0 left-0 right-0 z-[120] translate-y-0 px-2 sm:px-4 pt-2 transition-all duration-300"
             >
                 <div className={`max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 rounded-2xl border transition-all duration-300 ${
                     scrolled || mobileMenuOpen
