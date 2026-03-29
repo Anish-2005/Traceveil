@@ -16,7 +16,7 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, className = '' }: PageLayoutProps) {
     return (
-        <div className={`min-h-screen bg-[#030712] text-slate-100 relative overflow-hidden ${className}`}>
+        <div className={`app-shell relative overflow-hidden ${className}`}>
             {/* Premium Ambient Background */}
             <BackgroundEffects />
 
@@ -37,7 +37,7 @@ function BackgroundEffects() {
                 <div
                     className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-30"
                     style={{
-                        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, var(--ambient-orb-primary) 0%, transparent 70%)',
                         animation: 'float 8s ease-in-out infinite',
                     }}
                 />
@@ -46,7 +46,7 @@ function BackgroundEffects() {
                 <div
                     className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full opacity-25"
                     style={{
-                        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, var(--ambient-orb-secondary) 0%, transparent 70%)',
                         animation: 'float 10s ease-in-out infinite reverse',
                         animationDelay: '2s',
                     }}
@@ -56,7 +56,7 @@ function BackgroundEffects() {
                 <div
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-10"
                     style={{
-                        background: 'radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 60%)',
+                        background: 'radial-gradient(circle, var(--ambient-orb-tertiary) 0%, transparent 60%)',
                         animation: 'pulse-glow 6s ease-in-out infinite',
                     }}
                 />

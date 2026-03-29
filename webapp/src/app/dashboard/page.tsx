@@ -78,7 +78,7 @@ export default function DashboardPage() {
 
   // Main Dashboard
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 relative overflow-hidden">
+    <div className="app-shell relative overflow-hidden">
       {/* Premium Ambient Background */}
       <BackgroundEffects />
 

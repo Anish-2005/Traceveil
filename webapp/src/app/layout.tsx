@@ -3,6 +3,7 @@ import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ScrollObserver } from "@/components/ui/ScrollObserver";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { APIStatus } from '@/components/shared/APIStatus';
 import { RouteTransitionOverlay } from '@/components/shared/RouteTransitionOverlay';
 
@@ -105,13 +106,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#030712" },
-    { media: "(prefers-color-scheme: light)", color: "#030712" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f9ff" },
   ],
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  colorScheme: "dark",
+  colorScheme: "dark light",
 };
 
 export default function RootLayout({
@@ -120,8 +121,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+  try {
+    const key = 'traceveil.theme';
+    const stored = localStorage.getItem(key);
+    const theme =
+      stored === 'light' || stored === 'dark'
+        ? stored
+        : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
+  } catch {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.style.colorScheme = 'dark';
+  }
+})();`,
+          }}
+        />
         {/* Preconnect for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -174,11 +194,13 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        <AuthProvider>
-          <RouteTransitionOverlay />
-          {children}
-          <APIStatus />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <RouteTransitionOverlay />
+            {children}
+            <APIStatus />
+          </AuthProvider>
+        </ThemeProvider>
 
         {/* Performance: Preload critical resources */}
         <link

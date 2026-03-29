@@ -19,6 +19,7 @@ import {
     Slash,
     ChevronDown
 } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 interface NavItem {
     href: string;
@@ -65,7 +66,7 @@ export function PageHeader({
     return (
         <>
             <header
-                className={`fixed top-0 left-0 right-0 z-[80] border-b bg-[#030712]/80 backdrop-blur-md transition-all duration-300 ${
+                className={`fixed top-0 left-0 right-0 z-[80] border-b app-header-surface backdrop-blur-md transition-all duration-300 ${
                     isCompact
                         ? 'border-white/[0.12] shadow-[0_10px_30px_rgba(2,6,23,0.55)]'
                         : 'border-white/[0.08]'
@@ -157,6 +158,8 @@ export function PageHeader({
 
                         <div className="h-4 w-px bg-white/[0.08] hidden lg:block" />
 
+                        <ThemeToggle compact={isCompact} />
+
                         {/* Mobile Menu Toggle */}
                         <button
                             type="button"
@@ -171,7 +174,7 @@ export function PageHeader({
 
                 {/* Simple Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden border-t border-white/[0.08] bg-[#030712] p-4 space-y-2">
+                    <div className="md:hidden border-t border-white/[0.08] app-header-mobile p-4 space-y-2">
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}

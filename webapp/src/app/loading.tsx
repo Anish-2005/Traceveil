@@ -1,6 +1,6 @@
 export default function GlobalLoading() {
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 relative overflow-hidden">
+    <div className="app-shell relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div
           className="absolute -top-32 -right-28 h-[420px] w-[420px] rounded-full opacity-30"
@@ -42,4 +42,3 @@ export default function GlobalLoading() {
     </div>
   );
 }
-

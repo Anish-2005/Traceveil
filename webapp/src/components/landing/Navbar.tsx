@@ -7,6 +7,7 @@ import { ChevronRight } from 'lucide-react';
 import { useNavbarScroll } from '@/hooks';
 import { useAuth } from '@/context/AuthContext';
 import { BackgroundEffects } from '@/components';
+import { ThemeToggle } from '@/components/shared';
 
 export function Navbar() {
     const { user } = useAuth();
@@ -40,8 +41,8 @@ export function Navbar() {
             >
                 <div className={`max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 rounded-2xl border transition-all duration-300 ${
                     scrolled || mobileMenuOpen
-                        ? 'bg-[#030712]/86 border-white/[0.12] backdrop-blur-2xl shadow-[0_12px_40px_rgba(2,6,23,0.55)]'
-                        : 'bg-[#030712]/50 border-white/[0.07] backdrop-blur-xl'
+                        ? 'app-nav-surface-strong border-white/[0.12] backdrop-blur-2xl shadow-[0_12px_40px_rgba(2,6,23,0.55)]'
+                        : 'app-nav-surface border-white/[0.07] backdrop-blur-xl'
                 }`}>
                     <div className={`flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-12' : 'h-16'}`}>
                         {/* Logo */}
@@ -79,6 +80,7 @@ export function Navbar() {
 
                         {/* Right Side */}
                         <div className="hidden md:flex items-center gap-3">
+                            <ThemeToggle compact={scrolled} />
                             {!user ? (
                                 <>
                                     <Link
@@ -129,7 +131,7 @@ export function Navbar() {
 
             {/* Premium Mobile Menu Overlay */}
             <div
-                className={`fixed inset-0 z-40 bg-[#030712] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${mobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'
+                className={`fixed inset-0 z-40 app-mobile-overlay transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${mobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'
                     }`}
             >
                 {/* Background Ambience */}
@@ -138,6 +140,9 @@ export function Navbar() {
                 </div>
 
                 <div className="h-full flex flex-col pt-24 px-6 pb-8 relative z-10 overflow-y-auto">
+                    <div className="mb-6">
+                        <ThemeToggle />
+                    </div>
                     <nav className="flex-1 flex flex-col gap-2">
                         {[
                             { href: '#features', label: 'Platform', desc: 'Core capabilities & modules' },

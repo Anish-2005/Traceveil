@@ -17,7 +17,7 @@ export function LoadingSkeleton({ className = "" }: { className?: string }) {
  */
 export function DashboardSkeleton() {
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 relative overflow-hidden">
+    <div className="app-shell relative overflow-hidden">
       {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
         <div
@@ -31,7 +31,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Header Skeleton */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#030712]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] app-header-surface backdrop-blur-xl">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
           <div className="h-16 lg:h-[72px] flex items-center justify-between">
             <div className="flex items-center gap-4">

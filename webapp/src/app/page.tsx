@@ -59,7 +59,7 @@ function MainContent() {
   useScrollReveal();
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden animate-fade-in">
+    <div className="app-shell overflow-x-hidden animate-fade-in">
       {/* Background Effects */}
       <BackgroundEffects />
 
