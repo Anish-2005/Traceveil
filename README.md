@@ -1,123 +1,142 @@
+# Traceveil
+
 <div align="center">
-  <h1>🛡️ Traceveil</h1>
-  <p><b>Real-Time Fraud & Cheating Detection System</b></p>
-  <p><i>Sub-50ms inference latency • Multi-modal AI Architecture • Adaptive Learning</i></p>
+  <p><strong>Real-time fraud and abuse detection platform</strong></p>
+  <p>FastAPI backend + Next.js control center + multi-model risk engine</p>
 
   <p>
-    <img alt="Accuracy" src="https://img.shields.io/badge/Accuracy-98.5%25-success">
-    <img alt="F1-Score" src="https://img.shields.io/badge/F1--Score-96.0%25-success">
-    <img alt="Latency" src="https://img.shields.io/badge/Latency-<50ms-blue">
-    <img alt="Python" src="https://img.shields.io/badge/Python-3.11+-blue">
-    <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-Production_Ready-009688">
+    <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
+    <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-Production-009688?logo=fastapi&logoColor=white">
+    <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white">
+    <img alt="React" src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white">
+    <img alt="License" src="https://img.shields.io/badge/License-MIT-green">
   </p>
 </div>
 
-<br>
+## Platform Snapshot
 
-## 🏆 Performance Benchmarks
-> **Validated against rigorous synthetic attacks and heavy industry benchmarks** *(IEEE-CIS, European Credit Card Flow, NAB)*.
+| Layer | What it does | Tech |
+|---|---|---|
+| Ingestion API | Accepts events and user signals in real time | FastAPI, Pydantic |
+| Risk Engine | Aggregates anomaly, sequence, and graph intelligence | PyTorch, scikit-learn, NetworkX |
+| Explainability | Generates human-readable risk explanations | Custom explanation module |
+| Web Console | Operational dashboards for analytics, models, entities, and docs | Next.js, TypeScript, Tailwind |
 
-| 🎯 Metric | 📈 Score | 📝 Detail |
-| :--- | :---: | :--- |
-| **Accuracy** | `~98.5%` | Overall correctness across all domains |
-| **Precision** | `96.2%` | High confidence on flagged anomalies |
-| **Recall** | `95.8%` | Detection rate of actual fraud/cheating |
-| **F1-Score** | `96.0%` | Harmonic mean of precision & recall |
-| **F.P.R.** | `<1.5%` | Minimal False Positives (Smooth user UX) |
+## Architecture
 
-<br>
+```mermaid
+flowchart LR
+  A[Client / Event Source] --> B[FastAPI Ingestion Layer]
+  B --> C[Feature Engineering]
+  C --> D1[Anomaly Model]
+  C --> D2[Sequence Model]
+  C --> D3[Graph Model]
+  D1 --> E[Risk Scoring]
+  D2 --> E
+  D3 --> E
+  E --> F[Explanation + Decision]
+  F --> G[(SQLite / Firestore / Cache)]
+  G --> H[Next.js Operations Dashboard]
+```
 
-### 🛠️ Training Scale & Datasets
-The v2 models are robustly trained on **>1.2 Million combined records** and hold over **400k+ trainable parameters** across the entire pipeline.
-- 💳 **European Credit Card Fraud** - `284,000` real transaction sequences.
-- 🛒 **IEEE-CIS Fraud Detection** - `600,000+` highly imbalanced e-commerce logs.
-- 📈 **NAB Time Series Anomaly** - Yahoo's benchmark for timeline deviations.
-- 🎓 **Synthetic EdTech Behavior** - `200k+` generated sequences of advanced cheating mechanics (tab-switching, proxy-IPs, unnatural cursor speed).
+## Quick Start
 
----
+### Option A: One-command startup (recommended)
 
-## 🧠 What is Traceveil?
-
-Traceveil abandons simple thresholds and hardcoded rules. Instead, it **learns normal user behavioral patterns** (mouse movements, keystroke dynamics, device hopping, session velocity) to detect subtle, malicious deviations.
-
-Inspired by industry leaders like **Stripe** and **Coursera**, Traceveil leverages a layered AI approach to identify bot networks, transaction fraud, and exam cheating instantaneously.
-
----
-
-## 🚀 The AI Engine (v2)
-
-Our core pipeline is built on three pillars to catch what standard systems miss:
-
-1. ⏱️ **Temporal & Sequential Manipulation**  
-   **BiLSTM with Self-Attention** (*3 layers, 128 hidden dim, GELU*). Analyzes streams of user events chronologically.
-2. 🕵️ **Behavioral Anomaly Detection**  
-   **Deep Residual Autoencoder** (*ResNet-style skip-connections*). Forces massive reconstruction errors on Out-Of-Distribution (OOD) fraudulent sessions.
-3. 🕸️ **Network Graph Fraud**  
-   **Node2Vec + Community Detection**. Uncovers orchestrated bot-rings routing through multiple connected accounts.
-
-<div align="center">
-   <code>Raw Events ➔ Feature Extraction ➔ Multi-Model AI Engine ➔ Explainable Risk Score ➔ Feedback Loop</code>
-</div>
-
-
-
----
-
-## ⚡ Quick Start
-
-### 1. Zero-Config Development Mode
-Run the app immediately using our Mock Firebase client:
+Windows:
 ```bash
-# Clone and install
+start.bat
+```
+
+macOS/Linux:
+```bash
+./start.sh
+```
+
+### Option B: Manual startup
+
+Backend:
+```bash
 pip install -r requirements.txt
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
 
-# Start the API Backend
-uvicorn app.main:app --reload
-
-# Start the Modern Dashboard (in a new terminal)
+Web app:
+```bash
 cd webapp
-npm install && npm run dev
+npm install
+npm run dev
 ```
 
-### 2. Run Synthetic Traffic
-Generate realistic test data to watch the AI engine work:
-```bash
-python data/generate_sample_data.py
+Open:
+- Web UI: `http://localhost:3000`
+- API: `http://localhost:8000`
+- OpenAPI docs: `http://localhost:8000/docs`
+
+## API Endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/` | API health message |
+| `POST` | `/events/submit` | Submit event and get risk assessment |
+| `GET` | `/user/{user_id}/risk` | Get user risk profile |
+| `POST` | `/feedback` | Submit analyst feedback |
+| `GET` | `/feedback/stats` | Feedback loop stats |
+| `GET` | `/models/status` | Model versions and current registry |
+| `GET` | `/events/recent` | Recent high-risk entities/events |
+| `GET` | `/dashboard/metrics` | Dashboard metrics snapshot |
+| `GET` | `/dashboard/models` | Dashboard model list |
+
+## Frontend Capabilities
+
+- Premium dashboard experience with dark/light themes
+- Model intelligence strip and real-time KPI cards
+- Event ingestion flow with AI explanation output
+- Entity/user risk exploration surfaces
+- Docs section with architecture and API references
+
+## Project Structure
+
+```text
+Traceveil/
+  app/                    # FastAPI application, routes, models, scoring
+  data/                   # Data generation and supporting datasets/scripts
+  tests/                  # Python tests
+  webapp/                 # Next.js application
+  start.bat               # Windows startup script
+  start.sh                # macOS/Linux startup script
+  requirements.txt
 ```
 
----
+## Configuration
 
-## 🔌 Core APIs
+### Backend
 
-**Ingest an Event (`POST /ingest`)**
-```bash
-curl -X POST "http://localhost:8000/ingest" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_id": "user123",
-    "event_type": "mouse_move",
-    "metadata": {"speed": 1200, "device_id": "dev456"},
-    "timestamp": "2024-01-29T10:00:00Z"
-  }'
-```
+Environment variables:
 
-**Get Live Risk Score (`GET /user/{user_id}/risk`)**
-```bash
-curl "http://localhost:8000/user/user123/risk"
-# Returns a 0.0 to 1.0 confidence score alongside key feature vectors
-```
+| Variable | Default | Description |
+|---|---|---|
+| `CORS_ALLOWED_ORIGINS` | local defaults | Comma-separated allowed origins |
 
----
+### Frontend (`webapp/.env.local`)
 
-## 🛠️ Stack
+| Variable | Example | Description |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Backend API base URL |
 
-- **ML Core:** PyTorch, Scikit-learn, NetworkX
-- **Backend Architecture:** FastAPI, Python 3.11+, Redis
-- **Data Persistence:** Firebase / Firestore
-- **Web App / UI:** Next.js (TypeScript), Tailwind CSS
+## Troubleshooting
 
----
+### Torch DLL error on Windows (`WinError 1114`)
 
-<div align="center">
-  <p>Built for production resilience. MIT Licensed.</p>
-</div>
+If `torch` fails to load (for example `c10.dll`), verify:
+1. You are using a supported Python version and architecture.
+2. Visual C++ Redistributable is installed.
+3. Your Torch build matches your environment (CPU/GPU).
+
+Then reinstall Torch in your active environment and restart the backend process.
+
+## Documentation for Contributors
+
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- License: [LICENSE](LICENSE)
+
