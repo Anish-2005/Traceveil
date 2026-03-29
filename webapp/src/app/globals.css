@@ -375,6 +375,84 @@ html.theme-transitioning .docs-code {
   border-color: color-mix(in srgb, var(--border-subtle) 86%, transparent);
 }
 
+.landing-hero-section {
+  background: var(--surface-app);
+}
+
+.landing-hero-grid {
+  background-image:
+    linear-gradient(var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px);
+}
+
+.landing-hero-gradient {
+  background: linear-gradient(180deg, var(--surface-app) 0%, transparent 38%, var(--surface-app) 100%);
+}
+
+.landing-hero-overlay {
+  background: color-mix(in srgb, var(--surface-app) 88%, transparent);
+}
+
+.hero-terminal-window {
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 92%, transparent);
+  background: color-mix(in srgb, var(--surface-app-elevated) 94%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow:
+    0 24px 52px rgba(2, 6, 23, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.hero-terminal-header {
+  border-bottom: 1px solid color-mix(in srgb, var(--border-subtle) 88%, transparent);
+  background: color-mix(in srgb, var(--glass-bg-secondary) 70%, transparent);
+}
+
+.hero-terminal-file-chip {
+  background: color-mix(in srgb, #020617 64%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 78%, transparent);
+  color: var(--text-muted);
+}
+
+.hero-terminal-copy-btn {
+  color: var(--text-muted);
+}
+
+.hero-terminal-copy-btn:hover {
+  background: color-mix(in srgb, var(--glass-bg-secondary) 94%, transparent);
+  color: var(--text-primary);
+}
+
+.hero-terminal-body {
+  color: var(--text-secondary);
+}
+
+.hero-terminal-line-no {
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+}
+
+.hero-terminal-risk-row {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: rgba(239, 68, 68, 0.5);
+}
+
+.hero-terminal-footer {
+  background: color-mix(in srgb, #020617 88%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--border-subtle) 85%, transparent);
+}
+
+.hero-terminal-connected {
+  color: var(--text-muted);
+}
+
+.hero-terminal-alert {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 42px rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
 .mobile-stack {
   display: flex;
   flex-direction: column;
@@ -422,6 +500,70 @@ html.theme-transitioning .docs-code {
 [data-theme='light'] .app-cta-orb {
   background: rgba(255, 255, 255, 0.96);
   color: #1e293b;
+}
+
+[data-theme='light'] .landing-hero-overlay {
+  background: color-mix(in srgb, #f4f7fe 74%, transparent);
+}
+
+[data-theme='light'] .landing-hero-section .mix-blend-screen {
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+}
+
+[data-theme='light'] .hero-terminal-window {
+  border-color: rgba(148, 163, 184, 0.34);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(241, 245, 249, 0.82));
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+[data-theme='light'] .hero-terminal-header {
+  border-bottom-color: rgba(148, 163, 184, 0.32);
+  background: rgba(255, 255, 255, 0.74);
+}
+
+[data-theme='light'] .hero-terminal-file-chip {
+  background: rgba(241, 245, 249, 0.92);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #334155;
+}
+
+[data-theme='light'] .hero-terminal-risk-row {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: rgba(220, 38, 38, 0.5);
+}
+
+[data-theme='light'] .hero-terminal-footer {
+  background: rgba(241, 245, 249, 0.92);
+  border-top-color: rgba(148, 163, 184, 0.3);
+}
+
+[data-theme='light'] .hero-terminal-window .text-sky-400 {
+  color: #1d4ed8 !important;
+}
+
+[data-theme='light'] .hero-terminal-window .text-emerald-400 {
+  color: #047857 !important;
+}
+
+[data-theme='light'] .hero-terminal-window .text-amber-400 {
+  color: #b45309 !important;
+}
+
+[data-theme='light'] .hero-terminal-window .text-red-400 {
+  color: #b91c1c !important;
+}
+
+[data-theme='light'] .hero-terminal-window .text-purple-400 {
+  color: #6d28d9 !important;
+}
+
+[data-theme='light'] .hero-terminal-alert {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(148, 163, 184, 0.34);
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
 }
 
 /* Selection styling */
