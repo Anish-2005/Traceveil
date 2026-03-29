@@ -17,7 +17,7 @@ export default function DocsPage() {
             </Link>
             <Link
               href="/docs/api/endpoints"
-              className="inline-flex items-center px-5 py-3 rounded-xl border border-white/[0.12] bg-white/[0.03] text-sm font-semibold text-slate-100 hover:bg-white/[0.06] transition-colors"
+              className="btn-ghost inline-flex items-center px-5 py-3 rounded-xl text-sm font-semibold"
             >
               Explore API
             </Link>
@@ -73,4 +73,3 @@ export default function DocsPage() {
     </div>
   );
 }
-

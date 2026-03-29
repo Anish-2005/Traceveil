@@ -64,12 +64,12 @@ function BackgroundEffects() {
 
             {/* Subtle grid pattern */}
             <div
-                className="fixed inset-0 pointer-events-none opacity-[0.015]"
+                className="fixed inset-0 pointer-events-none opacity-[0.025]"
                 aria-hidden="true"
                 style={{
                     backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            linear-gradient(var(--grid-line-color) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px)
           `,
                     backgroundSize: '60px 60px',
                 }}

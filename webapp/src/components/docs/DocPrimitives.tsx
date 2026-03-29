@@ -16,7 +16,7 @@ export function DocHero({ badge, icon: Icon, title, description, actions }: DocH
       {badge && <div className="docs-badge">{badge}</div>}
       <div className="flex items-center gap-3 mb-4">
         <div className="docs-icon-wrap">
-          <Icon className="w-5 h-5 text-blue-300" />
+          <Icon className="w-5 h-5 docs-accent-icon" />
         </div>
         <h1 className="docs-title">{title}</h1>
       </div>
@@ -57,7 +57,7 @@ export function DocCard({ icon: Icon, title, description, href, children }: DocC
     <article className="docs-card group scroll-reveal-scale reveal-delay-300">
       {Icon && (
         <div className="docs-card-icon">
-          <Icon className="w-4 h-4 text-blue-300" />
+          <Icon className="w-4 h-4 docs-accent-icon" />
         </div>
       )}
       <h3 className="docs-card-title">{title}</h3>

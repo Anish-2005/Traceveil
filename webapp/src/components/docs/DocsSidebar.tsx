@@ -61,12 +61,12 @@ export function DocsSidebar() {
             {/* Backdrop */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden animate-fade-in"
+                    className="fixed inset-0 z-40 docs-sidebar-backdrop backdrop-blur-sm lg:hidden animate-fade-in"
                     onClick={() => setIsOpen(false)}
                 />
             )}
 
-            <aside className={`fixed top-14 bottom-0 left-0 w-72 border-r border-white/[0.08] bg-[#020712]/95 backdrop-blur-xl overflow-y-auto transform transition-transform duration-300 z-40 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+            <aside className={`fixed top-14 bottom-0 left-0 w-72 border-r border-white/[0.08] bg-[#020712]/95 docs-sidebar-surface backdrop-blur-xl overflow-y-auto transform transition-transform duration-300 z-40 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
                 <div className="p-5 space-y-6">
                     <div className="space-y-3">
@@ -77,7 +77,7 @@ export function DocsSidebar() {
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 placeholder="Search pages..."
-                                className="w-full rounded-lg bg-white/[0.03] border border-white/[0.08] py-2 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40"
+                                className="w-full rounded-lg bg-white/[0.03] border border-white/[0.08] docs-sidebar-search py-2 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40"
                             />
                         </div>
                     </div>
@@ -112,7 +112,7 @@ export function DocsSidebar() {
                         </div>
                     ))}
                     {filteredSections.length === 0 && (
-                        <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-3 text-sm text-slate-500">
+                        <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] docs-sidebar-empty p-3 text-sm text-slate-500">
                             No docs page matched "{query}".
                         </div>
                     )}
