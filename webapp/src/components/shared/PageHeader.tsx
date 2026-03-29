@@ -32,6 +32,7 @@ const navItems: NavItem[] = [
     { href: '/entities', label: 'Entities' },
     { href: '/models', label: 'Models' },
     { href: '/users', label: 'Users' },
+    { href: '/docs', label: 'Docs' },
 ];
 
 interface PageHeaderProps {
