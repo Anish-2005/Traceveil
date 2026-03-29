@@ -7,7 +7,7 @@
  * with real-time risk visualization and detailed explanations.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Activity,
@@ -30,7 +30,7 @@ import { ModelIntelligenceStrip } from '@/components/shared';
 import { traceveilApi, UserRisk } from '@/lib/api';
 import { useModelIntelligence } from '@/hooks';
 
-export default function UsersPage() {
+function UsersPageContent() {
   const searchParams = useSearchParams();
   const [userId, setUserId] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -391,5 +391,13 @@ export default function UsersPage() {
         </div>
       </main>
     </PageLayout>
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <Suspense fallback={<PageLayout><PageHeader title="User Risk Assessment" subtitle="Threat Hunting & Analysis" /></PageLayout>}>
+      <UsersPageContent />
+    </Suspense>
   );
 }

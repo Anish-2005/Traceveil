@@ -19,9 +19,7 @@ import {
     Cpu,
     Database,
     Zap,
-    BarChart3,
     GitBranch,
-    Shield,
     Network,
     Layers
 } from 'lucide-react';
@@ -64,7 +62,7 @@ export default function ModelsPage() {
             setModelsData(models);
             setModelStatus(status);
             setMetrics(metricsPayload);
-        } catch (error) {
+        } catch {
             setError('Unable to load model registry from backend.');
         } finally {
             setIsLoading(false);

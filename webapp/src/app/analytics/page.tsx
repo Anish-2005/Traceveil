@@ -9,7 +9,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  BarChart3,
   TrendingUp,
   Users,
   AlertTriangle,
@@ -21,12 +20,11 @@ import {
   Zap,
   ArrowUpRight,
   ArrowDownRight,
-  Shield
 } from 'lucide-react';
 import { PageLayout, PageHeader } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { useModelIntelligence } from '@/hooks';
-import { traceveilApi, FeedbackStats, DashboardMetrics, DashboardModels } from '@/lib/api';
+import { traceveilApi, FeedbackStats, DashboardMetrics, DashboardModels, ThreatEvent } from '@/lib/api';
 
 export default function AnalyticsPage() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
@@ -50,7 +48,7 @@ export default function AnalyticsPage() {
       setMetrics(metricsData);
       setModels(modelsData);
       setFeedbackStats(feedbackData);
-    } catch (error) {
+    } catch {
       setError('Unable to load analytics data from the model pipeline.');
     } finally {
       setIsLoading(false);
@@ -79,10 +77,10 @@ export default function AnalyticsPage() {
 
   // Risk distribution (calculated from recent threats)
   const riskDistribution = {
-    low: recentThreats.filter((t: any) => t.severity === 'low').length,
-    medium: recentThreats.filter((t: any) => t.severity === 'medium').length,
-    high: recentThreats.filter((t: any) => t.severity === 'high').length,
-    critical: recentThreats.filter((t: any) => t.severity === 'critical').length,
+    low: recentThreats.filter((t: ThreatEvent) => t.severity === 'low').length,
+    medium: recentThreats.filter((t: ThreatEvent) => t.severity === 'medium').length,
+    high: recentThreats.filter((t: ThreatEvent) => t.severity === 'high').length,
+    critical: recentThreats.filter((t: ThreatEvent) => t.severity === 'critical').length,
   };
   const totalRisks = Object.values(riskDistribution).reduce((a, b) => a + b, 0) || 1;
 

@@ -5,7 +5,7 @@ import { PageLayout, PageHeader } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { EntityCard } from '@/components/dashboard/EntityCard';
 import { traceveilApi, HighRiskEntity } from '@/lib/api';
-import { Activity, Search, Filter, RefreshCw, AlertTriangle, Shield } from 'lucide-react';
+import { Search, RefreshCw, AlertTriangle, Shield } from 'lucide-react';
 import { getSeverityFromScore, getStatusFromSeverity } from '@/lib/constants';
 import { useModelIntelligence } from '@/hooks';
 
