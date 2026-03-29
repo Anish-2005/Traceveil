@@ -1,20 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Terminal, Shield, Cpu, Activity, Check } from 'lucide-react';
+import { Activity, Check } from 'lucide-react';
 
-export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+const STATUS_STEPS = [
+    'Initializing core modules...',
+    'Verifying security signatures...',
+    'Connecting to threat intelligence grid...',
+    'Loading visualization engine...',
+    'System ready.',
+];
+
+export function LoadingScreen({
+    onComplete,
+    durationMs = 350,
+}: {
+    onComplete: () => void;
+    durationMs?: number;
+}) {
     const [progress, setProgress] = useState(0);
     const [status, setStatus] = useState('Initializing core modules...');
 
-    const steps = [
-        "Initializing core modules...",
-        "Verifying security signatures...",
-        "Connecting to threat intelligence grid...",
-        "Loading visualization engine...",
-        "System ready."
-    ];
-
     useEffect(() => {
-        const duration = 2000; // 2 seconds boot time
+        const duration = Math.max(120, durationMs);
         const interval = 20;
         const stepsCount = duration / interval;
         let currentStep = 0;
@@ -25,17 +31,17 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
             setProgress(newProgress);
 
             // Update status text based on progress chunks
-            const stepIndex = Math.floor((newProgress / 100) * (steps.length - 1));
-            setStatus(steps[stepIndex]);
+            const stepIndex = Math.floor((newProgress / 100) * (STATUS_STEPS.length - 1));
+            setStatus(STATUS_STEPS[stepIndex]);
 
             if (currentStep >= stepsCount) {
                 clearInterval(timer);
-                setTimeout(onComplete, 500); // Small delay after 100%
+                onComplete();
             }
         }, interval);
 
         return () => clearInterval(timer);
-    }, [onComplete]);
+    }, [onComplete, durationMs]);
 
     return (
         <div className="fixed inset-0 z-[100] bg-[#030712] flex flex-col items-center justify-center p-4">

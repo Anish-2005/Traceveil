@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useNavbarScroll } from '@/hooks';
 import { useAuth } from '@/context/AuthContext';
 import { BackgroundEffects } from '@/components';
@@ -26,16 +26,24 @@ export function Navbar() {
         };
     }, [mobileMenuOpen]);
 
+    const navLinks = [
+        { href: '#features', label: 'Platform' },
+        { href: '#models', label: 'Technology' },
+        { href: '#stats', label: 'Company' },
+        { href: '/docs', label: 'Documentation' },
+    ];
+
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled || mobileMenuOpen
-                    ? 'bg-[#030712]/80 backdrop-blur-xl border-b border-white/[0.08]'
-                    : 'bg-transparent py-4'
-                    }`}
+                className="fixed top-0 left-0 right-0 z-[70] px-2 sm:px-4 pt-2 transition-all duration-300"
             >
-                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
+                <div className={`max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 rounded-2xl border transition-all duration-300 ${
+                    scrolled || mobileMenuOpen
+                        ? 'bg-[#030712]/86 border-white/[0.12] backdrop-blur-2xl shadow-[0_12px_40px_rgba(2,6,23,0.55)]'
+                        : 'bg-[#030712]/50 border-white/[0.07] backdrop-blur-xl'
+                }`}>
+                    <div className={`flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-12' : 'h-16'}`}>
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group relative z-50" onClick={() => setMobileMenuOpen(false)}>
                             <div className="relative">
@@ -43,24 +51,26 @@ export function Navbar() {
                                 <img
                                     src="/traceveil-logo.svg"
                                     alt="Traceveil"
-                                    className={`relative transition-all duration-500 w-10 h-10 group-hover:scale-110`}
+                                    className={`relative transition-all duration-300 group-hover:scale-110 ${scrolled ? 'w-8 h-8' : 'w-10 h-10'}`}
                                 />
                             </div>
-                            <span className="font-bold text-white tracking-tight text-xl sm:text-2xl">Traceveil</span>
+                            <div className="flex flex-col">
+                                <span className={`font-bold text-white tracking-tight transition-all duration-300 ${scrolled ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl'}`}>
+                                    Traceveil
+                                </span>
+                                <span className={`hidden lg:block text-[10px] text-slate-500 uppercase tracking-[0.14em] transition-all duration-300 ${scrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+                                    Real-time Risk Intelligence
+                                </span>
+                            </div>
                         </Link>
 
                         {/* Desktop Nav Links */}
-                        <div className="hidden lg:flex items-center gap-1">
-                            {[
-                                { href: '#features', label: 'Platform' },
-                                { href: '#models', label: 'Technology' },
-                                { href: '#stats', label: 'Company' },
-                                { href: '/docs', label: 'Documentation' },
-                            ].map((link) => (
+                        <div className={`hidden lg:flex items-center transition-all duration-300 ${scrolled ? 'gap-0.5 px-1 py-1 rounded-full border border-white/[0.1] bg-white/[0.03]' : 'gap-1'}`}>
+                            {navLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href.startsWith('#') && pathname !== '/' ? `/${link.href}` : link.href}
-                                    className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.05] rounded-full transition-all"
+                                    className={`font-medium text-slate-400 hover:text-white hover:bg-white/[0.07] rounded-full transition-all ${scrolled ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'}`}
                                 >
                                     {link.label}
                                 </Link>
@@ -68,33 +78,33 @@ export function Navbar() {
                         </div>
 
                         {/* Right Side */}
-                        <div className="hidden md:flex items-center gap-4">
+                        <div className="hidden md:flex items-center gap-3">
                             {!user ? (
                                 <>
                                     <Link
                                         href="/login"
-                                        className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                                        className={`font-medium text-slate-400 hover:text-white transition-colors ${scrolled ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'}`}
                                     >
                                         Sign In
                                     </Link>
                                     <Link
                                         href="/dashboard"
-                                        className="group flex items-center gap-2 pl-5 pr-2 py-1.5 bg-white text-black rounded-full text-sm font-semibold hover:bg-slate-200 transition-all hover:scale-105"
+                                        className={`group flex items-center gap-2 bg-white text-black rounded-full font-semibold hover:bg-slate-200 transition-all ${scrolled ? 'pl-3 pr-1.5 py-1 text-xs' : 'pl-5 pr-2 py-1.5 text-sm hover:scale-105'}`}
                                     >
-                                        <span>Get Started</span>
-                                        <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                                            <ChevronRight className="w-4 h-4" />
+                                        <span>{scrolled ? 'Start' : 'Get Started'}</span>
+                                        <div className={`rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300 ${scrolled ? 'w-5 h-5' : 'w-7 h-7'}`}>
+                                            <ChevronRight className={scrolled ? 'w-3 h-3' : 'w-4 h-4'} />
                                         </div>
                                     </Link>
                                 </>
                             ) : (
                                 <Link
                                     href="/dashboard"
-                                    className="group flex items-center gap-2 pl-5 pr-2 py-1.5 bg-white text-black rounded-full text-sm font-semibold hover:bg-slate-200 transition-all hover:scale-105"
+                                    className={`group flex items-center gap-2 bg-white text-black rounded-full font-semibold hover:bg-slate-200 transition-all ${scrolled ? 'pl-3 pr-1.5 py-1 text-xs' : 'pl-5 pr-2 py-1.5 text-sm hover:scale-105'}`}
                                 >
                                     <span>Dashboard</span>
-                                    <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                                        <ChevronRight className="w-4 h-4" />
+                                    <div className={`rounded-full bg-black text-white flex items-center justify-center group-hover:rotate-45 transition-transform duration-300 ${scrolled ? 'w-5 h-5' : 'w-7 h-7'}`}>
+                                        <ChevronRight className={scrolled ? 'w-3 h-3' : 'w-4 h-4'} />
                                     </div>
                                 </Link>
                             )}

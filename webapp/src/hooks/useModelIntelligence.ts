@@ -25,8 +25,23 @@ export function useModelIntelligence(
     immediate = true,
   } = options;
 
-  const [data, setData] = useState<ModelIntelligenceSnapshot | null>(null);
-  const [isLoading, setIsLoading] = useState(immediate);
+  const cacheKey = 'traceveil.model_intelligence.cache.v1';
+
+  const readCache = (): ModelIntelligenceSnapshot | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = sessionStorage.getItem(cacheKey);
+      if (!raw) return null;
+      return JSON.parse(raw) as ModelIntelligenceSnapshot;
+    } catch {
+      return null;
+    }
+  };
+
+  const initialCache = readCache();
+
+  const [data, setData] = useState<ModelIntelligenceSnapshot | null>(initialCache);
+  const [isLoading, setIsLoading] = useState(immediate && !initialCache);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,15 +56,24 @@ export function useModelIntelligence(
       try {
         const next = await traceveilApi.getModelIntelligence();
         setData(next);
+        if (typeof window !== 'undefined') {
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(next));
+          } catch {
+            // Ignore cache write issues.
+          }
+        }
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load model intelligence');
+        if (!data) {
+          setError(err instanceof Error ? err.message : 'Failed to load model intelligence');
+        }
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
       }
     },
-    []
+    [data]
   );
 
   useEffect(() => {
@@ -80,4 +104,3 @@ export function useModelIntelligence(
     refresh,
   };
 }
-

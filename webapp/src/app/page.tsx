@@ -10,6 +10,7 @@
  */
 
 import { useState } from 'react';
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useScrollReveal } from '@/hooks';
 import { Navbar } from '@/components/landing/Navbar';
@@ -26,11 +27,28 @@ const CTASection = dynamic(() => import('@/components/landing/CTASection').then(
 const Footer = dynamic(() => import('@/components/landing/Footer').then(mod => mod.Footer));
 
 export default function LandingPage() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const key = 'traceveil.boot.seen';
+      const seen = sessionStorage.getItem(key);
+      if (!seen) {
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+          setIsLoading(false);
+          sessionStorage.setItem(key, '1');
+        }, 280);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // Ignore storage access errors and continue with immediate render.
+    }
+  }, []);
 
   return (
     <>
-      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      {isLoading && <LoadingScreen durationMs={280} onComplete={() => setIsLoading(false)} />}
       {!isLoading && <MainContent />}
     </>
   );

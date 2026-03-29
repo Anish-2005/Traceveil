@@ -67,13 +67,28 @@ export function useDashboardData(options: UseDashboardDataOptions = {}): UseDash
         onError,
     } = options;
 
+    const cacheKey = 'traceveil.dashboard.cache.v1';
+
+    const readCache = (): { metrics: DashboardMetrics; models: DashboardModels; lastUpdated: string } | null => {
+        if (typeof window === 'undefined') return null;
+        try {
+            const raw = sessionStorage.getItem(cacheKey);
+            if (!raw) return null;
+            return JSON.parse(raw);
+        } catch {
+            return null;
+        }
+    };
+
+    const initialCache = readCache();
+
     // State
     const [state, setState] = useState<DashboardDataState>({
-        metrics: null,
-        models: null,
-        isLoading: true,
+        metrics: initialCache?.metrics ?? null,
+        models: initialCache?.models ?? null,
+        isLoading: !initialCache,
         error: null,
-        lastUpdated: new Date(),
+        lastUpdated: initialCache?.lastUpdated ? new Date(initialCache.lastUpdated) : new Date(),
     });
 
     // Refs for tracking fetch state and preventing race conditions
@@ -120,6 +135,21 @@ export function useDashboardData(options: UseDashboardDataOptions = {}): UseDash
                     lastUpdated: new Date(),
                 });
 
+                if (typeof window !== 'undefined') {
+                    try {
+                        sessionStorage.setItem(
+                            cacheKey,
+                            JSON.stringify({
+                                metrics: metricsData,
+                                models: modelsData,
+                                lastUpdated: new Date().toISOString(),
+                            })
+                        );
+                    } catch {
+                        // Ignore cache write errors.
+                    }
+                }
+
                 onSuccess?.({ metrics: metricsData, models: modelsData });
             }
         } catch (err) {
@@ -136,7 +166,7 @@ export function useDashboardData(options: UseDashboardDataOptions = {}): UseDash
                 setState(prev => ({
                     ...prev,
                     isLoading: false,
-                    error: errorMessage,
+                    error: prev.metrics ? null : errorMessage,
                 }));
 
                 onError?.(err instanceof Error ? err : new Error(errorMessage));
