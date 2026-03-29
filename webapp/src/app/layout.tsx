@@ -6,6 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { APIStatus } from '@/components/shared/APIStatus';
 import { RouteTransitionOverlay } from '@/components/shared/RouteTransitionOverlay';
+import { seoConfig } from '@/lib/seo';
 
 // Premium font configuration with performance optimization
 const outfit = Outfit({
@@ -24,7 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 // Comprehensive SEO metadata
 export const metadata: Metadata = {
-  metadataBase: new URL("https://traceveil.io"),
+  metadataBase: seoConfig.metadataBase,
   title: {
     default: "Traceveil | AI-Powered Fraud Detection & Threat Intelligence",
     template: "%s | Traceveil",
@@ -46,58 +47,44 @@ export const metadata: Metadata = {
   authors: [{ name: "Traceveil Team" }],
   creator: "Traceveil",
   publisher: "Traceveil",
+  applicationName: "Traceveil",
+  referrer: "origin-when-cross-origin",
   robots: {
-    index: true,
-    follow: true,
+    index: seoConfig.shouldIndex,
+    follow: seoConfig.shouldIndex,
     googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      index: seoConfig.shouldIndex,
+      follow: seoConfig.shouldIndex,
+      "max-video-preview": seoConfig.shouldIndex ? -1 : 0,
+      "max-image-preview": seoConfig.shouldIndex ? "large" : "none",
+      "max-snippet": seoConfig.shouldIndex ? -1 : 0,
     },
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://traceveil.io",
+    url: seoConfig.siteUrl,
     siteName: "Traceveil",
     title: "Traceveil | AI-Powered Fraud Detection & Threat Intelligence",
     description:
       "Enterprise-grade AI fraud detection platform with real-time threat intelligence and behavioral analysis.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Traceveil - AI Fraud Detection Dashboard",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Traceveil | AI-Powered Fraud Detection",
     description:
       "Enterprise-grade AI fraud detection with real-time threat intelligence.",
-    images: ["/twitter-image.png"],
     creator: "@traceveil",
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-    other: [
-      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#3b82f6" },
     ],
   },
   manifest: "/site.webmanifest",
   alternates: {
-    canonical: "https://traceveil.io",
+    canonical: "/",
   },
   category: "technology",
 };
@@ -120,6 +107,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const apiOrigin = process.env.NEXT_PUBLIC_API_URL
+    ? (() => {
+        try {
+          return new URL(process.env.NEXT_PUBLIC_API_URL).origin;
+        } catch {
+          return null;
+        }
+      })()
+    : null;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -147,7 +144,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
         {/* DNS prefetch for API */}
-        <link rel="dns-prefetch" href="https://api.traceveil.io" />
+        {apiOrigin && <link rel="dns-prefetch" href={apiOrigin} />}
 
         {/* PWA meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />
