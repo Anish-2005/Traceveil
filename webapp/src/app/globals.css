@@ -132,7 +132,8 @@ body {
   width: 100%;
   max-width: 1600px;
   margin-inline: auto;
-  padding-inline: clamp(0.875rem, 2.6vw, 2.25rem);
+  padding-left: max(clamp(0.875rem, 2.6vw, 2.25rem), env(safe-area-inset-left));
+  padding-right: max(clamp(0.875rem, 2.6vw, 2.25rem), env(safe-area-inset-right));
 }
 
 .app-content-spacing {

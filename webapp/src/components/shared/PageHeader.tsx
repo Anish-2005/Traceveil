@@ -70,7 +70,7 @@ export function PageHeader({
                     isCompact ? 'app-header-frame-compact' : ''
                 }`}
             >
-                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+                <div className="app-main-container">
                     <div className={`flex items-center justify-between gap-4 transition-all duration-300 ${isCompact ? 'h-12' : 'h-14'}`}>
 
                     {/* Left: Brand & Context */}
