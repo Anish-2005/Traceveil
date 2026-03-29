@@ -6,7 +6,7 @@ import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 
 import { ArrowRight, Lock, Loader2, Mail, Shield } from 'lucide-react';
 import Image from 'next/image';
 import { auth } from '@/lib/firebase';
-import { PageLayout } from '@/components/shared';
+import { PageLayout, AnimatedSection } from '@/components/shared';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -52,7 +52,11 @@ export default function LoginPage() {
         className="min-h-screen flex items-center justify-center px-4 py-14"
       >
         <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-stretch">
-          <section className="hidden lg:flex flex-col justify-between rounded-3xl border border-white/[0.1] bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-transparent p-8">
+          <AnimatedSection
+            className="hidden lg:flex flex-col justify-between rounded-3xl border border-white/[0.1] bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-transparent p-8"
+            variant="left"
+            delayMs={100}
+          >
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-200 text-xs font-semibold uppercase tracking-wider">
                 <Shield className="w-3.5 h-3.5" />
@@ -73,9 +77,9 @@ export default function LoginPage() {
                 <li>Low-latency event ingestion for production workloads</li>
               </ul>
             </div>
-          </section>
+          </AnimatedSection>
 
-          <section className="glass-card-elevated p-6 sm:p-8 rounded-3xl">
+          <AnimatedSection className="glass-card-elevated p-6 sm:p-8 rounded-3xl" variant="right" delayMs={150}>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-11 h-11 rounded-2xl border border-blue-500/30 bg-blue-500/10 flex items-center justify-center">
                 <Image src="/traceveil-logo.svg" width={22} height={22} alt="Traceveil" />
@@ -155,10 +159,9 @@ export default function LoginPage() {
             >
               Continue with Google
             </button>
-          </section>
+          </AnimatedSection>
         </div>
       </main>
     </PageLayout>
   );
 }
-

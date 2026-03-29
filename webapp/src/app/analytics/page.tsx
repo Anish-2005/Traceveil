@@ -21,7 +21,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from 'lucide-react';
-import { PageLayout, PageHeader } from '@/components/shared';
+import { PageLayout, PageHeader, AnimatedSection } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { useModelIntelligence } from '@/hooks';
 import { traceveilApi, FeedbackStats, DashboardMetrics, DashboardModels, ThreatEvent } from '@/lib/api';
@@ -102,61 +102,74 @@ export default function AnalyticsPage() {
       />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8">
-        <ModelIntelligenceStrip
-          snapshot={modelSnapshot}
-          loading={isModelSnapshotLoading}
-        />
+        <AnimatedSection delayMs={80}>
+          <ModelIntelligenceStrip
+            snapshot={modelSnapshot}
+            loading={isModelSnapshotLoading}
+          />
+        </AnimatedSection>
 
         {error && (
-          <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+          <AnimatedSection
+            className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-300"
+            delayMs={120}
+          >
             {error}
-          </div>
+          </AnimatedSection>
         )}
 
         {/* KPI Cards */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            icon={<Activity className="w-5 h-5" />}
-            label="Total Events"
-            value={totalEvents.toLocaleString()}
-            change="+12.4%"
-            positive
-            color="blue"
-            loading={isLoading}
-          />
-          <KPICard
-            icon={<AlertTriangle className="w-5 h-5" />}
-            label="Risk Alerts"
-            value={criticalThreats.toString()}
-            change={criticalThreats > 10 ? '+5.2%' : '-8.1%'}
-            positive={criticalThreats <= 10}
-            color="red"
-            loading={isLoading}
-          />
-          <KPICard
-            icon={<Users className="w-5 h-5" />}
-            label="Active Streams"
-            value={metrics?.active_monitoring?.toLocaleString() ?? '0'}
-            change="+8.7%"
-            positive
-            color="emerald"
-            loading={isLoading}
-          />
-          <KPICard
-            icon={<TrendingUp className="w-5 h-5" />}
-            label="Detection Rate"
-            value={`${detectionPercentage}%`}
-            change="+2.1%"
-            positive
-            color="purple"
-            loading={isLoading}
-          />
+          <AnimatedSection delayMs={140}>
+            <KPICard
+              icon={<Activity className="w-5 h-5" />}
+              label="Total Events"
+              value={totalEvents.toLocaleString()}
+              change="+12.4%"
+              positive
+              color="blue"
+              loading={isLoading}
+            />
+          </AnimatedSection>
+          <AnimatedSection delayMs={180}>
+            <KPICard
+              icon={<AlertTriangle className="w-5 h-5" />}
+              label="Risk Alerts"
+              value={criticalThreats.toString()}
+              change={criticalThreats > 10 ? '+5.2%' : '-8.1%'}
+              positive={criticalThreats <= 10}
+              color="red"
+              loading={isLoading}
+            />
+          </AnimatedSection>
+          <AnimatedSection delayMs={220}>
+            <KPICard
+              icon={<Users className="w-5 h-5" />}
+              label="Active Streams"
+              value={metrics?.active_monitoring?.toLocaleString() ?? '0'}
+              change="+8.7%"
+              positive
+              color="emerald"
+              loading={isLoading}
+            />
+          </AnimatedSection>
+          <AnimatedSection delayMs={260}>
+            <KPICard
+              icon={<TrendingUp className="w-5 h-5" />}
+              label="Detection Rate"
+              value={`${detectionPercentage}%`}
+              change="+2.1%"
+              positive
+              color="purple"
+              loading={isLoading}
+            />
+          </AnimatedSection>
         </section>
 
         {/* Main Analytics Grid */}
         <section className="grid lg:grid-cols-12 gap-6">
           {/* Risk Distribution */}
-          <div className="lg:col-span-5">
+          <AnimatedSection className="lg:col-span-5" variant="left" delayMs={200}>
             <div className="glass-card-elevated p-6 h-full">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25">
@@ -211,10 +224,10 @@ export default function AnalyticsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
           {/* Model Performance */}
-          <div className="lg:col-span-7">
+          <AnimatedSection className="lg:col-span-7" variant="right" delayMs={240}>
             <div className="glass-card-elevated p-6 h-full">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
@@ -270,13 +283,13 @@ export default function AnalyticsPage() {
                 </div>
               )}
             </div>
-          </div>
+          </AnimatedSection>
         </section>
 
         {/* Bottom Row */}
         <section className="grid lg:grid-cols-2 gap-6">
           {/* Feedback Statistics */}
-          <div className="glass-card p-6">
+          <AnimatedSection className="glass-card p-6" delayMs={260}>
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/25">
                 <Target className="w-5 h-5 text-emerald-400" />
@@ -320,10 +333,10 @@ export default function AnalyticsPage() {
                 <p>No feedback data available</p>
               </div>
             )}
-          </div>
+          </AnimatedSection>
 
           {/* System Performance */}
-          <div className="glass-card p-6">
+          <AnimatedSection className="glass-card p-6" delayMs={300}>
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 rounded-lg bg-amber-500/15 border border-amber-500/25">
                 <Zap className="w-5 h-5 text-amber-400" />
@@ -360,7 +373,7 @@ export default function AnalyticsPage() {
                 positive
               />
             </div>
-          </div>
+          </AnimatedSection>
         </section>
       </main>
     </PageLayout>

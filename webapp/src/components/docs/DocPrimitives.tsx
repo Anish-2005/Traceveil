@@ -12,7 +12,7 @@ interface DocHeroProps {
 
 export function DocHero({ badge, icon: Icon, title, description, actions }: DocHeroProps) {
   return (
-    <header className="docs-hero">
+    <header className="docs-hero scroll-reveal reveal-delay-100">
       {badge && <div className="docs-badge">{badge}</div>}
       <div className="flex items-center gap-3 mb-4">
         <div className="docs-icon-wrap">
@@ -34,7 +34,7 @@ interface DocSectionProps {
 
 export function DocSection({ title, description, children }: DocSectionProps) {
   return (
-    <section className="docs-section">
+    <section className="docs-section scroll-reveal reveal-delay-200">
       <div className="mb-5">
         <h2 className="docs-section-title">{title}</h2>
         {description && <p className="docs-section-description">{description}</p>}
@@ -54,7 +54,7 @@ interface DocCardProps {
 
 export function DocCard({ icon: Icon, title, description, href, children }: DocCardProps) {
   const content = (
-    <article className="docs-card group">
+    <article className="docs-card group scroll-reveal-scale reveal-delay-300">
       {Icon && (
         <div className="docs-card-icon">
           <Icon className="w-4 h-4 text-blue-300" />
@@ -82,7 +82,7 @@ interface DocCodeBlockProps {
 
 export function DocCodeBlock({ code, languageLabel }: DocCodeBlockProps) {
   return (
-    <div className="docs-code">
+    <div className="docs-code scroll-reveal reveal-delay-300">
       {languageLabel && <div className="docs-code-label">{languageLabel}</div>}
       <pre className="docs-code-pre">
         <code>{code}</code>
@@ -99,7 +99,7 @@ interface DocCalloutProps {
 
 export function DocCallout({ title, tone = 'info', children }: DocCalloutProps) {
   return (
-    <aside className={`docs-callout docs-callout-${tone}`}>
+    <aside className={`docs-callout docs-callout-${tone} scroll-reveal reveal-delay-300`}>
       <h4 className="docs-callout-title">{title}</h4>
       <div className="docs-callout-body">{children}</div>
     </aside>
@@ -113,10 +113,9 @@ interface DocNavLinkProps {
 
 export function DocNavLink({ href, label }: DocNavLinkProps) {
   return (
-    <Link href={href} className="docs-nav-link">
+    <Link href={href} className="docs-nav-link scroll-reveal reveal-delay-300">
       <span>{label}</span>
       <ArrowRight className="w-4 h-4" />
     </Link>
   );
 }
-

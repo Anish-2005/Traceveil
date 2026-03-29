@@ -25,10 +25,11 @@ import {
   XCircle,
   // ... (imports remain)
 } from 'lucide-react';
-import { PageLayout, PageHeader } from '@/components/shared';
+import { PageLayout, PageHeader, AnimatedSection } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { traceveilApi, UserRisk } from '@/lib/api';
 import { useModelIntelligence } from '@/hooks';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
 
 function UsersPageContent() {
   const searchParams = useSearchParams();
@@ -109,15 +110,15 @@ function UsersPageContent() {
       />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="mb-6">
+        <AnimatedSection className="mb-6" delayMs={80}>
           <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
-        </div>
+        </AnimatedSection>
 
         <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Left Column - Search & History */}
           <div className="lg:col-span-4 space-y-6">
             {/* Search Card */}
-            <div className="glass-card-elevated p-6">
+            <AnimatedSection className="glass-card-elevated p-6" variant="left" delayMs={120}>
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 rounded-lg bg-blue-500/15 border border-blue-500/25">
                   <Search className="w-5 h-5 text-blue-400" />
@@ -168,11 +169,11 @@ function UsersPageContent() {
                   </div>
                 </div>
               )}
-            </div>
+            </AnimatedSection>
 
             {/* Search History */}
             {searchHistory.length > 0 && (
-              <div className="glass-card p-6">
+              <AnimatedSection className="glass-card p-6" variant="left" delayMs={180}>
                 <div className="flex items-center gap-2 mb-4">
                   <Clock className="w-4 h-4 text-slate-400" />
                   <h3 className="text-sm font-semibold text-slate-300">Recent Searches</h3>
@@ -192,11 +193,11 @@ function UsersPageContent() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </AnimatedSection>
             )}
 
             {/* Quick Tips */}
-            <div className="glass-card p-6">
+            <AnimatedSection className="glass-card p-6" variant="left" delayMs={220}>
               <div className="flex items-center gap-2 mb-4">
                 <Brain className="w-4 h-4 text-purple-400" />
                 <h3 className="text-sm font-semibold text-slate-300">How It Works</h3>
@@ -215,15 +216,17 @@ function UsersPageContent() {
                   Graph analysis examines network relationships
                 </li>
               </ul>
-            </div>
+            </AnimatedSection>
           </div>
 
           {/* Right Column - Results */}
           <div className="lg:col-span-8 space-y-6">
-            {userRisk ? (
+            {isSearching ? (
+              <UserRiskSkeleton />
+            ) : userRisk ? (
               <>
                 {/* Risk Overview Card */}
-                <div className="glass-card-elevated p-6 lg:p-8">
+                <AnimatedSection className="glass-card-elevated p-6 lg:p-8" variant="right" delayMs={140}>
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                     {/* User Info & Risk Level */}
                     <div className="flex items-start gap-4">
@@ -297,10 +300,10 @@ function UsersPageContent() {
                       <p className="text-xs text-slate-400 mt-1">Recent Events</p>
                     </div>
                   </div>
-                </div>
+                </AnimatedSection>
 
                 {/* Risk Analysis */}
-                <div className="glass-card p-6">
+                <AnimatedSection className="glass-card p-6" variant="right" delayMs={200}>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25">
                       <FileText className="w-5 h-5 text-purple-400" />
@@ -352,10 +355,10 @@ function UsersPageContent() {
                       </ul>
                     </div>
                   </div>
-                </div>
+                </AnimatedSection>
 
                 {/* Actions */}
-                <div className="glass-card p-6">
+                <AnimatedSection className="glass-card p-6" variant="right" delayMs={260}>
                   <div className="flex flex-wrap gap-3">
                     <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors">
                       <Activity className="w-4 h-4" />
@@ -370,11 +373,11 @@ function UsersPageContent() {
                       Mark Reviewed
                     </button>
                   </div>
-                </div>
+                </AnimatedSection>
               </>
             ) : (
               /* Empty State */
-              <div className="glass-card-elevated p-12 text-center">
+              <AnimatedSection className="glass-card-elevated p-12 text-center" variant="right" delayMs={180}>
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-blue-500/20 rounded-3xl blur-2xl" />
                   <div className="relative p-6 rounded-3xl bg-white/[0.04] border border-white/[0.06]">
@@ -385,7 +388,7 @@ function UsersPageContent() {
                 <p className="text-slate-400 max-w-md mx-auto">
                   Enter a user ID to analyze their risk profile using our AI-powered threat detection models.
                 </p>
-              </div>
+              </AnimatedSection>
             )}
           </div>
         </div>
@@ -399,5 +402,44 @@ export default function UsersPage() {
     <Suspense fallback={<PageLayout><PageHeader title="User Risk Assessment" subtitle="Threat Hunting & Analysis" /></PageLayout>}>
       <UsersPageContent />
     </Suspense>
+  );
+}
+
+function UserRiskSkeleton() {
+  return (
+    <div className="space-y-6">
+      <AnimatedSection className="glass-card-elevated p-6 lg:p-8" variant="right" delayMs={140}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <LoadingSkeleton className="h-8 w-52 mb-3" />
+            <LoadingSkeleton className="h-5 w-32 mb-6" />
+            <div className="grid grid-cols-3 gap-4">
+              <LoadingSkeleton className="h-20 rounded-xl" />
+              <LoadingSkeleton className="h-20 rounded-xl" />
+              <LoadingSkeleton className="h-20 rounded-xl" />
+            </div>
+          </div>
+          <LoadingSkeleton className="h-40 rounded-2xl" />
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection className="glass-card p-6" variant="right" delayMs={200}>
+        <LoadingSkeleton className="h-5 w-40 mb-4" />
+        <LoadingSkeleton className="h-16 rounded-xl mb-4" />
+        <div className="space-y-3">
+          <LoadingSkeleton className="h-12 rounded-xl" />
+          <LoadingSkeleton className="h-12 rounded-xl" />
+          <LoadingSkeleton className="h-12 rounded-xl" />
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection className="glass-card p-6" variant="right" delayMs={260}>
+        <div className="flex flex-wrap gap-3">
+          <LoadingSkeleton className="h-10 w-36 rounded-xl" />
+          <LoadingSkeleton className="h-10 w-36 rounded-xl" />
+          <LoadingSkeleton className="h-10 w-36 rounded-xl" />
+        </div>
+      </AnimatedSection>
+    </div>
   );
 }

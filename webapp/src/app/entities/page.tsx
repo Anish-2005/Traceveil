@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageLayout, PageHeader } from '@/components/shared';
+import { PageLayout, PageHeader, AnimatedSection } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { EntityCard } from '@/components/dashboard/EntityCard';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
 import { traceveilApi, HighRiskEntity } from '@/lib/api';
 import { Search, RefreshCw, AlertTriangle, Shield } from 'lucide-react';
 import { getSeverityFromScore, getStatusFromSeverity } from '@/lib/constants';
@@ -96,12 +97,12 @@ export default function EntitiesPage() {
             />
 
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="mb-6">
+                <AnimatedSection className="mb-6" delayMs={80}>
                     <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
-                </div>
+                </AnimatedSection>
 
                 {/* Filters */}
-                <div className="mb-8 flex flex-col sm:flex-row gap-4">
+                <AnimatedSection className="mb-8 flex flex-col sm:flex-row gap-4" delayMs={140}>
                     <div className="relative flex-1 max-w-md">
                         <input
                             type="text"
@@ -113,13 +114,25 @@ export default function EntitiesPage() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                     </div>
                     {/* Add more filters here if needed */}
-                </div>
+                </AnimatedSection>
 
                 {/* Content */}
                 {loading && !isRefreshing ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-                        <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4" />
-                        <p>Loading entities...</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {Array.from({ length: 8 }).map((_, idx) => (
+                            <AnimatedSection key={`entity-skeleton-${idx}`} delayMs={180 + idx * 35}>
+                                <div className="glass-card p-4 rounded-xl">
+                                    <LoadingSkeleton className="h-4 w-1/2 mb-3" />
+                                    <LoadingSkeleton className="h-8 w-2/3 mb-3" />
+                                    <LoadingSkeleton className="h-3 w-3/4 mb-2" />
+                                    <LoadingSkeleton className="h-3 w-1/2 mb-4" />
+                                    <div className="flex gap-2">
+                                        <LoadingSkeleton className="h-6 w-14 rounded-full" />
+                                        <LoadingSkeleton className="h-6 w-18 rounded-full" />
+                                    </div>
+                                </div>
+                            </AnimatedSection>
+                        ))}
                     </div>
                 ) : filteredEntities.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -128,10 +141,9 @@ export default function EntitiesPage() {
                             const status = getStatusFromSeverity(severity);
 
                             return (
-                                <div
+                                <AnimatedSection
                                     key={entity.id || index}
-                                    className="scroll-reveal"
-                                    style={{ transitionDelay: `${index * 30}ms` }}
+                                    delayMs={180 + index * 30}
                                 >
                                     <EntityCard
                                         id={entity.user_id || 'Unknown'} // Pass User ID for the link
@@ -141,18 +153,18 @@ export default function EntitiesPage() {
                                         status={status}
                                         explanation={entity.description}
                                     />
-                                </div>
+                                </AnimatedSection>
                             );
                         })}
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-slate-500 border border-dashed border-white/[0.06] rounded-xl">
+                    <AnimatedSection className="flex flex-col items-center justify-center py-20 text-slate-500 border border-dashed border-white/[0.06] rounded-xl" delayMs={180}>
                         <Shield className="w-12 h-12 mb-4 opacity-20" />
                         <h3 className="text-lg font-medium text-slate-400">No entities found</h3>
                         <p className="max-w-xs text-center text-sm opacity-60 mt-2">
                             Try adjusting your search criteria or waiting for new events.
                         </p>
-                    </div>
+                    </AnimatedSection>
                 )}
             </main>
         </PageLayout>

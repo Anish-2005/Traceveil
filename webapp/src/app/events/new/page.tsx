@@ -23,10 +23,11 @@ import {
   FileJson,
   Sparkles
 } from 'lucide-react';
-import { PageLayout, PageHeader } from '@/components/shared';
+import { PageLayout, PageHeader, AnimatedSection } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { traceveilApi, EventData, RiskAssessment } from '@/lib/api';
 import { useModelIntelligence } from '@/hooks';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
 
 const eventTypes = [
   { value: 'login', label: 'Login', icon: <User className="w-4 h-4" />, color: 'blue' },
@@ -142,13 +143,13 @@ export default function NewEventPage() {
       />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="mb-6">
+        <AnimatedSection className="mb-6" delayMs={80}>
           <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} compact />
-        </div>
+        </AnimatedSection>
 
         <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Form Column */}
-          <div className="lg:col-span-6">
+          <AnimatedSection className="lg:col-span-6" variant="left" delayMs={120}>
             <div className="glass-card-elevated p-6 lg:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/25">
@@ -279,14 +280,16 @@ export default function NewEventPage() {
                 </button>
               </form>
             </div>
-          </div>
+          </AnimatedSection>
 
           {/* Results Column */}
           <div className="lg:col-span-6 space-y-6">
-            {result ? (
+            {isSubmitting && !result ? (
+              <EventResultSkeleton />
+            ) : result ? (
               <>
                 {/* Success Banner */}
-                <div className="glass-card p-4 border-l-4 border-emerald-500">
+                <AnimatedSection className="glass-card p-4 border-l-4 border-emerald-500" variant="right" delayMs={150}>
                   <div className="flex items-center gap-3">
                     <CheckCircle className="w-5 h-5 text-emerald-400" />
                     <div>
@@ -294,10 +297,10 @@ export default function NewEventPage() {
                       <p className="text-xs text-slate-400">Event ID: {result.event_id}</p>
                     </div>
                   </div>
-                </div>
+                </AnimatedSection>
 
                 {/* Risk Assessment Card */}
-                <div className="glass-card-elevated p-6 lg:p-8">
+                <AnimatedSection className="glass-card-elevated p-6 lg:p-8" variant="right" delayMs={200}>
                   <div className="flex items-center gap-3 mb-6">
                     <div className={`p-3 rounded-xl ${getRiskColor(result.risk_assessment.risk_level).bg} ${getRiskColor(result.risk_assessment.risk_level).border} border`}>
                       {getRiskIcon(result.risk_assessment.risk_level)}
@@ -347,10 +350,10 @@ export default function NewEventPage() {
                     <p className="text-xs text-slate-400 mb-1">Category</p>
                     <p className="text-sm font-medium text-white">{result.risk_assessment.category}</p>
                   </div>
-                </div>
+                </AnimatedSection>
 
                 {/* Explanation Card */}
-                <div className="glass-card p-6">
+                <AnimatedSection className="glass-card p-6" variant="right" delayMs={250}>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25">
                       <Sparkles className="w-5 h-5 text-purple-400" />
@@ -395,11 +398,15 @@ export default function NewEventPage() {
                       </ul>
                     </div>
                   </div>
-                </div>
+                </AnimatedSection>
               </>
             ) : (
               /* Empty State */
-              <div className="glass-card-elevated p-12 text-center h-full flex flex-col items-center justify-center min-h-[400px]">
+              <AnimatedSection
+                className="glass-card-elevated p-12 text-center h-full flex flex-col items-center justify-center min-h-[400px]"
+                variant="right"
+                delayMs={180}
+              >
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-purple-500/20 rounded-3xl blur-2xl" />
                   <div className="relative p-6 rounded-3xl bg-white/[0.04] border border-white/[0.06]">
@@ -424,11 +431,39 @@ export default function NewEventPage() {
                     Graph Analysis
                   </div>
                 </div>
-              </div>
+              </AnimatedSection>
             )}
           </div>
         </div>
       </main>
     </PageLayout>
+  );
+}
+
+function EventResultSkeleton() {
+  return (
+    <div className="space-y-6">
+      <AnimatedSection className="glass-card p-4" variant="right" delayMs={140}>
+        <LoadingSkeleton className="h-5 w-48" />
+      </AnimatedSection>
+      <AnimatedSection className="glass-card-elevated p-6 lg:p-8" variant="right" delayMs={190}>
+        <LoadingSkeleton className="h-6 w-40 mb-6" />
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <LoadingSkeleton className="h-24 rounded-xl" />
+          <LoadingSkeleton className="h-24 rounded-xl" />
+        </div>
+        <LoadingSkeleton className="h-3 w-full rounded-full mb-6" />
+        <LoadingSkeleton className="h-14 rounded-xl" />
+      </AnimatedSection>
+      <AnimatedSection className="glass-card p-6" variant="right" delayMs={240}>
+        <LoadingSkeleton className="h-5 w-36 mb-4" />
+        <LoadingSkeleton className="h-16 rounded-xl mb-4" />
+        <div className="space-y-2">
+          <LoadingSkeleton className="h-10 rounded-lg" />
+          <LoadingSkeleton className="h-10 rounded-lg" />
+          <LoadingSkeleton className="h-10 rounded-lg" />
+        </div>
+      </AnimatedSection>
+    </div>
   );
 }

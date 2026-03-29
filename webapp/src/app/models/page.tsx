@@ -23,7 +23,7 @@ import {
     Network,
     Layers
 } from 'lucide-react';
-import { PageLayout, PageHeader } from '@/components/shared';
+import { PageLayout, PageHeader, AnimatedSection } from '@/components/shared';
 import { ModelIntelligenceStrip } from '@/components/shared';
 import { useModelIntelligence } from '@/hooks';
 import { traceveilApi, DashboardModels, ModelStatus, DashboardMetrics } from '@/lib/api';
@@ -211,48 +211,65 @@ export default function ModelsPage() {
             />
 
             <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-8">
-                <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} />
+                <AnimatedSection delayMs={80}>
+                    <ModelIntelligenceStrip snapshot={modelSnapshot} loading={isModelSnapshotLoading} />
+                </AnimatedSection>
 
                 {error && (
-                    <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+                    <AnimatedSection
+                        className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-300"
+                        delayMs={120}
+                    >
                         {error}
-                    </div>
+                    </AnimatedSection>
                 )}
 
                 {/* Overview Stats */}
                 <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatsCard
-                        icon={<Brain className="w-5 h-5" />}
-                        label="Active Models"
-                        value={activeModels.toString()}
-                        subtext="deployed in production"
-                        color="blue"
-                    />
-                    <StatsCard
-                        icon={<Zap className="w-5 h-5" />}
-                        label="Total Predictions"
-                        value={totalPredictions.toLocaleString()}
-                        subtext="last 24 hours"
-                        color="emerald"
-                    />
-                    <StatsCard
-                        icon={<TrendingUp className="w-5 h-5" />}
-                        label="Avg Accuracy"
-                        value={`${avgAccuracy.toFixed(1)}%`}
-                        subtext="across all models"
-                        color="purple"
-                    />
-                    <StatsCard
-                        icon={<Clock className="w-5 h-5" />}
-                        label="Avg Latency"
-                        value={`${((metrics?.avg_response_time || 0) * 1000).toFixed(1)}ms`}
-                        subtext="inference time"
-                        color="amber"
-                    />
+                    <AnimatedSection delayMs={140}>
+                        <StatsCard
+                            icon={<Brain className="w-5 h-5" />}
+                            label="Active Models"
+                            value={activeModels.toString()}
+                            subtext="deployed in production"
+                            color="blue"
+                            loading={isLoading}
+                        />
+                    </AnimatedSection>
+                    <AnimatedSection delayMs={180}>
+                        <StatsCard
+                            icon={<Zap className="w-5 h-5" />}
+                            label="Total Predictions"
+                            value={totalPredictions.toLocaleString()}
+                            subtext="last 24 hours"
+                            color="emerald"
+                            loading={isLoading}
+                        />
+                    </AnimatedSection>
+                    <AnimatedSection delayMs={220}>
+                        <StatsCard
+                            icon={<TrendingUp className="w-5 h-5" />}
+                            label="Avg Accuracy"
+                            value={`${avgAccuracy.toFixed(1)}%`}
+                            subtext="across all models"
+                            color="purple"
+                            loading={isLoading}
+                        />
+                    </AnimatedSection>
+                    <AnimatedSection delayMs={260}>
+                        <StatsCard
+                            icon={<Clock className="w-5 h-5" />}
+                            label="Avg Latency"
+                            value={`${((metrics?.avg_response_time || 0) * 1000).toFixed(1)}ms`}
+                            subtext="inference time"
+                            color="amber"
+                            loading={isLoading}
+                        />
+                    </AnimatedSection>
                 </section>
 
                 {/* Model Cards */}
-                <section>
+                <section className="scroll-reveal reveal-delay-300">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-xl font-bold text-white">Deployed Models</h2>
@@ -263,20 +280,24 @@ export default function ModelsPage() {
                     {isLoading ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[1, 2, 3].map((i) => (
-                                <ModelCardSkeleton key={i} />
+                                <AnimatedSection key={`model-skeleton-${i}`} delayMs={220 + i * 40} variant="scale">
+                                    <ModelCardSkeleton />
+                                </AnimatedSection>
                             ))}
                         </div>
                     ) : (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {models.map((model, idx) => (
-                                <ModelCard key={idx} model={model} />
+                                <AnimatedSection key={`model-card-${idx}`} delayMs={220 + idx * 40} variant="scale">
+                                    <ModelCard model={model} />
+                                </AnimatedSection>
                             ))}
                         </div>
                     )}
                 </section>
 
                 {/* Model Versions Table */}
-                <section className="glass-card p-6">
+                <AnimatedSection className="glass-card p-6" delayMs={340}>
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-2 rounded-lg bg-blue-500/15 border border-blue-500/25">
                             <GitBranch className="w-5 h-5 text-blue-400" />
@@ -335,10 +356,10 @@ export default function ModelsPage() {
                             </tbody>
                         </table>
                     </div>
-                </section>
+                </AnimatedSection>
 
                 {/* System Resources */}
-                <section className="glass-card p-6">
+                <AnimatedSection className="glass-card p-6" delayMs={380}>
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25">
                             <Database className="w-5 h-5 text-purple-400" />
@@ -350,12 +371,20 @@ export default function ModelsPage() {
                     </div>
 
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <ResourceBar label="CPU Usage" value={42} color="blue" />
-                        <ResourceBar label="Memory" value={67} color="purple" />
-                        <ResourceBar label="GPU Utilization" value={38} color="emerald" />
-                        <ResourceBar label="Model Cache" value={85} color="amber" />
+                        <AnimatedSection delayMs={420} variant="scale">
+                            <ResourceBar label="CPU Usage" value={42} color="blue" />
+                        </AnimatedSection>
+                        <AnimatedSection delayMs={460} variant="scale">
+                            <ResourceBar label="Memory" value={67} color="purple" />
+                        </AnimatedSection>
+                        <AnimatedSection delayMs={500} variant="scale">
+                            <ResourceBar label="GPU Utilization" value={38} color="emerald" />
+                        </AnimatedSection>
+                        <AnimatedSection delayMs={540} variant="scale">
+                            <ResourceBar label="Model Cache" value={85} color="amber" />
+                        </AnimatedSection>
                     </div>
-                </section>
+                </AnimatedSection>
             </main>
         </PageLayout>
     );
@@ -371,15 +400,27 @@ interface StatsCardProps {
     value: string;
     subtext: string;
     color: 'blue' | 'purple' | 'emerald' | 'amber';
+    loading?: boolean;
 }
 
-function StatsCard({ icon, label, value, subtext, color }: StatsCardProps) {
+function StatsCard({ icon, label, value, subtext, color, loading }: StatsCardProps) {
     const colorClasses = {
         blue: 'from-blue-500/20 to-blue-600/10 border-blue-500/20 text-blue-400',
         purple: 'from-purple-500/20 to-purple-600/10 border-purple-500/20 text-purple-400',
         emerald: 'from-emerald-500/20 to-emerald-600/10 border-emerald-500/20 text-emerald-400',
         amber: 'from-amber-500/20 to-amber-600/10 border-amber-500/20 text-amber-400',
     }[color];
+
+    if (loading) {
+        return (
+            <div className="glass-card p-5 animate-pulse">
+                <div className="w-10 h-10 bg-white/[0.06] rounded-xl mb-4" />
+                <div className="h-8 w-24 bg-white/[0.06] rounded mb-2" />
+                <div className="h-4 w-28 bg-white/[0.06] rounded mb-1" />
+                <div className="h-3 w-24 bg-white/[0.06] rounded" />
+            </div>
+        );
+    }
 
     return (
         <div className="glass-card p-5 group hover:scale-[1.02] transition-transform">
