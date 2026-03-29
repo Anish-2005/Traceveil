@@ -1,14 +1,25 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Activity, XCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { RefreshCw, WifiOff, X } from 'lucide-react';
 import { traceveilApi } from '@/lib/api';
 
+const FAILURE_THRESHOLD = 4;
+const GRACE_PERIOD_MS = 15000;
+const POLL_INTERVAL_MS = 10000;
+const DISMISS_KEY = 'traceveil_api_status_dismissed';
+
 export function APIStatus() {
-  const [status, setStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  const pathname = usePathname();
+  const [status, setStatus] = useState<'online' | 'offline'>('online');
   const [latency, setLatency] = useState<number | null>(null);
+  const [dismissed, setDismissed] = useState(false);
   const isCheckingRef = useRef(false);
   const failureCountRef = useRef(0);
+  const mountedAtRef = useRef(Date.now());
+
+  const shouldShowOnRoute = /^\/(dashboard|analytics|entities|events|models|users)(\/|$)/.test(pathname);
 
   const checkHealth = useCallback(async () => {
     if (isCheckingRef.current) {
@@ -22,15 +33,22 @@ export function APIStatus() {
         failureCountRef.current = 0;
         setLatency(result.latencyMs ?? null);
         setStatus('online');
-      } else {
-        failureCountRef.current += 1;
-        if (failureCountRef.current >= 2) {
-          setStatus('offline');
-        }
+        return;
+      }
+
+      failureCountRef.current += 1;
+      if (
+        Date.now() - mountedAtRef.current > GRACE_PERIOD_MS &&
+        failureCountRef.current >= FAILURE_THRESHOLD
+      ) {
+        setStatus('offline');
       }
     } catch {
       failureCountRef.current += 1;
-      if (failureCountRef.current >= 2) {
+      if (
+        Date.now() - mountedAtRef.current > GRACE_PERIOD_MS &&
+        failureCountRef.current >= FAILURE_THRESHOLD
+      ) {
         setStatus('offline');
       }
     } finally {
@@ -39,48 +57,62 @@ export function APIStatus() {
   }, []);
 
   useEffect(() => {
+    try {
+      setDismissed(window.sessionStorage.getItem(DISMISS_KEY) === '1');
+    } catch {
+      setDismissed(false);
+    }
+  }, []);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       checkHealth();
-    }, 0);
+    }, 1000);
 
-    const interval = setInterval(checkHealth, 8000);
+    const interval = setInterval(checkHealth, POLL_INTERVAL_MS);
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
   }, [checkHealth]);
 
-  if (status === 'online') {
+  if (!shouldShowOnRoute || status !== 'offline' || dismissed) {
     return null;
   }
 
+  const handleDismiss = () => {
+    setDismissed(true);
+    try {
+      window.sessionStorage.setItem(DISMISS_KEY, '1');
+    } catch {
+      // Ignore storage errors.
+    }
+  };
+
+  const handleRetry = async () => {
+    await checkHealth();
+  };
+
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
-      <div
-        className={`flex items-center gap-2 px-3 py-2 rounded-lg border backdrop-blur-md shadow-lg transition-colors ${
-          status === 'offline'
-            ? 'bg-red-500/10 border-red-500/20 text-red-500'
-            : 'bg-slate-800/80 border-slate-700 text-slate-400'
-        }`}
-      >
-        {status === 'offline' ? (
-          <>
-            <XCircle className="w-4 h-4" />
-            <span className="text-sm font-medium">API Disconnected</span>
-            <button onClick={checkHealth} className="text-xs underline hover:text-red-400 ml-1">
-              Retry
-            </button>
-          </>
-        ) : (
-          <>
-            <Activity className="w-4 h-4 animate-spin" />
-            <span className="text-sm">
-              Connectivity Check{latency ? ` (${latency}ms)` : '...'}
-            </span>
-          </>
-        )}
+      <div className="flex items-center gap-2 rounded-full border border-amber-500/35 bg-slate-950/95 px-3 py-2 text-amber-300 shadow-lg shadow-black/30 backdrop-blur-md">
+        <WifiOff className="h-4 w-4" />
+        <span className="text-xs font-medium">API unreachable{latency ? ` (${latency}ms)` : ''}</span>
+        <button
+          onClick={handleRetry}
+          className="inline-flex h-6 w-6 items-center justify-center rounded-full hover:bg-amber-500/15"
+          aria-label="Retry API health check"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+        </button>
+        <button
+          onClick={handleDismiss}
+          className="inline-flex h-6 w-6 items-center justify-center rounded-full hover:bg-amber-500/15"
+          aria-label="Dismiss API status"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
       </div>
     </div>
   );
 }
-

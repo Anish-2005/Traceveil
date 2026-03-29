@@ -4,6 +4,7 @@ import "./globals.css";
 import { ScrollObserver } from "@/components/ui/ScrollObserver";
 import { AuthProvider } from "@/context/AuthContext";
 import { APIStatus } from '@/components/shared/APIStatus';
+import { RouteTransitionOverlay } from '@/components/shared/RouteTransitionOverlay';
 
 // Premium font configuration with performance optimization
 const outfit = Outfit({
@@ -174,6 +175,7 @@ export default function RootLayout({
         </a>
 
         <AuthProvider>
+          <RouteTransitionOverlay />
           {children}
           <APIStatus />
         </AuthProvider>

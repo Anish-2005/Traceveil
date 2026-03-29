@@ -365,6 +365,72 @@ body {
   animation: scale-in 0.4s ease-out forwards;
 }
 
+/* ----------------------------------------------------------------------------
+   ROUTE TRANSITIONS - Global Page Loading/Unloading Feel
+   ---------------------------------------------------------------------------- */
+@keyframes route-stage-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.995);
+    filter: saturate(0.92) blur(1px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: saturate(1) blur(0);
+  }
+}
+
+.route-transition-stage {
+  animation: route-stage-enter 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+@keyframes route-overlay-exit {
+  0% {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+}
+
+@keyframes route-overlay-enter {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.998);
+  }
+}
+
+.route-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  background:
+    radial-gradient(1000px 320px at 50% -5%, rgba(59, 130, 246, 0.24), transparent 60%),
+    linear-gradient(180deg, rgba(3, 7, 18, 0.06) 0%, rgba(3, 7, 18, 0.34) 100%);
+  backdrop-filter: blur(2px) saturate(112%);
+  -webkit-backdrop-filter: blur(2px) saturate(112%);
+}
+
+.route-transition-overlay.exiting {
+  animation: route-overlay-exit 220ms ease-out forwards;
+}
+
+.route-transition-overlay.entering {
+  animation: route-overlay-enter 380ms ease-out forwards;
+}
+
 /* Stagger animations for lists */
 .stagger-1 {
   animation-delay: 0.05s;
@@ -682,6 +748,10 @@ body {
 
   html {
     scroll-behavior: auto;
+  }
+
+  .route-transition-overlay {
+    display: none !important;
   }
 }
 
@@ -1343,6 +1413,12 @@ body {
   .float-medium,
   .float-fast {
     animation-duration: 12s;
+  }
+
+  .route-transition-stage,
+  .route-transition-overlay.exiting,
+  .route-transition-overlay.entering {
+    animation-duration: 140ms;
   }
 
   /* Ensure touch targets are adequate */

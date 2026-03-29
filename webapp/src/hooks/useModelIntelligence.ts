@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ModelIntelligenceSnapshot, traceveilApi } from '@/lib/api';
 import { DASHBOARD_REFRESH_INTERVAL_MS } from '@/lib/constants';
 
@@ -26,6 +26,8 @@ export function useModelIntelligence(
   } = options;
 
   const cacheKey = 'traceveil.model_intelligence.cache.v1';
+  const [cacheHydrated, setCacheHydrated] = useState(false);
+  const hadCacheRef = useRef(false);
 
   const readCache = (): ModelIntelligenceSnapshot | null => {
     if (typeof window === 'undefined') return null;
@@ -38,10 +40,9 @@ export function useModelIntelligence(
     }
   };
 
-  const initialCache = readCache();
-
-  const [data, setData] = useState<ModelIntelligenceSnapshot | null>(initialCache);
-  const [isLoading, setIsLoading] = useState(immediate && !initialCache);
+  // Keep initial render deterministic across SSR/CSR to avoid hydration mismatch.
+  const [data, setData] = useState<ModelIntelligenceSnapshot | null>(null);
+  const [isLoading, setIsLoading] = useState(immediate);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,8 +78,23 @@ export function useModelIntelligence(
   );
 
   useEffect(() => {
+    const cached = readCache();
+    if (cached) {
+      setData(cached);
+      setIsLoading(false);
+      hadCacheRef.current = true;
+    }
+    setCacheHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!cacheHydrated) {
+      return;
+    }
+
     if (immediate) {
-      load(false);
+      // If cache exists, refresh in background without showing loading skeleton.
+      load(hadCacheRef.current);
     }
 
     if (refreshInterval <= 0) {
@@ -90,7 +106,7 @@ export function useModelIntelligence(
     }, refreshInterval);
 
     return () => clearInterval(timer);
-  }, [immediate, load, refreshInterval]);
+  }, [cacheHydrated, immediate, load, refreshInterval]);
 
   const refresh = useCallback(async () => {
     await load(true);
