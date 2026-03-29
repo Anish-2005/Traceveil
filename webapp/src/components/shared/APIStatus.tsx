@@ -95,7 +95,7 @@ export function APIStatus() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
-      <div className="flex items-center gap-2 rounded-full border border-amber-500/35 bg-slate-950/95 px-3 py-2 text-amber-300 shadow-lg shadow-black/30 backdrop-blur-md">
+      <div className="api-status-chip flex items-center gap-2 rounded-full border border-amber-500/35 bg-slate-950/95 px-3 py-2 text-amber-300 shadow-lg shadow-black/30 backdrop-blur-md">
         <WifiOff className="h-4 w-4" />
         <span className="text-xs font-medium">API unreachable{latency ? ` (${latency}ms)` : ''}</span>
         <button

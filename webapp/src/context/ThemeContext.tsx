@@ -37,13 +37,11 @@ function applyTheme(theme: Theme) {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('dark');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const next = resolveInitialTheme();
     setThemeState(next);
     applyTheme(next);
-    setMounted(true);
   }, []);
 
   const setTheme = useCallback((nextTheme: Theme) => {
@@ -69,10 +67,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [theme, setTheme, toggleTheme]
   );
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
@@ -83,4 +77,3 @@ export function useTheme() {
   }
   return context;
 }
-
